@@ -17,6 +17,12 @@ export class Student {
     @Column({default: ""})
     hashedOTP: string
 
+    @Column({default: ""})
+    accessToken: string
+
+    @Column({default: ""})
+    refreshToken: string
+
     @Column({default: false})
     active: boolean
 }

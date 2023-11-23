@@ -5,6 +5,8 @@ import otpGenerator from "otp-generator";
 import bcrypt from "bcrypt";
 import {Student} from "../models/Student";
 import { AppDataSource } from '../config/db.config';
+import jwt from "jsonwebtoken";
+
 
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
@@ -17,7 +19,7 @@ myOAuth2Client.setCredentials({
 
 class StudentController{
     register = async (req,res) => {
-        // try{
+        try{
             // Get information (email, username, password) from request
             const email = req.body.email;
             const password = req.body.password;
@@ -74,9 +76,9 @@ class StudentController{
             //Send email
             await transport.sendMail(mailOptions)
             res.status(200).json({ message: 'OTP has been sent to your email' })
-        // }catch{
-        //     res.status(500).json({ message: 'OTP failed' })
-        // }
+        }catch{
+            res.status(500).json({ message: 'OTP failed' })
+        }
     }
 
     verifyRegister = async (req,res) => {
@@ -102,9 +104,33 @@ class StudentController{
         }
     }
 
-    test = (req,res) => {
-        res.json("hello");
+    login = async (req,res) => {
+        try {
+            const email = req.body.email;
+            const password = req.body.password;
+            let studentRequest = AppDataSource.getRepository(Student);
+            let studentTarget = await studentRequest.findOneBy({studentEmail: email})
+            let result = await bcrypt.compare(password,studentTarget.studentHashedPassword)
+            // console.log("Input Email:" +email);
+            // console.log("Input Password: " +password);
+            // console.log("Data Email: "+ studentTarget.studentEmail)
+            // console.log("Data Password: "+ studentTarget.studentHashedPassword)
+            // console.log("result check:" + result);
+            if (email === studentTarget.studentEmail &&  result == true){
+                const token = jwt.sign({email: studentTarget.studentEmail}, process.env.SECRETKEY,{ expiresIn: '1h' })
+                studentTarget.accessToken = token;
+                await studentRequest.save(studentTarget)
+                res.status(200).json({message:"Login Successfully", token});
+            }
+            else {
+                res.status(401).json({message:"Email or password incorrect"});
+            }
+        }catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
     }
+
 }
 
 export default new StudentController();
