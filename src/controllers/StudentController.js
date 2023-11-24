@@ -7,7 +7,6 @@ import {Student} from "../models/Student";
 import { AppDataSource } from '../config/db.config';
 import jwt from "jsonwebtoken";
 
-
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
@@ -24,21 +23,16 @@ class StudentController{
             const email = req.body.email;
             const password = req.body.password;
             const username = req.body.username;
-            console.log(email)
-            console.log(password)
-            console.log(username)
+
             //Check information
             let studentRequest = AppDataSource.getRepository(Student);
-            let studentCheck = await studentRequest.findOneBy({studentEmail: email})
-
+            let studentCheck = await studentRequest.findOneBy({studentID: username, studentEmail: email})
             if (studentCheck == null){
                 return res.status(500).json({message: "Username must be your student's id"})
-            }
-            else if (studentCheck.active){
-                console.log('StudentCheck: ' +studentCheck);
-                console.log("Student ACtive " +studentCheck.active);
+            } else if (studentCheck.active){
                 return res.status(500).json({ message: "Account's already been activated" })
             }
+            
             //Create OTP and hash OTP, password
             const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false});
             const salt = await bcrypt.genSalt(10)
@@ -93,9 +87,9 @@ class StudentController{
             let hashOTP = studentTarget.hashedOTP;
             let result = await bcrypt.compare(OTP, hashOTP);
             if (result){
-                res.status(200).json({ message: 'OTP is valid' })
                 studentTarget.active = true
                 studentRequest.save(studentTarget)
+                res.status(200).json({ message: 'OTP is valid' })
             }else{
                 res.status(402).json({ message: 'OTP is not valid' })
             }
@@ -109,20 +103,21 @@ class StudentController{
             const email = req.body.email;
             const password = req.body.password;
             let studentRequest = AppDataSource.getRepository(Student);
-            let studentTarget = await studentRequest.findOneBy({studentEmail: email})
-            let result = await bcrypt.compare(password,studentTarget.studentHashedPassword)
-            // console.log("Input Email:" +email);
-            // console.log("Input Password: " +password);
-            // console.log("Data Email: "+ studentTarget.studentEmail)
-            // console.log("Data Password: "+ studentTarget.studentHashedPassword)
-            // console.log("result check:" + result);
-            if (email === studentTarget.studentEmail &&  result == true){
-                const token = jwt.sign({email: studentTarget.studentEmail}, process.env.SECRETKEY,{ expiresIn: '1h' })
-                studentTarget.accessToken = token;
-                await studentRequest.save(studentTarget)
-                res.status(200).json({message:"Login Successfully", token});
+            let studentTarget = await studentRequest.findOneBy({studentEmail: email, active: true})
+            //Account has not been activated
+            if (studentTarget == null){
+                res.status(401).json({message:"Account has not been activated yet. Please register"});
             }
-            else {
+
+            let result = await bcrypt.compare(password,studentTarget.studentHashedPassword)
+            if (email === studentTarget.studentEmail &&  result == true){
+                const accessToken = jwt.sign({studentID: studentTarget.studentID}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{ expiresIn: '1h' })
+                const refreshToken = jwt.sign({studentID: studentTarget.studentID}, process.env.STUDENT_REFRESH_TOKEN_SECRET,{ expiresIn: '1y' })
+                studentTarget.accessToken = accessToken;
+                studentTarget.refreshToken = refreshToken;
+                await studentRequest.save(studentTarget);
+                res.status(200).json({message:"Login Successfully", refreshToken: refreshToken, accessToken: accessToken});
+            }else {
                 res.status(401).json({message:"Email or password incorrect"});
             }
         }catch (error) {
@@ -131,7 +126,111 @@ class StudentController{
         }
     }
 
+    forgotPassword = async (req, res) => {
+        try {
+            const email = req.body.email;
+            const studentRequest = AppDataSource.getRepository(Student);
+            const studentCheck = await studentRequest.findOneBy({ studentEmail: email, active: true });
+    
+            if (!studentCheck) {
+                return res.status(400).json({ message: "Invalid email address or is not active" });
+            }
+    
+            if (studentCheck.active) {
+                const myAccessTokenObject = await myOAuth2Client.getAccessToken()
+                const myAccessToken = myAccessTokenObject?.token
+    
+                const transport = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        type: 'OAuth2',
+                        user: process.env.GOOGLE_EMAIL_ADDRESS,
+                        clientId: process.env.GOOGLE_CLIENT_ID,
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+                        accessToken: myAccessToken
+                    }
+                })
+    
+                const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+                const salt = await bcrypt.genSalt(10)
+                const hashOTP = await bcrypt.hash(OTP, salt)
+    
+                let studentTarget = await studentRequest.findOneBy({ studentEmail: email, active: studentCheck.active });
+                studentTarget.hashedOTP = hashOTP;
+                await studentRequest.save(studentTarget);
+    
+                const mailOptions = {
+                    to: email,
+                    subject: "OTP Forgot Password",
+                    html: `<h3>${OTP}</h3>`
+                }
+    
+                await transport.sendMail(mailOptions);
+                
+                res.status(200).json({ message: 'OTP has been sent to your email' });
+            } else {
+                res.status(400).json({ message: 'User is not active' });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+    verifyForgotPassword = async (req,res) => {
+        try {
+            //Get Information User and OTP
+            const email = req.body.email;
+            const OTP = req.body.OTP;
+            //Verify OTP
+            let studentRequest = AppDataSource.getRepository(Student);
+            let studentTarget = await studentRequest.findOneBy({studentEmail: email, active: true});
+            let hashOTP = studentTarget.hashedOTP;
+            let result = await bcrypt.compare(OTP, hashOTP);
+            if(result){
+                // studentTarget.hashedOTP = undefined;
+                // await studentRequest.save(studentTarget)
+                res.status(200).json({message:"OTP is valid"});
+            }
+            else {
+                res.status(400).json({message:"OTP is not valid"});
+            }
+            
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+    
+    resetPassword = async (req, res) => {
+        try {
+            // Get Information User
+            const email = req.body.email;
+            const newPassword = req.body.newPassword;
+    
+            // Get User in DB
+            let studentRequest = AppDataSource.getRepository(Student);
+            let studentTarget = await studentRequest.findOneBy({ studentEmail: email, active: true });
+            // Compare old password with new password
+            const result = await bcrypt.compare(newPassword, studentTarget.studentHashedPassword);
+    
+            if (result) {
+                res.status(400).json({ message: "Password don't change" });
+            } else {
+                // Hash the new password and save it to the database
+                const salt = await bcrypt.genSalt(10);
+                const hashPassword = await bcrypt.hash(newPassword, salt);
+                studentTarget.studentHashedPassword = hashPassword;
+                await studentRequest.save(studentTarget);
+                res.status(200).json({ message: "Reset Password successfully" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    };
+    
 }
 
 export default new StudentController();
-
