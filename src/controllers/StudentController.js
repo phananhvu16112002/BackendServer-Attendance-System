@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import {Student} from "../models/Student";
 import { AppDataSource } from '../config/db.config';
 import jwt from "jsonwebtoken";
+import JSDatetimeToMySQLDatetime from '../utils/TimeConvert';
 
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
@@ -158,6 +159,9 @@ class StudentController{
     
                 let studentTarget = await studentRequest.findOneBy({ studentEmail: email, active: studentCheck.active });
                 studentTarget.hashedOTP = hashOTP;
+                let date = new Date();
+                date.setMinutes(date.getMinutes() + 1)
+                studentTarget.timeToLiveOTP = JSDatetimeToMySQLDatetime(date);
                 await studentRequest.save(studentTarget);
     
                 const mailOptions = {
@@ -187,16 +191,28 @@ class StudentController{
             let studentRequest = AppDataSource.getRepository(Student);
             let studentTarget = await studentRequest.findOneBy({studentEmail: email, active: true});
             let hashOTP = studentTarget.hashedOTP;
-            let result = await bcrypt.compare(OTP, hashOTP);
-            if(result){
-                // studentTarget.hashedOTP = undefined;
-                // await studentRequest.save(studentTarget)
-                res.status(200).json({message:"OTP is valid"});
+            let timeConvert = new Date(studentTarget.timeToLiveOTP);
+            let timeUse = JSDatetimeToMySQLDatetime(timeConvert);
+            let checkTimeLive = timeUse < JSDatetimeToMySQLDatetime(new Date()); // 16:43 16:47
+            console.log("Time Orginal: " +timeConvert);
+            console.log("Time Use from DB:" +timeUse);
+            console.log("Time now: " +JSDatetimeToMySQLDatetime(new Date()));
+            console.log("Result " +checkTimeLive);
+            if (checkTimeLive){
+                return res.status(400).json({message: "OTP expired"});
             }
             else {
-                res.status(400).json({message:"OTP is not valid"});
+                let result = await bcrypt.compare(OTP, hashOTP);
+                if(result){
+                    const resetToken = jwt.sign({email: email}, process.env.STUDENT_RESET_TOKEN_SECRET, {expiresIn: '1h'});
+                    studentTarget.resetToken = resetToken;
+                    await studentRequest.save(studentTarget);
+                    res.status(200).json({message:"OTP is valid", resetToken: studentTarget.resetToken});
+                }
+                else {
+                    res.status(400).json({message:"OTP is not valid"});
+                }
             }
-            
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal Server Error' });
@@ -208,20 +224,22 @@ class StudentController{
             // Get Information User
             const email = req.body.email;
             const newPassword = req.body.newPassword;
+            const resetToken = req.body.resetToken;
     
             // Get User in DB
             let studentRequest = AppDataSource.getRepository(Student);
             let studentTarget = await studentRequest.findOneBy({ studentEmail: email, active: true });
             // Compare old password with new password
             const result = await bcrypt.compare(newPassword, studentTarget.studentHashedPassword);
-    
             if (result) {
                 res.status(400).json({ message: "Password don't change" });
             } else {
                 // Hash the new password and save it to the database
                 const salt = await bcrypt.genSalt(10);
                 const hashPassword = await bcrypt.hash(newPassword, salt);
-                studentTarget.studentHashedPassword = hashPassword;
+                studentTarget.hashedOTP = null; 
+                studentTarget.resetToken = null;
+                studentTarget.studentHashedPassword = hashPassword; 
                 await studentRequest.save(studentTarget);
                 res.status(200).json({ message: "Reset Password successfully" });
             }

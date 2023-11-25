@@ -23,6 +23,12 @@ export class Student {
     @Column({default: ""})
     refreshToken: string
 
+    @Column({default: ""})
+    resetToken: string
+
+    @Column({type: "datetime", nullable: true})
+    timeToLiveOTP: string
+
     @Column({default: false})
     active: boolean
 }
