@@ -27,7 +27,7 @@ class StudentController{
 
             //Check information
             let studentRequest = AppDataSource.getRepository(Student);
-            let studentCheck = await studentRequest.findOneBy({studentID: username, studentEmail: email})
+            let studentCheck = await studentRequest.findOneBy({ studentEmail: email})
             if (studentCheck == null){
                 return res.status(500).json({message: "Username must be your student's id"})
             } else if (studentCheck.active){
@@ -224,7 +224,6 @@ class StudentController{
             // Get Information User
             const email = req.body.email;
             const newPassword = req.body.newPassword;
-            const resetToken = req.body.resetToken;
     
             // Get User in DB
             let studentRequest = AppDataSource.getRepository(Student);
@@ -248,6 +247,48 @@ class StudentController{
             res.status(500).json({ message: 'Internal Server Error' });
         }
     };
+    resendOTP = async (req,res) => {
+        try {
+            const email = req.body.email;
+            let studentRequest = AppDataSource.getRepository(Student);
+            let studentTarget = await studentRequest.findOneBy({studentEmail: email, active:true});
+            if (studentTarget.active){
+                const myAccessTokenObject = await myOAuth2Client.getAccessToken()
+                const myAccessToken = myAccessTokenObject?.token
+                const transport = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        type: 'OAuth2',
+                        user: process.env.GOOGLE_EMAIL_ADDRESS,
+                        clientId: process.env.GOOGLE_CLIENT_ID,
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+                        accessToken: myAccessToken
+                    }
+            })
+            const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            const salt = await bcrypt.genSalt(10)
+            const hashOTP = await bcrypt.hash(OTP, salt)
+            let date = new Date();
+            date.setMinutes(date.getMinutes() + 1)
+            studentTarget.timeToLiveOTP = JSDatetimeToMySQLDatetime(date);
+            studentTarget.hashedOTP = hashOTP;
+            await studentRequest.save(studentTarget);
+            const mailOptions = {
+                to: email,
+                subject: "OTP Forgot Password",
+                html: `<h3>${OTP}</h3>`
+            }
+            await transport.sendMail(mailOptions);
+            res.status(200).json({ message: 'OTP has been sent to your email' });
+        }else{
+            res.status(400).json({message:"Failed to send OTP"});
+        }
+        }catch(error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
     
 }
 
