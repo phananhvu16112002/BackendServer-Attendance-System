@@ -221,6 +221,8 @@ class StudentController{
     
     resetPassword = async (req, res) => {
         try {
+            console.log("--------------------------------------");
+            console.log("Reset Password");
             // Get Information User
             const email = req.body.email;
             const newPassword = req.body.newPassword;
@@ -236,7 +238,8 @@ class StudentController{
                 // Hash the new password and save it to the database
                 const salt = await bcrypt.genSalt(10);
                 const hashPassword = await bcrypt.hash(newPassword, salt);
-                studentTarget.hashedOTP = null; 
+                studentTarget.hashedOTP = ""; 
+                studentTarget.resetToken = "";
                 studentTarget.studentHashedPassword = hashPassword; 
                 await studentRequest.save(studentTarget);
                 res.status(200).json({ message: "Reset Password successfully" });
