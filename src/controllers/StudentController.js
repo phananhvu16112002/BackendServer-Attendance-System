@@ -27,7 +27,7 @@ class StudentController{
 
             //Check information
             let studentRequest = AppDataSource.getRepository(Student);
-            let studentCheck = await studentRequest.findOneBy({ studentEmail: email})
+            let studentCheck = await studentRequest.findOneBy({studentEmail: email})
             if (studentCheck == null){
                 return res.status(500).json({message: "Username must be your student's id"})
             } else if (studentCheck.active){
@@ -237,7 +237,6 @@ class StudentController{
                 const salt = await bcrypt.genSalt(10);
                 const hashPassword = await bcrypt.hash(newPassword, salt);
                 studentTarget.hashedOTP = null; 
-                studentTarget.resetToken = null;
                 studentTarget.studentHashedPassword = hashPassword; 
                 await studentRequest.save(studentTarget);
                 res.status(200).json({ message: "Reset Password successfully" });
