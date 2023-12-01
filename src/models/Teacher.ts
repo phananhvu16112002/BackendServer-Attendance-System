@@ -1,18 +1,18 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
-
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
+import { Classes } from "./Classes"
 @Entity()
-export class Student {
+export class Teacher {
     @PrimaryColumn()
-    studentID: string
+    teacherID: string
 
     @Column({default: ""})
-    studentName: string
+    teacherName: string
 
     @Column({default: ""})
-    studentHashedPassword: string
+    teacherHashedPassword: string
 
     @Column({default: ""})
-    studentEmail: string
+    teacherEmail: string
 
     @Column({default: ""})
     hashedOTP: string
@@ -31,4 +31,7 @@ export class Student {
 
     @Column({default: false})
     active: boolean
+
+    @OneToMany(() => Classes, Classes => Classes.course)
+    classes: Classes[]
 }
