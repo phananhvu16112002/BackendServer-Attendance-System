@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
 import { AttendanceDetail } from "./AttendanceDetail"
-import { type } from "os"
+
 @Entity()
 export class Evidence {
     @PrimaryColumn()

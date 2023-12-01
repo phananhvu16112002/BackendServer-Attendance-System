@@ -6,8 +6,8 @@ export class Classes {
     @PrimaryColumn()
     classID: string
 
-    @Column({default: 0})
-    roomNumber: number
+    @Column({default: ""})
+    roomNumber: string
 
     @Column({default: 0})
     shiftNumber: number
