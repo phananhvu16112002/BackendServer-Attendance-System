@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
 import { Classes } from "./Classes"
 import { Student } from "./Student"
-
+import { AttendanceDetail } from "./AttendanceDetail"
 @Entity()
 export class StudentClass {
     @PrimaryColumn({name: "studentID", type: 'string'})
@@ -22,4 +22,7 @@ export class StudentClass {
 
     @Column()
     absenceTotal: number 
+
+    // @OneToMany(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.studentClass)
+    // attendanceDetail: AttendanceDetail[]
 }

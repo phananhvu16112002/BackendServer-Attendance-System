@@ -32,6 +32,6 @@ export class Teacher {
     @Column({default: false})
     active: boolean
 
-    @OneToMany(() => Classes, Classes => Classes.course)
+    @OneToMany(() => Classes, Classes => Classes.teacher)
     classes: Classes[]
 }
