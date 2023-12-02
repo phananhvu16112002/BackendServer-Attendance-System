@@ -58,6 +58,6 @@ export class AttendanceDetail {
     @Column({type: "decimal", precision: 10, scale: 2, default: 0})
     altitude: number
 
-    @OneToMany(() => Evidence, Evidence => Evidence)
-    evidences: Evidence[]
+    // @OneToMany(() => Evidence, Evidence => Evidence)
+    // evidences: Evidence[]
 }

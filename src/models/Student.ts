@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
+import { StudentClass } from "./StudentClass"
 
 @Entity()
 export class Student {
@@ -31,4 +32,7 @@ export class Student {
 
     @Column({default: false})
     active: boolean
+
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.student)
+    studentClass: StudentClass[]
 }

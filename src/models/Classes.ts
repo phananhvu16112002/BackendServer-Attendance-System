@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from "typeorm"
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany } from "typeorm"
 import { Course } from "./Course"
 import { Teacher } from "./Teacher"
+import { StudentClass } from "./StudentClass"
 @Entity()
 export class Classes {
     @PrimaryColumn()
@@ -32,4 +33,7 @@ export class Classes {
 
     @ManyToOne(() => Teacher, Teacher => Teacher.classes)
     teacher: Teacher
+
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.classes)
+    studentClass: StudentClass[]
 }

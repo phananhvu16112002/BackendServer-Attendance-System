@@ -7,5 +7,10 @@ TestRouter.get("/createTeacherTable", TestController.testCreateTeacherTable)
 TestRouter.get("/createCourseTable", TestController.testCreateCourseTable)
 TestRouter.get("/createClassTable", TestController.testCreateClassTable)
 
+TestRouter.get("/getStudent", TestController.testGetStudent)
+TestRouter.get("/getTeacher", TestController.testGetTeacher)
+TestRouter.get("/getCourse", TestController.testGetCourse)
+TestRouter.get("/getClass", TestController.testGetClasses)
+
 export default TestRouter
 

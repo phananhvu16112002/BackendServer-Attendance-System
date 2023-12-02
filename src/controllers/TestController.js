@@ -65,7 +65,7 @@ class Test {
 
             let t2 = new Teacher();
             t2.teacherName = "Manh Van Mai"
-            t2.teacherEmail = "manhvanmai@student.tdtu.edu.vn"
+            t2.teacherEmail = "manhvanmai@lecturer.tdtu.edu.vn"
             t2.teacherID = "222h333"
 
             let teacherRepository = AppDataSource.getRepository(Teacher);
@@ -91,17 +91,46 @@ class Test {
             classes.startTime = JSDatetimeToMySQLDatetime(new Date());
             classes.subGroup = "01";
             classes.teacher = await AppDataSource.getRepository(Teacher).findOneBy({teacherID: "333h222"});
+            await AppDataSource.getRepository(Classes).save(classes);
 
             let studentClass = new StudentClass()
             studentClass.student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
             studentClass.classes = classes
-
+            console.log(studentClass)
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             res.json("success");
         }catch{
             console.log("Error in the database");
             res.json("failed");
         }
+    }
+
+    testCreateFormTable = async (req,res) => {
+        
+    }
+
+    testGetStudent = async (req,res) => {
+        let st = await AppDataSource.getRepository(Student).findOne({where: {studentID: "520H0380"}, relations: {studentClass: true}})
+        console.log(st);
+        res.json(st);
+    }
+
+    testGetTeacher = async (req,res) => {
+        let teacher = await AppDataSource.getRepository(Teacher).findOne({where: {teacherID: "333h222"}, relations: {classes: true}});
+        console.log(teacher)
+        res.json(teacher)
+    }
+
+    testGetCourse = async (req,res) => {
+        let course = await AppDataSource.getRepository(Course).findOne({where: {courseID: "503111"}, relations: {classes : true}});
+        console.log(course)
+        res.json(course);
+    }
+
+    testGetClasses = async (req,res) => {
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"})
+        console.log(classes);
+        res.json(classes);
     }
 }
 
