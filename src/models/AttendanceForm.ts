@@ -7,13 +7,9 @@ export class AttendanceForm {
     @PrimaryColumn()
     formID: string
 
-    @ManyToOne(() => Classes, (Classes) => Classes.classID)
+    @ManyToOne(() => Classes, (Classes) => Classes.attendanceForm)
     @JoinColumn({name:"classID",referencedColumnName:"classID"})
     classes: Classes
-
-    @ManyToOne(() => Teacher, (Teacher) => Teacher.teacherID)
-    @JoinColumn({name:"teacherID",referencedColumnName:"teacherID"})
-    teacher: Teacher
 
     @Column({type: "datetime", nullable: true})
     startTime: string

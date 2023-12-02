@@ -5,6 +5,8 @@ import { Classes } from "../models/Classes";
 import { StudentClass } from "../models/StudentClass";
 import { AppDataSource } from "../config/db.config";
 import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import { AttendanceForm } from "../models/AttendanceForm";
+import { AttendanceDetail } from "../models/AttendanceDetail";
 
 class Test {
     testCreateStudentTable = async (req,res) => {
@@ -106,7 +108,25 @@ class Test {
     }
 
     testCreateFormTable = async (req,res) => {
-        
+        let attendanceForm = new AttendanceForm()
+        attendanceForm.formID = "formID2"
+        attendanceForm.classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"})
+        attendanceForm.status = true
+        attendanceForm.weekNumber = 11
+        await AppDataSource.getRepository(AttendanceForm).save(attendanceForm);
+        res.json("success");
+    }
+
+    testTakeAttendance = async (req,res) => {
+        let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"});
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({student: student.studentID, classes: classes.classID})
+        let attendanceDetail = new AttendanceDetail()
+        attendanceDetail.classes = studentClass
+        attendanceDetail.student = studentClass
+        attendanceDetail.attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: "formID2"})
+        await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
+        res.json(attendanceDetail);
     }
 
     testGetStudent = async (req,res) => {

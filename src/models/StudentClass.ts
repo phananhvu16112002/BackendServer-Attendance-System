@@ -21,7 +21,7 @@ export class StudentClass {
     lateTotal: number
 
     @Column({default: 0})
-    absenceTotal: number 
+    absenceTotal: number     
 
     // @OneToMany(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.studentClass)
     // attendanceDetail: AttendanceDetail[]

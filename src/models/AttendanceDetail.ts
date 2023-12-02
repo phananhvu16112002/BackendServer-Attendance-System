@@ -16,6 +16,7 @@ export class AttendanceDetail {
     // @JoinColumn({name: "classID", referencedColumnName: "classID"})
     // classes: Classes
 
+    //////Oke
     @PrimaryColumn({type: "string", name: "studentID"})
     @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.student)
     @JoinColumn({name: "studentID", referencedColumnName: "student"})
@@ -30,34 +31,32 @@ export class AttendanceDetail {
     @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm.formID)
     @JoinColumn({name:"formID",referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
+    ///////
 
-    @Column()
+    @Column({default: false})
     present: boolean
 
-    @Column()
+    @Column({default: false})
     late: boolean
 
-    @Column()
+    @Column({default: false})
     absence: boolean
 
     @Column({type: "datetime", nullable: true})
     date: string
 
-    @Column()
+    @Column({default: ""})
     location: string
 
-    @Column()
+    @Column({default: ""})
     note: string
 
-    @Column({type: "decimal", precision: 10, scale: 2, default: 0})
+    @Column({type: "decimal", precision: 10, scale: 2, default: 0, nullable: true})
     latitude: number
 
-    @Column({type: "decimal", precision: 10, scale: 2, default: 0})
+    @Column({type: "decimal", precision: 10, scale: 2, default: 0, nullable: true})
     longitude: number
 
-    @Column({type: "decimal", precision: 10, scale: 2, default: 0})
+    @Column({type: "decimal", precision: 10, scale: 2, default: 0, nullable: true})
     altitude: number
-
-    // @OneToMany(() => Evidence, Evidence => Evidence)
-    // evidences: Evidence[]
 }
