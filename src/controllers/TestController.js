@@ -152,6 +152,41 @@ class Test {
         console.log(classes);
         res.json(classes);
     }
+
+    testGetStudentClasses = async (req,res) => {
+        let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
+        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {student: student.studentID}, relations: {classes: true}})
+        let object = studentClass[0].classes;
+        let classes = await AppDataSource.getRepository(Classes).findOne({where: 
+            {
+                classID: object.classID
+            }, 
+            select: {
+                teacher: {
+                    teacherID: true,
+                    teacherEmail: true,
+                    teacherName: true
+                }, 
+                course: true, 
+            },
+            relations: {
+                teacher: true,
+                course: true
+            }
+        })
+        studentClass[0].classes = classes;
+        //res.json(studentClass[0]);
+        console.log(studentClass);
+        res.json(studentClass)
+    }
+
+    testGetAttendanceDetail = async (req,res) => {
+        let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"});
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({student: student.studentID, classes: classes.classID})
+        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {student: studentClass.student, classes: studentClass.classes}});
+        res.json(attendanceDetail);
+    }
 }
 
 export default new Test();
