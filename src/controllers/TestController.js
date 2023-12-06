@@ -86,11 +86,12 @@ class Test {
             classes.classID = "520300_09_t01";
             classes.classType = "lecture"; 
             classes.course = await AppDataSource.getRepository(Course).findOneBy({courseID: "503111"});
-            classes.endTime = JSDatetimeToMySQLDatetime(new Date());
+            let d = new Date();
+            classes.endTime = JSDatetimeToMySQLDatetime(d);
             classes.group = "09";
             classes.roomNumber = "A503"; 
             classes.shiftNumber = "3";
-            classes.startTime = JSDatetimeToMySQLDatetime(new Date());
+            classes.startTime = JSDatetimeToMySQLDatetime(d);
             classes.subGroup = "01";
             classes.teacher = await AppDataSource.getRepository(Teacher).findOneBy({teacherID: "333h222"});
             await AppDataSource.getRepository(Classes).save(classes);
@@ -149,7 +150,8 @@ class Test {
 
     testGetClasses = async (req,res) => {
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"})
-        console.log(classes);
+        classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime))
+        classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime))
         res.json(classes);
     }
 
@@ -184,7 +186,8 @@ class Test {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"});
         let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({student: student.studentID, classes: classes.classID})
-        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {student: studentClass.student, classes: studentClass.classes}});
+        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {student: studentClass.student, classes: studentClass.classes}, relations: {student: true}});
+        
         res.json(attendanceDetail);
     }
 }

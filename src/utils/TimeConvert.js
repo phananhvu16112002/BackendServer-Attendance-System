@@ -6,7 +6,8 @@ function JSDatetimeToMySQLDatetime(date){
         let timeFraction = time.split(" ");
         let noon = timeFraction[1]
         if (noon==="AM"){
-            return timeFraction[0]
+            let hour = timeFraction[0].split(":")
+            return normalize(hour[0]) + ":" + hour[1] + ":" + hour[2]; 
         }else{
             let hour = timeFraction[0].split(":")
             let a = Number(hour[0]) + 12
@@ -16,7 +17,15 @@ function JSDatetimeToMySQLDatetime(date){
     
     function convertDate(date){
         let dateSplit = date.split("/");
-        return dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1]
+        return dateSplit[2] + "-" + normalize(dateSplit[0]) + "-" + normalize(dateSplit[1])
+    }
+
+    function normalize(date){
+        if (date.length == 1){
+            return "0" + date
+        }else{
+            return date;
+        }
     }
 
     return convertDate(dateString) + " " + convertTime(timeString)
