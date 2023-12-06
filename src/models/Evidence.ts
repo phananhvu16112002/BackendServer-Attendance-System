@@ -9,8 +9,8 @@ export class Evidence {
     @Column()
     evidenceImage: string
 
-    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.student)
-    @JoinColumn({name: "studentID", referencedColumnName: "student"})
+    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.studentDetail)
+    @JoinColumn({name: "studentID", referencedColumnName: "studentDetail"})
     student: AttendanceDetail
 
     @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.classes)

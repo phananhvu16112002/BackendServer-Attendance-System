@@ -21,7 +21,7 @@ export class AttendanceForm {
     status: boolean
 
     @Column({type: "datetime", nullable: true})
-    date: string
+    dateOpen: string
 
     @Column()
     weekNumber: number

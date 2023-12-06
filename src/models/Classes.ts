@@ -14,10 +14,10 @@ export class Classes {
     @Column({default: 0})
     shiftNumber: number
 
-    @Column({type: "datetime", nullable: true})
+    @Column({type: "datetime", nullable: false})
     startTime: string
 
-    @Column({type: "datetime", nullable: true})
+    @Column({type: "datetime", nullable: false})
     endTime: string
 
     @Column({default: ""})
@@ -35,7 +35,7 @@ export class Classes {
     @ManyToOne(() => Teacher, Teacher => Teacher.classes)
     teacher: Teacher
 
-    @OneToMany(() => StudentClass, StudentClass => StudentClass.classes)
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.classesID)
     studentClass: StudentClass[]
 
     @OneToMany(() => AttendanceForm, AttendanceForm => AttendanceForm.classes)
