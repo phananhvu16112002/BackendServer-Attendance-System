@@ -83,23 +83,29 @@ class Test {
     testCreateClassTable = async (req,res) => {
         try{
             let classes = new Classes()
-            classes.classID = "520300_09_t01";
-            classes.classType = "lecture"; 
-            classes.course = await AppDataSource.getRepository(Course).findOneBy({courseID: "503111"});
-            let d = new Date();
-            classes.endTime = JSDatetimeToMySQLDatetime(d);
-            classes.group = "09";
-            classes.roomNumber = "A503"; 
-            classes.shiftNumber = "3";
-            classes.startTime = JSDatetimeToMySQLDatetime(d);
-            classes.subGroup = "01";
-            classes.teacher = await AppDataSource.getRepository(Teacher).findOneBy({teacherID: "333h222"});
-            await AppDataSource.getRepository(Classes).save(classes);
+            classes.classID = "520300_09_t0133";
+            classes.classType = "thesis"; 
+            classes.course = await AppDataSource.getRepository(Course).findOneBy({courseID: "502111"});
+            classes.endTime = JSDatetimeToMySQLDatetime(new Date());
+
+            classes.group = "10";
+            classes.roomNumber = "A0503"; 
+            classes.shiftNumber = "4";
+            classes.startTime = JSDatetimeToMySQLDatetime(new Date());
+            classes.subGroup = "08";
+            classes.teacher = await AppDataSource.getRepository(Teacher).findOneBy({teacherID: "222h333"});
+            let classRepository = AppDataSource.getRepository(Classes);
+            console.log(JSDatetimeToMySQLDatetime(new Date()));
+            await classRepository.save(classes);
 
             let studentClass = new StudentClass()
-            studentClass.student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass.classes = classes
+            studentClass.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass.classesID = classes
+            console.log('---------------------------------')
             console.log(studentClass)
+            console.log('---------------------------------')
+            console.log(classes)
+            console.log('#################################')
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             res.json("success");
         }catch{
@@ -111,20 +117,26 @@ class Test {
     testCreateFormTable = async (req,res) => {
         let attendanceForm = new AttendanceForm()
         attendanceForm.formID = "formID2"
-        attendanceForm.classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"})
+        attendanceForm.classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"})
         attendanceForm.status = true
         attendanceForm.weekNumber = 11
+        attendanceForm.dateOpen = JSDatetimeToMySQLDatetime(new Date())
+        console.log('---------------------------------')
+        console.log(attendanceForm);
+        console.log('---------------------------------')
         await AppDataSource.getRepository(AttendanceForm).save(attendanceForm);
         res.json("success");
     }
 
     testTakeAttendance = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({student: student.studentID, classes: classes.classID})
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classesID: classes.classID})
+        let date = new Date();
         let attendanceDetail = new AttendanceDetail()
+        attendanceDetail.dateAttendanced = JSDatetimeToMySQLDatetime(date)
         attendanceDetail.classes = studentClass
-        attendanceDetail.student = studentClass
+        attendanceDetail.studentDetail = studentClass
         attendanceDetail.attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: "formID2"})
         await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
         res.json(attendanceDetail);
@@ -149,16 +161,17 @@ class Test {
     }
 
     testGetClasses = async (req,res) => {
-        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"})
-        classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime))
-        classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime))
+        let classes = await AppDataSource.getRepository(Classes).findOne({where: {classID: "520300_09_t0133"}, relations: {studentClass: true, teacher: true, course: true}});
+        classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime));
+        classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime));  
+        console.log(classes);
         res.json(classes);
     }
 
     testGetStudentClasses = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {student: student.studentID}, relations: {classes: true}})
-        let object = studentClass[0].classes;
+        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classesID: true}})
+        let object = studentClass[0].classesID;
         let classes = await AppDataSource.getRepository(Classes).findOne({where: 
             {
                 classID: object.classID
@@ -176,20 +189,24 @@ class Test {
                 course: true
             }
         })
-        studentClass[0].classes = classes;
+        console.log("Before:"+classes.startTime);
+        classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime));
+        classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime));
+
+
+        studentClass[0].classesID = classes;
         //res.json(studentClass[0]);
         console.log(studentClass);
-        res.json(studentClass)
+        res.status(200).json(studentClass)
     }
 
     testGetAttendanceDetail = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t01"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({student: student.studentID, classes: classes.classID})
-        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {student: studentClass.student, classes: studentClass.classes}, relations: {student: true}});
-        
-        res.json(attendanceDetail);
-    }
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classesID: classes.classID})
+        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {studentDetail: studentClass.studentID, classes: studentClass.classesID}, relations: {studentDetail: true}});
+        res.status(200).json(attendanceDetail);
+    }   
 }
 
 export default new Test();

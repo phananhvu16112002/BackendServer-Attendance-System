@@ -33,6 +33,6 @@ export class Student {
     @Column({default: false})
     active: boolean
 
-    @OneToMany(() => StudentClass, StudentClass => StudentClass.student)
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.studentID)
     studentClass: StudentClass[]
 }

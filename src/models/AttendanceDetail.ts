@@ -18,13 +18,13 @@ export class AttendanceDetail {
 
     //////Oke
     @PrimaryColumn({type: "string", name: "studentID"})
-    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.student)
-    @JoinColumn({name: "studentID", referencedColumnName: "student"})
-    student: StudentClass
+    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.studentID)
+    @JoinColumn({name: "studentID", referencedColumnName: "studentID"})
+    studentDetail: StudentClass
 
     @PrimaryColumn({type: "string", name: "classID"})
-    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.classes)
-    @JoinColumn({name: "classID", referencedColumnName: "classes"})
+    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.classesID)
+    @JoinColumn({name: "classID", referencedColumnName: "classesID"})
     classes: StudentClass
 
     @PrimaryColumn({type: "string", name: "formID"})
@@ -43,7 +43,7 @@ export class AttendanceDetail {
     absence: boolean
 
     @Column({type: "datetime", nullable: true})
-    date: string
+    dateAttendanced: string
 
     @Column({default: ""})
     location: string

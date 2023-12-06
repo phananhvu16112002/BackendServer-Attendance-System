@@ -27,7 +27,7 @@ class StudentController{
 
             //Check information
             let studentRequest = AppDataSource.getRepository(Student);
-            let studentCheck = await studentRequest.findOneBy({ studentEmail: email})
+            let studentCheck = await studentRequest.findOneBy({studentEmail: email})
             if (studentCheck == null){
                 return res.status(500).json({message: "Username must be your student's id"})
             } else if (studentCheck.active){

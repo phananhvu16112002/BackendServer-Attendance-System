@@ -7,12 +7,12 @@ export class StudentClass {
     @PrimaryColumn({name: "studentID", type: 'string'})
     @ManyToOne(() => Student, (Student) => Student.studentClass)
     @JoinColumn({name:"studentID",referencedColumnName:"studentID"})
-    student: Student
+    studentID: Student
 
     @PrimaryColumn({name: "classID", type: 'string'})
     @ManyToOne(() => Classes, (Classes) => Classes.studentClass)
     @JoinColumn({name:"classID",referencedColumnName:"classID"})
-    classes: Classes
+    classesID: Classes
 
     @Column({default: 0})
     presenceTotal: number
