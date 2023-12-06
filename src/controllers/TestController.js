@@ -249,6 +249,9 @@ class Test {
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
         let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classesID: classes.classID})
         let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {studentDetail: studentClass.studentID, classes: studentClass.classesID}, relations: {studentDetail: true}});
+        for (let i = 0; i < attendanceDetail.length; i++){
+            attendanceDetail[0].dateAttendanced = JSDatetimeToMySQLDatetime(new Date(attendanceDetail[0].dateAttendanced))
+        }
         res.status(200).json(attendanceDetail);
     }   
 }
