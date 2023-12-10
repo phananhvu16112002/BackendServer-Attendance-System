@@ -8,6 +8,26 @@ import { AppDataSource } from '../config/db.config';
 import jwt from "jsonwebtoken";
 import JSDatetimeToMySQLDatetime from '../utils/TimeConvert';
 
+//for face recognition
+import fs from "fs/promises";
+import * as tf from "@tensorflow/tfjs-node";
+import * as faceapi from "@vladmandic/face-api";
+import canvas from "canvas";
+import { StudentClass } from '../models/StudentClass';
+import { AttendanceForm } from '../models/AttendanceForm';
+import { AttendanceDetail } from '../models/AttendanceDetail';
+
+const { Canvas, Image, ImageData } = canvas;
+faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
+
+async function LoadModels() {
+    await faceapi.nets.faceRecognitionNet.loadFromDisk("./premodels");
+    await faceapi.nets.faceLandmark68Net.loadFromDisk("./premodels");
+    await faceapi.nets.ssdMobilenetv1.loadFromDisk("./premodels");
+}
+
+LoadModels();
+
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
@@ -249,6 +269,7 @@ class StudentController{
             res.status(500).json({ message: 'Internal Server Error' });
         }
     };
+
     resendOTP = async (req,res) => {
         try {
             const email = req.body.email;
@@ -290,6 +311,77 @@ class StudentController{
             console.error(error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
+    }
+
+    takeAttendance = async (req,res) => {
+        const studentID = req.body.studentID;
+        const classID = req.body.classID;
+        const formID = req.body.formID;
+        const image = req.files.file;
+
+        //Get time now to process later
+        let timeNow = JSDatetimeToMySQLDatetime(new Date());
+
+        //check if there is a class that has this attendance form
+        let attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: formID, classes: classID});
+        if (attendanceForm == null){
+            return res.status(403).json({message: "No classes found that has this attendance form"});
+        }
+
+        //check if student has registered the class or not
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: studentID, classesID: classID});
+        if (studentClass == null){
+            return res.status(403).json({message: "Student is not registered in this class"});
+        }
+
+        //check end time of the form
+        let endTimeForm = JSDatetimeToMySQLDatetime(new Date(attendanceForm.endTime));
+        if (timeNow > endTimeForm){
+            return res.status(403).json({message: "The form has been closed"});
+        }
+
+        //check face recognition
+
+        //convert the request image file to canvas 
+        let canvasImg = await canvas.loadImage(image);
+
+        //get face descriptions and resized
+        let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+        faceDescription = faceapi.resizeResults(faceDescription, canvasImg);
+
+        //pre train model
+        const labels = ["1", "2", "3"];
+        const labeledFaceDescriptors = await Promise.all(
+            labels.map(async label => {
+                
+                const imgURL = `../../students/${studentID}/${label}.jpg`;
+                const fileBuffer = await fs.readFile(imgURL);
+                const canvasImg = await canvas.loadImage(fileBuffer);
+
+                const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+                return new faceapi.LabeledFaceDescriptors(label, faceDescription);
+            })
+        )
+
+        //Matching
+        const threshold = 0.6;
+        const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
+        const results = faceMatcher.findBestMatch(faceDescription);
+
+        //check result
+        if (results.label == "unknown"){
+            return res.status(403).json({message: "Your face does not match in the database"});
+        }
+
+        //Create attendance detail
+        let attendanceDetail = new AttendanceDetail();
+        attendanceDetail.present = true;
+        attendanceDetail.studentDetail = studentClass;
+        attendanceDetail.classes = studentClass;
+        attendanceDetail.dateAttendanced = timeNow;
+        
+        await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
+        return res.status(200).json({message: "Take attendance successfully"});
     }
 }
 
