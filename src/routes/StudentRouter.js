@@ -11,5 +11,7 @@ StudentRouter.post("/forgotPassword",StudentController.forgotPassword);
 StudentRouter.post("/verifyForgotPassword", StudentController.verifyForgotPassword);
 StudentRouter.post("/resetPassword",verifyResetToken,StudentController.resetPassword);
 StudentRouter.post("/resendOTP",StudentController.resendOTP);
-StudentRouter.post("/takeAttendance", verifyAccessToken, StudentController.takeAttendance);
+
+//will put verify access token later
+StudentRouter.post("/takeAttendance", StudentController.takeAttendance);
 export default StudentRouter;

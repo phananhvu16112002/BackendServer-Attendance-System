@@ -16,6 +16,7 @@ import canvas from "canvas";
 import { StudentClass } from '../models/StudentClass';
 import { AttendanceForm } from '../models/AttendanceForm';
 import { AttendanceDetail } from '../models/AttendanceDetail';
+import { Classes } from '../models/Classes';
 
 const { Canvas, Image, ImageData } = canvas;
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
@@ -319,13 +320,22 @@ class StudentController{
         const formID = req.body.formID;
         const image = req.files.file;
 
+        console.log(studentID);
+        console.log(classID);
+        console.log(formID);
+        console.log(image);
         //Get time now to process later
         let timeNow = JSDatetimeToMySQLDatetime(new Date());
 
         //check if there is a class that has this attendance form
-        let attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: formID, classes: classID});
+        let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: classID});
+        if (classes == null){
+            return res.status(403).json({message: "No classes found"});
+        }
+        
+        let attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: formID});
         if (attendanceForm == null){
-            return res.status(403).json({message: "No classes found that has this attendance form"});
+            return res.status(403).json({message: "No attenddace form found"});
         }
 
         //check if student has registered the class or not
@@ -343,7 +353,7 @@ class StudentController{
         //check face recognition
 
         //convert the request image file to canvas 
-        let canvasImg = await canvas.loadImage(image);
+        let canvasImg = await canvas.loadImage(image.data);
 
         //get face descriptions and resized
         let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
@@ -354,24 +364,27 @@ class StudentController{
         const labeledFaceDescriptors = await Promise.all(
             labels.map(async label => {
                 
-                const imgURL = `../../students/${studentID}/${label}.jpg`;
+                const imgURL = `././students/${studentID}/${label}.jpg`;
                 const fileBuffer = await fs.readFile(imgURL);
                 const canvasImg = await canvas.loadImage(fileBuffer);
 
                 const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
-                return new faceapi.LabeledFaceDescriptors(label, faceDescription);
+                const faceDescriptors = [faceDescription.descriptor]
+                return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
             })
         )
 
         //Matching
         const threshold = 0.6;
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
-        const results = faceMatcher.findBestMatch(faceDescription);
+        const results = faceMatcher.findBestMatch(faceDescription.descriptor);
 
         //check result
         if (results.label == "unknown"){
             return res.status(403).json({message: "Your face does not match in the database"});
         }
+
+        console.log(results);
 
         //Create attendance detail
         let attendanceDetail = new AttendanceDetail();
@@ -379,6 +392,7 @@ class StudentController{
         attendanceDetail.studentDetail = studentClass;
         attendanceDetail.classes = studentClass;
         attendanceDetail.dateAttendanced = timeNow;
+        attendanceDetail.attendanceForm = attendanceForm;
         
         await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
         return res.status(200).json({message: "Take attendance successfully"});

@@ -7,6 +7,7 @@ import { AppDataSource } from "../config/db.config";
 import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
+import { time } from "console";
 
 class Test {
     testCreateStudentTable = async (req,res) => {
@@ -142,18 +143,25 @@ class Test {
         attendanceForm.classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"})
         attendanceForm.status = true
         attendanceForm.weekNumber = 1
-        attendanceForm.dateOpen = JSDatetimeToMySQLDatetime(new Date())
+
+        let timeAttendance = new Date();
+        timeAttendance.setMinutes(timeAttendance.getMinutes() + 5)
+
+        let timeEnd = new Date()
+        timeEnd.setMinutes(timeEnd.getMinutes() + 10);
+
+        attendanceForm.dateOpen = JSDatetimeToMySQLDatetime(timeAttendance)
         attendanceForm.startTime = JSDatetimeToMySQLDatetime(new Date())
-        attendanceForm.endTime = JSDatetimeToMySQLDatetime(new Date())
+        attendanceForm.endTime = JSDatetimeToMySQLDatetime(timeEnd)
         //form diem danh lan 2 cua lop 520300_09_t0133
         let attendanceForm2 = new AttendanceForm()
         attendanceForm2.formID = "formID2"
         attendanceForm2.classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"})
         attendanceForm2.status = true
         attendanceForm2.weekNumber = 2
-        attendanceForm2.dateOpen = JSDatetimeToMySQLDatetime(new Date())
+        attendanceForm2.dateOpen = JSDatetimeToMySQLDatetime(timeAttendance)
         attendanceForm2.startTime = JSDatetimeToMySQLDatetime(new Date())
-        attendanceForm2.endTime = JSDatetimeToMySQLDatetime(new Date())
+        attendanceForm2.endTime = JSDatetimeToMySQLDatetime(timeEnd)
 
         await AppDataSource.getRepository(AttendanceForm).save(attendanceForm);
         await AppDataSource.getRepository(AttendanceForm).save(attendanceForm2);
