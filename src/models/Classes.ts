@@ -35,7 +35,7 @@ export class Classes {
     @ManyToOne(() => Teacher, Teacher => Teacher.classes)
     teacher: Teacher
 
-    @OneToMany(() => StudentClass, StudentClass => StudentClass.classesID)
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.classID)
     studentClass: StudentClass[]
 
     @OneToMany(() => AttendanceForm, AttendanceForm => AttendanceForm.classes)

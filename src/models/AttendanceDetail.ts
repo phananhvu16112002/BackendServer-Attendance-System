@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
 import { AttendanceForm } from "./AttendanceForm"
 import { StudentClass } from "./StudentClass"
+import {Report} from "./Report";
+
 import { Student } from "./Student"
 import { Classes } from "./Classes"
 import { Evidence } from "./Evidence"
@@ -23,24 +25,18 @@ export class AttendanceDetail {
     studentDetail: StudentClass
 
     @PrimaryColumn({type: "string", name: "classID"})
-    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.classesID)
-    @JoinColumn({name: "classID", referencedColumnName: "classesID"})
-    classes: StudentClass
+    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.classID)
+    @JoinColumn({name: "classID", referencedColumnName: "classID"})
+    classDetail: StudentClass
 
     @PrimaryColumn({type: "string", name: "formID"})
     @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm.formID)
-    @JoinColumn({name:"formID",referencedColumnName:"formID"})
+    @JoinColumn({name:"formID", referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
     ///////
 
-    @Column({default: false})
-    present: boolean
-
-    @Column({default: false})
-    late: boolean
-
-    @Column({default: false})
-    absence: boolean
+    @Column({default: 0})
+    result: number
 
     @Column({type: "datetime", nullable: true})
     dateAttendanced: string
@@ -57,6 +53,9 @@ export class AttendanceDetail {
     @Column({type: "decimal", precision: 10, scale: 2, default: 0, nullable: true})
     longitude: number
 
-    @Column({type: "decimal", precision: 10, scale: 2, default: 0, nullable: true})
-    altitude: number
+    @Column({default: ""})
+    url: string
+
+    // @OneToMany(() => Report, Report => Report.attendanceDetail)
+    // report: Report[]
 }

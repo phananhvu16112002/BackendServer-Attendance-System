@@ -10,7 +10,7 @@ function JSDatetimeToMySQLDatetime(date){
             return normalize(hour[0]) + ":" + hour[1] + ":" + hour[2]; 
         }else{
             let hour = timeFraction[0].split(":")
-            let a = Number(hour[0]) + 12
+            let a = hour[0] == "12" ? hour[0] : Number(hour[0]) + 12
             return a + ":" + hour[1] + ":" + hour[2]
         }
     }

@@ -12,16 +12,7 @@ export class StudentClass {
     @PrimaryColumn({name: "classID", type: 'string'})
     @ManyToOne(() => Classes, (Classes) => Classes.studentClass)
     @JoinColumn({name:"classID",referencedColumnName:"classID"})
-    classesID: Classes
-
-    @Column({default: 0})
-    presenceTotal: number
-
-    @Column({default: 0})
-    lateTotal: number
-
-    @Column({default: 0})
-    absenceTotal: number     
+    classID: Classes
 
     // @OneToMany(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.studentClass)
     // attendanceDetail: AttendanceDetail[]

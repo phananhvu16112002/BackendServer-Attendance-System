@@ -13,7 +13,7 @@ export class Evidence {
     @JoinColumn({name: "studentID", referencedColumnName: "studentDetail"})
     student: AttendanceDetail
 
-    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.classes)
+    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.classDetail)
     @JoinColumn({name: "classID", referencedColumnName: "classes"})
     classes: AttendanceDetail
 

@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
 import { StudentClass } from "./StudentClass"
+import { StudentImage } from "./StudentImage"
 
 @Entity()
 export class Student {
@@ -35,4 +36,7 @@ export class Student {
 
     @OneToMany(() => StudentClass, StudentClass => StudentClass.studentID)
     studentClass: StudentClass[]
+
+    @OneToMany(() => StudentImage, StudentImage => StudentImage.studentID)
+    studentImage: StudentImage[]
 }
