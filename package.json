@@ -24,6 +24,7 @@
     "express-fileupload": "^1.4.3",
     "fs": "^0.0.1-security",
     "google-auth-library": "^9.2.0",
+    "imgur": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.4",
     "node-gyp": "^10.0.1",

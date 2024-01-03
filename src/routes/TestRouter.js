@@ -16,5 +16,16 @@ TestRouter.get("/getTeacher", TestController.testGetTeacher)
 TestRouter.get("/getCourse", TestController.testGetCourse)
 TestRouter.get("/getClass", TestController.testGetClasses)
 
+TestRouter.post("/upload", TestController.testUpload)
+TestRouter.get("/delete", TestController.testDelete)
+
+//Test Token
+TestRouter.post("/testCreateAccessTokenAndRefreshTokenForStudent", TestController.testCreateAccessTokenAndRefreshTokenForStudent)
+TestRouter.post("/testVerifyAccessToken", TestController.testVerifyAccessToken)
+TestRouter.post("/testRefreshAccessToken", TestController.testRefreshAccessToken)
+
+
+
 export default TestRouter
+
 

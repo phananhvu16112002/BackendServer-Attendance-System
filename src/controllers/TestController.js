@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Student } from "../models/Student";
 import { Teacher } from "../models/Teacher";
 import { Course } from "../models/Course";
@@ -7,6 +8,11 @@ import { AppDataSource } from "../config/db.config";
 import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
+import UploadImageService from "../services/UploadImageService";
+import FaceMatchingService from "../services/FaceMatchingService";
+import jwt from "jsonwebtoken";
+
+const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
 class Test {
     testCreateStudentTable = async (req,res) => {
@@ -119,11 +125,11 @@ class Test {
             //Ket noi student va class trong StudentClass
             let studentClass = new StudentClass()
             studentClass.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass.classesID = classes
+            studentClass.classID = classes
 
             let studentClass2 = new StudentClass()
             studentClass2.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass2.classesID = classes2
+            studentClass2.classID = classes2
 
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             await AppDataSource.getRepository(StudentClass).save(studentClass2);
@@ -163,22 +169,22 @@ class Test {
     testTakeAttendance = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classesID: classes.classID})
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: "520H0380", classID: "520300_09_t0133"})
 
         //Take attendance formID1 cua sinh vien 520H0380 trong lop 520300_09_t0133
         let date = new Date();
         let attendanceDetail = new AttendanceDetail()
         attendanceDetail.dateAttendanced = JSDatetimeToMySQLDatetime(date)
-        attendanceDetail.classes = studentClass
-        attendanceDetail.studentDetail = studentClass
+        attendanceDetail.classDetail = "520300_09_t0133"
+        attendanceDetail.studentDetail = "520H0380"  
         attendanceDetail.attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: "formID1"})
 
         //Take attendance formID2
         let date2 = new Date();
         let attendanceDetail2 = new AttendanceDetail()
         attendanceDetail2.dateAttendanced = JSDatetimeToMySQLDatetime(date2)
-        attendanceDetail2.classes = studentClass
-        attendanceDetail2.studentDetail = studentClass
+        attendanceDetail2.classDetail = "520300_09_t0133"
+        attendanceDetail2.studentDetail = "520H0380" 
         attendanceDetail2.attendanceForm = await AppDataSource.getRepository(AttendanceForm).findOneBy({formID: "formID2"})
 
         await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
@@ -214,10 +220,10 @@ class Test {
 
     testGetStudentClasses = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classesID: true}})
+        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classID: true}})
 
         for (let i = 0; i < studentClass.length; i++){
-            let object = studentClass[i].classesID;
+            let object = studentClass[i].classID;
             let classes = await AppDataSource.getRepository(Classes).findOne({where: 
                 {
                     classID: object.classID
@@ -239,7 +245,7 @@ class Test {
             classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime));
             classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime));
 
-            studentClass[i].classesID = classes;
+            studentClass[i].classID = classes;
         }
         res.status(200).json(studentClass)
     }
@@ -247,13 +253,91 @@ class Test {
     testGetAttendanceDetail = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classesID: classes.classID})
-        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {studentDetail: studentClass.studentID, classes: studentClass.classesID}, relations: {studentDetail: true}});
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classID: classes.classID})
+        let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {studentDetail: studentClass.studentID, classes: studentClass.classID}, relations: {studentDetail: true}});
         for (let i = 0; i < attendanceDetail.length; i++){
             attendanceDetail[i].dateAttendanced = JSDatetimeToMySQLDatetime(new Date(attendanceDetail[i].dateAttendanced))
         }
         res.status(200).json(attendanceDetail);
     }   
+
+    testUpload = async (req,res) => {
+        await UploadImageService.uploadFiles(req.files);
+        res.json({message: "Upload success"});
+    }
+
+    testDelete = async (req,res) => {
+        await UploadImageService.deleteFiles("520H0380");
+        res.json({message: "Delete success"});
+    }
+
+    //Test token here 
+
+    // create access token and refresh token for student
+
+    // localhost:8080/test/testCreateAccessTokenAndRefreshTokenForStudent
+    // send POST method, studentID
+    testCreateAccessTokenAndRefreshTokenForStudent = async (req,res) => {
+        let studentID = req.body.studentID;
+        let role = "student";
+        try{
+            const accessToken = jwt.sign({studentID: studentID, role: role}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{ expiresIn: '45s' });
+            const refreshToken = jwt.sign({studentID: studentID, role: role}, process.env.STUDENT_REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
+            res.status(200).json({message: "Login Successfully", accessToken, refreshToken});
+        } catch {
+            res.staus(500).json({message: "Login Failed"});
+        }
+    }
+
+    //localhost:8080/test/testVerifyAccessToken
+    //send Post method, header access token
+    testVerifyAccessToken = async (req,res) => {
+        try{
+            const accessToken = req.headers.authorization;
+            if (!accessToken) {
+                return res.status(498).json({ message: 'Access Token is not provided' })
+            }else{
+                const decoded = jwt.verify(accessToken, process.env.STUDENT_ACCESS_TOKEN_SECRET);
+                req.user = decoded;
+                return res.status(200).json(req.user);
+            }
+        }catch (e) {
+            if (e.message == "invalid token"){
+                return res.status(498).json({ message: 'Access Token is invalid' }) //Flutter recieved 498, send error message to client
+            }else if (e.message == "jwt expired"){
+                return res.status(401).json({ message: 'Access Token is expired' }) //Flutter recieved 401, immediately send a refresh token to refresh new access token
+            }else {
+                return res.status(500).json({message: e.message});
+            }
+        }
+    }
+
+    //localhost:8080/test/testRefreshAccessToken
+    //send Post method, header refresh token
+    testRefreshAccessToken = async (req,res) => {
+        try {
+            const refreshToken = req.headers.authorization;
+            if (!refreshToken){
+                return res.status(498).json({message: "Refresh Token is not provided"});
+            }else {
+                const decoded = jwt.verify(refreshToken, process.env.STUDENT_REFRESH_TOKEN_SECRET);
+                req.user = decoded;
+                let studentID = decoded.studentID;
+                let role = decoded.role;
+                const accessToken = jwt.sign({studentID, role}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{expiresIn: '45s'})
+                return res.status(200).json({message: "Access Token Successfully Refreshed",accessToken});
+            }
+
+        } catch (e) {
+            if (e.message == "invalid token"){
+                return res.status(498).json({ message: 'Refresh Token is invalid' }) //Flutter recieved 498, send error message to client
+            }else if (e.message == "jwt expired"){
+                return res.status(401).json({ message: 'Refresh Token is expired' }) //Flutter recieved 401, immediately send a refresh token to refresh new access token
+            }else {
+                return res.status(500).json({message: e.message});
+            }
+        }
+    }
 }
 
 export default new Test();

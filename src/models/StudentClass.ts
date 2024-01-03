@@ -6,14 +6,11 @@ import { AttendanceDetail } from "./AttendanceDetail"
 export class StudentClass {
     @PrimaryColumn({name: "studentID", type: 'string'})
     @ManyToOne(() => Student, (Student) => Student.studentClass)
-    @JoinColumn({name:"studentID",referencedColumnName:"studentID"})
+    @JoinColumn({name:"studentID", referencedColumnName:"studentID"})
     studentID: Student
 
     @PrimaryColumn({name: "classID", type: 'string'})
     @ManyToOne(() => Classes, (Classes) => Classes.studentClass)
-    @JoinColumn({name:"classID",referencedColumnName:"classID"})
+    @JoinColumn({name:"classID", referencedColumnName:"classID"})
     classID: Classes
-
-    // @OneToMany(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.studentClass)
-    // attendanceDetail: AttendanceDetail[]
 }

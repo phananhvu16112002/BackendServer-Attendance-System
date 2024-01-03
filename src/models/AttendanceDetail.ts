@@ -5,35 +5,27 @@ import {Report} from "./Report";
 
 import { Student } from "./Student"
 import { Classes } from "./Classes"
-import { Evidence } from "./Evidence"
+
 @Entity()
 export class AttendanceDetail {
-    // @PrimaryColumn({type: "string", name: "studentID"})
-    // @ManyToOne(() => Student, (Student) => Student.studentID)
-    // @JoinColumn({name: "studentID", referencedColumnName: "studentID"})
-    // student: Student
 
-    // @PrimaryColumn({type: "string", name: "classID"})
-    // @ManyToOne(() => Classes, (Classes) => Classes.classID)
-    // @JoinColumn({name: "classID", referencedColumnName: "classID"})
-    // classes: Classes
+    @PrimaryColumn({name: "studentID", type: "string"})
+    studentDetail: string
 
-    //////Oke
-    @PrimaryColumn({type: "string", name: "studentID"})
-    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.studentID)
-    @JoinColumn({name: "studentID", referencedColumnName: "studentID"})
-    studentDetail: StudentClass
+    @PrimaryColumn({name: "classID", type: 'string'})
+    classDetail: string
 
-    @PrimaryColumn({type: "string", name: "classID"})
-    @ManyToOne(() => StudentClass, (StudentClass) => StudentClass.classID)
-    @JoinColumn({name: "classID", referencedColumnName: "classID"})
-    classDetail: StudentClass
+    @ManyToOne(() => StudentClass, StudentClass => StudentClass)
+    @JoinColumn([
+        {name: "studentID", referencedColumnName: "studentID"},
+        {name: "classID", referencedColumnName: "classID"},
+    ])
+    studentClass : StudentClass
 
     @PrimaryColumn({type: "string", name: "formID"})
     @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm.formID)
     @JoinColumn({name:"formID", referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
-    ///////
 
     @Column({default: 0})
     result: number
@@ -57,5 +49,10 @@ export class AttendanceDetail {
     url: string
 
     // @OneToMany(() => Report, Report => Report.attendanceDetail)
+    // @JoinColumn([
+    //     {name: "studentID", referencedColumnName: "studentDetail"},
+    //     {name: "classID", referencedColumnName: "classDetail"},
+    //     {name: "formID", referencedColumnName: "attendanceForm"},
+    // ])
     // report: Report[]
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, OneToMany, PrimaryGeneratedColumn, ManyToOne } from "typeorm"
+import { Entity, Column, PrimaryColumn, OneToMany, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm"
 import { AttendanceDetail } from "./AttendanceDetail"
 import { ReportImage } from "./ReportImage"
 
@@ -10,8 +10,13 @@ export class Report {
     @Column()
     message: string
 
-    // @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail.report)
-    // attendanceDetail: AttendanceDetail
+    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail)
+    @JoinColumn([
+        {name: "studentID", referencedColumnName: "studentDetail"},
+        {name: "classID", referencedColumnName: "classDetail"},
+        {name: "formID", referencedColumnName: "attendanceForm"},
+    ])
+    attendanceDetail: AttendanceDetail
 
     @OneToMany(() => ReportImage, ReportImage => ReportImage.report)
     reportImage: ReportImage[]

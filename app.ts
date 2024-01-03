@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import StudentRouter from "./src/routes/StudentRouter";
 import TestRouter from "./src/routes/TestRouter";
 import fileUpload from "express-fileupload";
+import UploadImageService from "./src/services/UploadImageService";
 
 const app = express();
 DB();

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany, JoinColumn } from "typeorm"
 import { Course } from "./Course"
 import { Teacher } from "./Teacher"
 import { StudentClass } from "./StudentClass"
@@ -30,9 +30,11 @@ export class Classes {
     subGroup: string
 
     @ManyToOne(() => Course, Course => Course.classes)
+    @JoinColumn({name:"courseID", referencedColumnName:"courseID"})
     course: Course
 
     @ManyToOne(() => Teacher, Teacher => Teacher.classes)
+    @JoinColumn({name:"teacherID", referencedColumnName:"teacherID"})
     teacher: Teacher
 
     @OneToMany(() => StudentClass, StudentClass => StudentClass.classID)
