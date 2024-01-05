@@ -37,7 +37,7 @@ export class Classes {
     @JoinColumn({name:"teacherID", referencedColumnName:"teacherID"})
     teacher: Teacher
 
-    @OneToMany(() => StudentClass, StudentClass => StudentClass.classID)
+    @OneToMany(() => StudentClass, StudentClass => StudentClass.classDetail)
     studentClass: StudentClass[]
 
     @OneToMany(() => AttendanceForm, AttendanceForm => AttendanceForm.classes)

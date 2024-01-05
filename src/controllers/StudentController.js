@@ -132,8 +132,8 @@ class StudentController{
 
             let result = await bcrypt.compare(password,studentTarget.studentHashedPassword)
             if (email === studentTarget.studentEmail &&  result == true){
-                const accessToken = jwt.sign({studentID: studentTarget.studentID}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{ expiresIn: '1h' })
-                const refreshToken = jwt.sign({studentID: studentTarget.studentID}, process.env.STUDENT_REFRESH_TOKEN_SECRET,{ expiresIn: '1y' })
+                const accessToken = jwt.sign({userID: studentTarget.studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1h' })
+                const refreshToken = jwt.sign({userID: studentTarget.studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' })
                 studentTarget.accessToken = accessToken;
                 studentTarget.refreshToken = refreshToken;
                 await studentRequest.save(studentTarget);
@@ -224,7 +224,7 @@ class StudentController{
             else {
                 let result = await bcrypt.compare(OTP, hashOTP);
                 if(result){
-                    const resetToken = jwt.sign({email: email}, process.env.STUDENT_RESET_TOKEN_SECRET, {expiresIn: '1h'});
+                    const resetToken = jwt.sign({email: email}, process.env.RESET_TOKEN_SECRET, {expiresIn: '1h'});
                     studentTarget.resetToken = resetToken;
                     await studentRequest.save(studentTarget);
                     res.status(200).json({message:"OTP is valid", resetToken: studentTarget.resetToken});

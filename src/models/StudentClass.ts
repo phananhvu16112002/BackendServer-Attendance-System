@@ -7,10 +7,10 @@ export class StudentClass {
     @PrimaryColumn({name: "studentID", type: 'string'})
     @ManyToOne(() => Student, (Student) => Student.studentClass)
     @JoinColumn({name:"studentID", referencedColumnName:"studentID"})
-    studentID: Student
+    studentDetail: Student
 
     @PrimaryColumn({name: "classID", type: 'string'})
     @ManyToOne(() => Classes, (Classes) => Classes.studentClass)
     @JoinColumn({name:"classID", referencedColumnName:"classID"})
-    classID: Classes
+    classDetail: Classes
 }
