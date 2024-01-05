@@ -1,5 +1,6 @@
 import express from "express";
 import TestController from "../controllers/TestController";
+import verifyAccessToken from "../middlewares/verifyAccessToken";
 const TestRouter = express.Router();
 
 TestRouter.get("/createStudentTable", TestController.testCreateStudentTable)
@@ -9,7 +10,7 @@ TestRouter.get("/createClassTable", TestController.testCreateClassTable)
 TestRouter.get("/createFormTable", TestController.testCreateFormTable)
 TestRouter.get("/takeAttendance", TestController.testTakeAttendance)
 
-TestRouter.get("/getAttendanceDetail", TestController.testGetAttendanceDetail)
+TestRouter.get("/getAttendanceDetail" ,TestController.testGetAttendanceDetail)
 TestRouter.get("/getStudentClass", TestController.testGetStudentClasses)
 TestRouter.get("/getStudent", TestController.testGetStudent)
 TestRouter.get("/getTeacher", TestController.testGetTeacher)
