@@ -17,6 +17,8 @@ import { StudentClass } from '../models/StudentClass';
 import { AttendanceForm } from '../models/AttendanceForm';
 import { AttendanceDetail } from '../models/AttendanceDetail';
 
+import StudentService from '../services/StudentService';
+
 const { Canvas, Image, ImageData } = canvas;
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
@@ -45,15 +47,16 @@ class StudentController{
             const password = req.body.password;
             const username = req.body.username;
 
-            //Check information
-            let studentRequest = AppDataSource.getRepository(Student);
-            let studentCheck = await studentRequest.findOneBy({studentEmail: email})
-            if (studentCheck == null){
-                return res.status(500).json({message: "Username must be your student's id"})
-            } else if (studentCheck.active){
-                return res.status(500).json({ message: "Account's already been activated" })
+            let student = StudentService.checkStudentExist(username);
+            if (student == null){
+                return res.status(422).json({message: "Username must be your student's id"})
             }
-            
+
+            if (StudentService.checkStudentStatus(student)){
+                return res.status(422).json({ message: "Account's already been activated" })
+            }
+
+
             //Create OTP and hash OTP, password
             const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false});
             const salt = await bcrypt.genSalt(10)
