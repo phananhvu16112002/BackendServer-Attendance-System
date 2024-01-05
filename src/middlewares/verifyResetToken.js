@@ -1,17 +1,17 @@
 import jwt from "jsonwebtoken";
-const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
+const secretKey = process.env.RESET_TOKEN_SECRET;
 
-const verifyResetToken = (req, res, next) => {
+const VerifyResetToken = (req, res, next) => {
     try{
         const token = req.headers.authorization;
         if (!token) {
-            return res.status(403).json({ message: 'Reset Token is not provided' })
+            return res.status(498).json({ message: 'Reset Token is not provided' })
         }
         jwt.verify(token, secretKey, (err, decoded) => {
             if (err) {
-                return res.status(401).json({ message: 'Reset Token is invalid' })
+                return res.status(498).json({ message: 'Reset Token is invalid' })
             }
-            req.user = decoded;
+            req.payload = decoded;
             next();
         });
     }catch(e){
@@ -19,4 +19,4 @@ const verifyResetToken = (req, res, next) => {
     }
 };
 
-export default verifyResetToken;
+export default VerifyResetToken;

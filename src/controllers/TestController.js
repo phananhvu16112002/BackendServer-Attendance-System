@@ -223,7 +223,7 @@ class Test {
         let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classID: true}})
 
         for (let i = 0; i < studentClass.length; i++){
-            let object = studentClass[i].classID;
+            let object = studentClass[i].classDetail;
             let classes = await AppDataSource.getRepository(Classes).findOne({where: 
                 {
                     classID: object.classID
@@ -245,7 +245,7 @@ class Test {
             classes.startTime = JSDatetimeToMySQLDatetime(new Date(classes.startTime));
             classes.endTime = JSDatetimeToMySQLDatetime(new Date(classes.endTime));
 
-            studentClass[i].classID = classes;
+            studentClass[i].classDetail = classes;
         }
         res.status(200).json(studentClass)
     }
@@ -253,7 +253,7 @@ class Test {
     testGetAttendanceDetail = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: student.studentID, classID: classes.classID})
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentDetail: student.studentID, classDetail: classes.classID})
         let attendanceDetail = await AppDataSource.getRepository(AttendanceDetail).find({where: {studentDetail: studentClass.studentID, classes: studentClass.classID}, relations: {studentDetail: true}});
         for (let i = 0; i < attendanceDetail.length; i++){
             attendanceDetail[i].dateAttendanced = JSDatetimeToMySQLDatetime(new Date(attendanceDetail[i].dateAttendanced))
@@ -281,8 +281,8 @@ class Test {
         let studentID = req.body.studentID;
         let role = "student";
         try{
-            const accessToken = jwt.sign({studentID: studentID, role: role}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{ expiresIn: '45s' });
-            const refreshToken = jwt.sign({studentID: studentID, role: role}, process.env.STUDENT_REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
+            const accessToken = jwt.sign({userID: studentID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '45s' });
+            const refreshToken = jwt.sign({userID: studentID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
             res.status(200).json({message: "Login Successfully", accessToken, refreshToken});
         } catch {
             res.staus(500).json({message: "Login Failed"});
@@ -297,7 +297,7 @@ class Test {
             if (!accessToken) {
                 return res.status(498).json({ message: 'Access Token is not provided' })
             }else{
-                const decoded = jwt.verify(accessToken, process.env.STUDENT_ACCESS_TOKEN_SECRET);
+                const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
                 req.user = decoded;
                 return res.status(200).json(req.user);
             }
@@ -320,11 +320,11 @@ class Test {
             if (!refreshToken){
                 return res.status(498).json({message: "Refresh Token is not provided"});
             }else {
-                const decoded = jwt.verify(refreshToken, process.env.STUDENT_REFRESH_TOKEN_SECRET);
+                const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
                 req.user = decoded;
-                let studentID = decoded.studentID;
+                let userID = decoded.studentID;
                 let role = decoded.role;
-                const accessToken = jwt.sign({studentID, role}, process.env.STUDENT_ACCESS_TOKEN_SECRET,{expiresIn: '45s'})
+                const accessToken = jwt.sign({userID, role}, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '45s'})
                 return res.status(200).json({message: "Access Token Successfully Refreshed",accessToken});
             }
 
