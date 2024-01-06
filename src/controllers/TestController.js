@@ -124,12 +124,12 @@ class Test {
 
             //Ket noi student va class trong StudentClass
             let studentClass = new StudentClass()
-            studentClass.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass.classID = classes
+            studentClass.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass.classDetail = classes
 
             let studentClass2 = new StudentClass()
-            studentClass2.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass2.classID = classes2
+            studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass2.classDetail = classes2
 
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             await AppDataSource.getRepository(StudentClass).save(studentClass2);
@@ -169,7 +169,7 @@ class Test {
     testTakeAttendance = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: "520H0380", classID: "520300_09_t0133"})
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentDetail: "520H0380", classDetail: "520300_09_t0133"})
 
         //Take attendance formID1 cua sinh vien 520H0380 trong lop 520300_09_t0133
         let date = new Date();
@@ -220,7 +220,7 @@ class Test {
 
     testGetStudentClasses = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classID: true}})
+        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentDetail: student.studentID}, relations: {classDetail: true}})
 
         for (let i = 0; i < studentClass.length; i++){
             let object = studentClass[i].classDetail;

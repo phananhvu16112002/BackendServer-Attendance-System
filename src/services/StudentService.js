@@ -62,7 +62,7 @@ class StudentService {
     login = async (student, email, password) => {
         try {
             let result = await bcrypt.compare(password, student.studentHashedPassword);
-            if (email == student.studentEmail && result == true){
+            if (email.toLowerCase() == student.studentEmail.toLowerCase() && result == true){
                 return true;
             }
             return false;
