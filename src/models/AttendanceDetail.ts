@@ -17,8 +17,8 @@ export class AttendanceDetail {
 
     @ManyToOne(() => StudentClass, StudentClass => StudentClass)
     @JoinColumn([
-        {name: "studentID", referencedColumnName: "studentID"},
-        {name: "classID", referencedColumnName: "classID"},
+        {name: "studentID", referencedColumnName: "studentDetail"},
+        {name: "classID", referencedColumnName: "classDetail"},
     ])
     studentClass : StudentClass
 
