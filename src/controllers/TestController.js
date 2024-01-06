@@ -124,12 +124,12 @@ class Test {
 
             //Ket noi student va class trong StudentClass
             let studentClass = new StudentClass()
-            studentClass.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass.classID = classes
+            studentClass.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass.classDetail = classes
 
             let studentClass2 = new StudentClass()
-            studentClass2.studentID = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
-            studentClass2.classID = classes2
+            studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass2.classDetail = classes2
 
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             await AppDataSource.getRepository(StudentClass).save(studentClass2);
@@ -220,7 +220,7 @@ class Test {
 
     testGetStudentClasses = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentID: student.studentID}, relations: {classID: true}})
+        let studentClass = await AppDataSource.getRepository(StudentClass).find({where: {studentDetail: student.studentID}, relations: {classDetail: true}})
 
         for (let i = 0; i < studentClass.length; i++){
             let object = studentClass[i].classDetail;
