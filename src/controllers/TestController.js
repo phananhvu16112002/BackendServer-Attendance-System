@@ -11,6 +11,9 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import UploadImageService from "../services/UploadImageService";
 import FaceMatchingService from "../services/FaceMatchingService";
 import jwt from "jsonwebtoken";
+import StudentClassService from '../services/StudentClassService';
+import AttendanceFormService from '../services/AttendanceFormService';
+import AttendanceDetailService from '../services/AttendanceDetailService';
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -337,6 +340,22 @@ class Test {
                 return res.status(500).json({message: e.message});
             }
         }
+    }
+
+    getStudentClass = async (req,res) => {
+        res.json(await StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
+    }
+
+    createAttendanceForm = async (req,res) => {
+        
+        res.json(await AttendanceFormService.createForm("5202111_09_t000", 
+        JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0));
+    }
+
+    createAttendanceDetail = async (req,res) => {
+        let studentClass = await StudentClassService.getStudentClass("520H0380", "5202111_09_t000");
+        let attendanceForm = await AttendanceFormService.getFormByID("7aeed109-2b1d-4b06-b4d0-926b926f626e");
+        res.json(await AttendanceDetailService.createAttendanceDetail(studentClass, attendanceForm, "VN"));
     }
 }
 

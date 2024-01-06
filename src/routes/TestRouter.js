@@ -24,7 +24,9 @@ TestRouter.post("/testCreateAccessTokenAndRefreshTokenForStudent", TestControlle
 TestRouter.post("/testVerifyAccessToken", TestController.testVerifyAccessToken)
 TestRouter.post("/testRefreshAccessToken", TestController.testRefreshAccessToken)
 
-
+TestRouter.get("/studentClass", TestController.getStudentClass)
+TestRouter.get("/attendanceForm", TestController.createAttendanceForm)
+TestRouter.get("/attendanceDetail", TestController.createAttendanceDetail)
 
 export default TestRouter
 

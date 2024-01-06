@@ -5,6 +5,7 @@ import StudentRouter from "./src/routes/StudentRouter";
 import TestRouter from "./src/routes/TestRouter";
 import fileUpload from "express-fileupload";
 import UploadImageService from "./src/services/UploadImageService";
+import StudentClassService from "./src/services/StudentClassService";
 
 const app = express();
 DB();
@@ -17,4 +18,6 @@ app.use("/api/student", StudentRouter)
 
 app.use("/test", TestRouter)
 
-app.listen(8080, () => console.log("Hello"))
+app.listen(8080, () => {
+    console.log("Hello");
+})
