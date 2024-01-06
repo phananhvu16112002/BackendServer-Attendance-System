@@ -205,7 +205,7 @@ class StudentController{
             const studentID = StudentService.transformEmailToID(email);
 
             //Check user input
-            let student = StudentService.checkStudentExist(studentID);
+            let student = await StudentService.checkStudentExist(studentID);
             if (student == null){
                 return res.status(422).json({message: "Email address does not exist"});
             }
