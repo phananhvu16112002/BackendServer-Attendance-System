@@ -14,6 +14,8 @@ import jwt from "jsonwebtoken";
 import StudentClassService from '../services/StudentClassService';
 import AttendanceFormService from '../services/AttendanceFormService';
 import AttendanceDetailService from '../services/AttendanceDetailService';
+import ClassService from '../services/ClassService';
+import { v4 as uuidv4 } from 'uuid';
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -133,6 +135,10 @@ class Test {
             let studentClass2 = new StudentClass()
             studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
             studentClass2.classDetail = classes2
+
+            // let studentClass3 = new StudentClass()
+            // studentClass3.studentDetail = 
+            // studentClass3.classDetail = classes2
 
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             await AppDataSource.getRepository(StudentClass).save(studentClass2);
@@ -286,7 +292,19 @@ class Test {
         try{
             const accessToken = jwt.sign({userID: studentID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '45s' });
             const refreshToken = jwt.sign({userID: studentID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
-            res.status(200).json({message: "Login Successfully", accessToken, refreshToken});
+            res.status(200).json({message: "Student Login Successfully", accessToken, refreshToken});
+        } catch {
+            res.staus(500).json({message: "Login Failed"});
+        }
+    }
+
+    testCreateAccessTokenAndRefreshTokenForTeacher = async (req,res) => {
+        let teacherID = req.body.teacherID;
+        let role = "teacher";
+        try{
+            const accessToken = jwt.sign({userID: teacherID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '2m' });
+            const refreshToken = jwt.sign({userID: teacherID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
+            res.status(200).json({message: "Teacher Login Successfully", accessToken, refreshToken});
         } catch {
             res.staus(500).json({message: "Login Failed"});
         }
@@ -348,14 +366,30 @@ class Test {
 
     createAttendanceForm = async (req,res) => {
         
-        res.json(await AttendanceFormService.createForm("5202111_09_t000", 
-        JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0));
+        let classes = await ClassService.getAllStudentsByClassID("5202111_09_t000");
+        let listOfStudentClass = classes.studentClass;
+
+        const id = uuidv4();
+
+        await AttendanceFormService.createFormWithID(id, classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0)
+        await AttendanceDetailService.createDefaultAttendanceDetailForStudents(listOfStudentClass, id);
+        
     }
 
     createAttendanceDetail = async (req,res) => {
         let studentClass = await StudentClassService.getStudentClass("520H0380", "5202111_09_t000");
         let attendanceForm = await AttendanceFormService.getFormByID("7aeed109-2b1d-4b06-b4d0-926b926f626e");
         res.json(await AttendanceDetailService.createAttendanceDetail(studentClass, attendanceForm, "VN"));
+    }
+
+    testEndpoint = async (req, res) => {
+        //console.log(await StudentClassService.getStudentsByClassID("5202111_09_t000"));
+        //let classes = await ClassService.getClassByID("5202111_09_t000");
+
+        let classes = await ClassService.getAllStudentsByClassID("5202111_09_t000");
+        console.log(classes.studentClass[0].studentDetail.studentID);
+        
+        res.json();
     }
 }
 

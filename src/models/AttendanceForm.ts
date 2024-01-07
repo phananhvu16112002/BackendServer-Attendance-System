@@ -23,6 +23,6 @@ export class AttendanceForm {
     @Column({type: "datetime", nullable: true})
     dateOpen: string
 
-    @Column()
-    weekNumber: number
+    @Column({default: 0})
+    type: number
 }
