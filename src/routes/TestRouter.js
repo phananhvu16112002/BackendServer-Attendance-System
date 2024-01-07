@@ -35,6 +35,9 @@ TestRouter.get("/attendanceForm", TestController.createAttendanceForm)
 TestRouter.get("/attendanceDetail", TestController.createAttendanceDetail)
 TestRouter.get("/getAllAttendanceForm", AttendanceFormController.getAllFormByClassID)
 
+//Test Imgur
+TestRouter.post("/imgur", TestController.testImgur)
+
 export default TestRouter
 
 

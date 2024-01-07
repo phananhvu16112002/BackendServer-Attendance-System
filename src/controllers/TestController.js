@@ -397,6 +397,10 @@ class Test {
         
         res.json();
     }
+
+    testImgur = async (req, res) => {
+        res.json(await UploadImageService.uploadAttendanceEvidenceFile(req.files.file)); 
+    }
 }
 
 export default new Test();

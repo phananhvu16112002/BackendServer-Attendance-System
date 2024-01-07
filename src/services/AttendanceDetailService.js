@@ -24,18 +24,35 @@ class AttendanceDetailService {
         //attendanceDetailRepository.save(listOfAttendanceDetail);
     }
 
-    createAttendanceDetail = async (studentClass, attendanceForm, location) => {
-        let attendanceDetail = new AttendanceDetail();
-        attendanceDetail.studentClass = studentClass;
-        attendanceDetail.attendanceForm = attendanceForm;
-        attendanceDetail.location = location;
-        await attendanceDetailRepository.save(attendanceDetail);
-        return attendanceDetail;
+    // createAttendanceDetail = async (studentClass, attendanceForm, location) => {
+    //     let attendanceDetail = new AttendanceDetail();
+    //     attendanceDetail.studentClass = studentClass;
+    //     attendanceDetail.attendanceForm = attendanceForm;
+    //     attendanceDetail.location = location;
+    //     await attendanceDetailRepository.save(attendanceDetail);
+    //     return attendanceDetail;
+    // }
+
+    getAttendanceDetail = async (studentID, classID, formID) => {
+        try {
+            return await attendanceDetailRepository.findOne({
+                where : {
+                    studentDetail : studentID,
+                    classDetail: classID,
+                    formID : formID 
+                },
+                relations : {
+                    attendanceForm : true
+                }
+            })
+        } catch (e) {
+            return null;
+        }
     }
 
-    takeAttendance = async () => {
+    // takeAttendance = async () => {
 
-    }
+    // }
 }
 
 export default new AttendanceDetailService();
