@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
+import { MySQLDatetimeToJSDatetime } from "../utils/TimeConvert";
 import { AppDataSource } from "../config/db.config";
 import { Student } from "../models/Student";
 
@@ -98,10 +99,10 @@ class StudentService {
 
     checkStudentOTPExpired = (student) => {
         try {
-            let timeToLiveOTPConvert = new Date(student.timeToLiveOTP);
-            let timeToLiveOTPUse = JSDatetimeToMySQLDatetime(timeToLiveOTPConvert);
+            // let timeToLiveOTPConvert = new Date(student.timeToLiveOTP);
+            // let timeToLiveOTPUse = JSDatetimeToMySQLDatetime(timeToLiveOTPConvert);
 
-            return timeToLiveOTPUse < JSDatetimeToMySQLDatetime(new Date());
+            return MySQLDatetimeToJSDatetime(student.timeToLiveOTP) < JSDatetimeToMySQLDatetime(new Date());
         } catch (e) {
             return false;
         }

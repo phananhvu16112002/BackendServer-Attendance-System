@@ -371,9 +371,15 @@ class Test {
 
         const id = uuidv4();
 
-        await AttendanceFormService.createFormWithID(id, classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0)
-        await AttendanceDetailService.createDefaultAttendanceDetailForStudents(listOfStudentClass, id);
-        
+        let attendanceForm = await AttendanceFormService.createFormWithID(id, classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0)
+        let attendanceDetail = await AttendanceDetailService.createDefaultAttendanceDetailForStudents(listOfStudentClass, 1);
+    
+        const a = await AppDataSource.transaction(async (transactionalEntityManager) => {
+            await transactionalEntityManager.save(attendanceForm);
+            await transactionalEntityManager.save(attendanceDetail);
+        })
+
+        console.log(a)
     }
 
     createAttendanceDetail = async (req,res) => {

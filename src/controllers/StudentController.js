@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import {Student} from "../models/Student";
 import { AppDataSource } from '../config/db.config';
 import jwt from "jsonwebtoken";
-import JSDatetimeToMySQLDatetime from '../utils/TimeConvert';
+import {JSDatetimeToMySQLDatetime} from '../utils/TimeConvert';
 
 //for face recognition
 import fs from "fs/promises";

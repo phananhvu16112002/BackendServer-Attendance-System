@@ -6,9 +6,24 @@ import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 
 class AttendanceFormService {
-    createFormWithID = async (id, classes, startTime, endTime, dateOpen, type) => {
+
+    createFormTransaction = async (attendanceForm, attendanceDetail) => {
+        try {
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.save(attendanceForm);
+                await transactionalEntityManager.save(attendanceDetail);
+            })
+
+            return attendanceForm;
+        } catch (e) {
+            return null;
+        }
+    }
+
+
+    createFormEntity = async (classes, startTime, endTime, dateOpen, type) => {
         let form = new AttendanceForm();
-        form.formID = id;
+        form.formID = uuidv4();
         form.classes = classes;
         form.startTime = startTime;
         form.endTime = endTime;
@@ -16,7 +31,7 @@ class AttendanceFormService {
         form.status = true;
         form.type = type;
 
-        await attendanceFormRepository.save(form);
+        //await attendanceFormRepository.save(form);
         return form;
     }
 

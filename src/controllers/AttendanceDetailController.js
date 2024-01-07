@@ -6,12 +6,11 @@ class AttendanceDetailController {
         const formID = req.body.formID;
 
         const location = req.body.location;
+        const image = req.files.file;
         
-
-        //Check student class exist (call database)
-
-        //Check form exist (call database)
-
+        //Check if attendance Detail exist
+        
+        
         //Check form status and dateOpen
         
         
