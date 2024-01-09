@@ -5,7 +5,7 @@ import { Course } from "../models/Course";
 import { Classes } from "../models/Classes";
 import { StudentClass } from "../models/StudentClass";
 import { AppDataSource } from "../config/db.config";
-import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import UploadImageService from "../services/UploadImageService";
@@ -16,6 +16,7 @@ import AttendanceFormService from '../services/AttendanceFormService';
 import AttendanceDetailService from '../services/AttendanceDetailService';
 import ClassService from '../services/ClassService';
 import { v4 as uuidv4 } from 'uuid';
+import { JsonContains } from 'typeorm';
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -371,15 +372,12 @@ class Test {
 
         const id = uuidv4();
 
-        let attendanceForm = await AttendanceFormService.createFormWithID(id, classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 0)
-        let attendanceDetail = await AttendanceDetailService.createDefaultAttendanceDetailForStudents(listOfStudentClass, 1);
+        let attendanceForm = await AttendanceFormService.createFormEntity(classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 1);
+        let attendanceDetail = await AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(listOfStudentClass, attendanceForm);
     
-        const a = await AppDataSource.transaction(async (transactionalEntityManager) => {
-            await transactionalEntityManager.save(attendanceForm);
-            await transactionalEntityManager.save(attendanceDetail);
-        })
+        const form = await AttendanceFormService.createFormTransaction(attendanceForm, attendanceDetail);
 
-        console.log(a)
+        res.json(form);
     }
 
     createAttendanceDetail = async (req,res) => {

@@ -13,6 +13,9 @@ class AttendanceDetailController {
         const longtitude = req.body.longtitude;
         const image = req.files.file;
 
+        //Check location first (has a service to check)
+
+
         //Call database to get attendance detail
         let attendanceDetail = await AttendanceDetailService.getAttendanceDetail(studentID, classID, formID);
         let attendanceForm = attendanceDetail.attendanceForm;
@@ -28,14 +31,22 @@ class AttendanceDetailController {
         }
 
         //Check form time
-        if (dateTimeAttendance >= MySQLDatetimeToJSDatetime(attendanceForm.startTime) 
-            && dateTimeAttendance <= MySQLDatetimeToJSDatetime(attendanceForm.endTime)){
+        if (dateTimeAttendance < MySQLDatetimeToJSDatetime(attendanceForm.startTime) 
+            || dateTimeAttendance > MySQLDatetimeToJSDatetime(attendanceForm.endTime)){
             
             return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
         }
 
-        
-        
+        //Send image to Imgur
+
+        //If only type == 1
+            //After send image success, do face matching
+
+
+            //if face matching is not match, then delete image in Imgur
+
+
+        //after all work successfully, store attendance detail in server
     }
 }
 

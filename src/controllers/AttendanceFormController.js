@@ -1,7 +1,7 @@
 import AttendanceDetailService from "../services/AttendanceDetailService";
 import AttendanceFormService from "../services/AttendanceFormService";
 import ClassService from "../services/ClassService";
-import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 
 class AttendanceFormController {
     createAttendanceForm = async (req, res) => {
@@ -11,6 +11,11 @@ class AttendanceFormController {
             const endTime = req.body.endTime;
             const dateOpen = JSDatetimeToMySQLDatetime(new Date());
             const type = req.body.type;
+
+            const location = req.body.location;
+            const latitude = req.body.latitude;
+            const longtitude = req.body.longtitude;
+            const radius = req.body.radius;
 
             const classes = await ClassService.getClassByID(classID);
             if (classes == null){
@@ -27,7 +32,7 @@ class AttendanceFormController {
                 return res.status(503).json({message : "Attendance Form cannot be created. Please try again!"});
             }
 
-            res.status(200).json({message : "Attendance Form has been created"});
+            res.status(200).json(form);
         } catch (e) {
             res.status(500).json({message : "Internal Server"});
         }

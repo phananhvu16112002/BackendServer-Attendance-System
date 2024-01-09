@@ -1,7 +1,7 @@
 import { AppDataSource } from "../config/db.config"
 import { AttendanceForm } from "../models/AttendanceForm"
 import { v4 as uuidv4 } from 'uuid';
-import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 
