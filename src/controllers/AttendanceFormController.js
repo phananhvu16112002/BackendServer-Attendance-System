@@ -1,3 +1,4 @@
+import AttendanceFormDTO from "../dto/AttendanceFormDTO";
 import AttendanceDetailService from "../services/AttendanceDetailService";
 import AttendanceFormService from "../services/AttendanceFormService";
 import ClassService from "../services/ClassService";
@@ -27,12 +28,12 @@ class AttendanceFormController {
             const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceForm);
         
             //Make transactions to insert into database
-            const form = AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);
+            const form = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);
             if (form == null){
                 return res.status(503).json({message : "Attendance Form cannot be created. Please try again!"});
             }
 
-            res.status(200).json(form);
+            res.status(200).json(AttendanceFormDTO.excludeClasses(form));
         } catch (e) {
             res.status(500).json({message : "Internal Server"});
         }

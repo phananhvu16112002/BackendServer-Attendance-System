@@ -17,6 +17,7 @@ import AttendanceDetailService from '../services/AttendanceDetailService';
 import ClassService from '../services/ClassService';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonContains } from 'typeorm';
+import AttendanceFormDTO from '../dto/AttendanceFormDTO';
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -377,7 +378,7 @@ class Test {
     
         const form = await AttendanceFormService.createFormTransaction(attendanceForm, attendanceDetail);
 
-        res.json(form);
+        res.json(AttendanceFormDTO.excludeClasses(form));
     }
 
     createAttendanceDetail = async (req,res) => {
