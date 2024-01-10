@@ -23,6 +23,15 @@ export class AttendanceForm {
     @Column({type: "datetime", nullable: true})
     dateOpen: string
 
-    @Column()
-    weekNumber: number
+    @Column({default: 0})
+    type: number
+
+    @Column({type: "decimal", precision: 10, scale: 10, default: 0, nullable: true})
+    latitude: number
+
+    @Column({type: "decimal", precision: 10, scale: 10, default: 0, nullable: true})
+    longitude: number
+
+    @Column({default: 0})
+    radius: number
 }

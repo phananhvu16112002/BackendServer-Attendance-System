@@ -3,7 +3,7 @@ const Authorization = (role) => {
         if (req.payload.role == role){
             next();
         }else {
-            res.status(403).json({message: "Access denied"});
+            res.status(403).json({message: `Access denied. This service is intended only for ${role}`});
         }
     }
 }

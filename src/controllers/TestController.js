@@ -5,12 +5,19 @@ import { Course } from "../models/Course";
 import { Classes } from "../models/Classes";
 import { StudentClass } from "../models/StudentClass";
 import { AppDataSource } from "../config/db.config";
-import JSDatetimeToMySQLDatetime from "../utils/TimeConvert";
+import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import UploadImageService from "../services/UploadImageService";
 import FaceMatchingService from "../services/FaceMatchingService";
 import jwt from "jsonwebtoken";
+import StudentClassService from '../services/StudentClassService';
+import AttendanceFormService from '../services/AttendanceFormService';
+import AttendanceDetailService from '../services/AttendanceDetailService';
+import ClassService from '../services/ClassService';
+import { v4 as uuidv4 } from 'uuid';
+import { JsonContains } from 'typeorm';
+import AttendanceFormDTO from '../dto/AttendanceFormDTO';
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -131,6 +138,10 @@ class Test {
             studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
             studentClass2.classDetail = classes2
 
+            // let studentClass3 = new StudentClass()
+            // studentClass3.studentDetail = 
+            // studentClass3.classDetail = classes2
+
             await AppDataSource.getRepository(StudentClass).save(studentClass);
             await AppDataSource.getRepository(StudentClass).save(studentClass2);
             res.status(200).json("success");
@@ -169,7 +180,7 @@ class Test {
     testTakeAttendance = async (req,res) => {
         let student = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"});
         let classes = await AppDataSource.getRepository(Classes).findOneBy({classID: "520300_09_t0133"});
-        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentID: "520H0380", classID: "520300_09_t0133"})
+        let studentClass = await AppDataSource.getRepository(StudentClass).findOneBy({studentDetail: "520H0380", classDetail: "520300_09_t0133"})
 
         //Take attendance formID1 cua sinh vien 520H0380 trong lop 520300_09_t0133
         let date = new Date();
@@ -283,7 +294,19 @@ class Test {
         try{
             const accessToken = jwt.sign({userID: studentID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '45s' });
             const refreshToken = jwt.sign({userID: studentID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
-            res.status(200).json({message: "Login Successfully", accessToken, refreshToken});
+            res.status(200).json({message: "Student Login Successfully", accessToken, refreshToken});
+        } catch {
+            res.staus(500).json({message: "Login Failed"});
+        }
+    }
+
+    testCreateAccessTokenAndRefreshTokenForTeacher = async (req,res) => {
+        let teacherID = req.body.teacherID;
+        let role = "teacher";
+        try{
+            const accessToken = jwt.sign({userID: teacherID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '2m' });
+            const refreshToken = jwt.sign({userID: teacherID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
+            res.status(200).json({message: "Teacher Login Successfully", accessToken, refreshToken});
         } catch {
             res.staus(500).json({message: "Login Failed"});
         }
@@ -337,6 +360,45 @@ class Test {
                 return res.status(500).json({message: e.message});
             }
         }
+    }
+
+    getStudentClass = async (req,res) => {
+        res.json(await StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
+    }
+
+    createAttendanceForm = async (req,res) => {
+        
+        let classes = await ClassService.getAllStudentsByClassID("5202111_09_t000");
+        let listOfStudentClass = classes.studentClass;
+
+        const id = uuidv4();
+
+        let attendanceForm = await AttendanceFormService.createFormEntity(classes, JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), JSDatetimeToMySQLDatetime(new Date()), 1);
+        let attendanceDetail = await AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(listOfStudentClass, attendanceForm);
+    
+        const form = await AttendanceFormService.createFormTransaction(attendanceForm, attendanceDetail);
+
+        res.json(AttendanceFormDTO.excludeClasses(form));
+    }
+
+    createAttendanceDetail = async (req,res) => {
+        let studentClass = await StudentClassService.getStudentClass("520H0380", "5202111_09_t000");
+        let attendanceForm = await AttendanceFormService.getFormByID("7aeed109-2b1d-4b06-b4d0-926b926f626e");
+        res.json(await AttendanceDetailService.createAttendanceDetail(studentClass, attendanceForm, "VN"));
+    }
+
+    testEndpoint = async (req, res) => {
+        //console.log(await StudentClassService.getStudentsByClassID("5202111_09_t000"));
+        //let classes = await ClassService.getClassByID("5202111_09_t000");
+
+        let classes = await ClassService.getAllStudentsByClassID("5202111_09_t000");
+        console.log(classes.studentClass[0].studentDetail.studentID);
+        
+        res.json();
+    }
+
+    testImgur = async (req, res) => {
+        res.json(await UploadImageService.uploadAttendanceEvidenceFile(req.files.file)); 
     }
 }
 

@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import {Student} from "../models/Student";
 import { AppDataSource } from '../config/db.config';
 import jwt from "jsonwebtoken";
-import JSDatetimeToMySQLDatetime from '../utils/TimeConvert';
+import {JSDatetimeToMySQLDatetime} from '../utils/TimeConvert';
 
 //for face recognition
 import fs from "fs/promises";
@@ -118,7 +118,14 @@ class StudentController{
             const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' })
 
             await StudentService.updateStudentAccessTokenAndRefreshToken(student, accessToken, refreshToken);
-            res.status(200).json({message:"Login Successfully", refreshToken: refreshToken, accessToken: accessToken});
+            res.status(200).json({
+                message:"Login Successfully", 
+                refreshToken: refreshToken, 
+                accessToken: accessToken,
+                studentID: studentID,
+                studentEmail: email,
+                studentName: student.studentName
+            });
             
         }catch (e) {
             console.error(e);

@@ -14,6 +14,18 @@ const client = new ImgurClient({
 })
 
 class UploadImageService {
+    uploadAttendanceEvidenceFile = async (file) => {
+        try {
+            const response = await client.upload({
+                image: file.data
+            })
+            console.log(response.success)
+            return response;
+        } catch (e) {
+            return null;
+        }
+    }
+
     uploadReportFiles = async (files, report) => {
         for (var file in files){
             var img = files[file];

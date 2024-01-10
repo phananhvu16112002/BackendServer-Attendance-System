@@ -31,5 +31,8 @@ function JSDatetimeToMySQLDatetime(date){
     return convertDate(dateString) + " " + convertTime(timeString)
 }
 
+function MySQLDatetimeToJSDatetime(date){
+    return JSDatetimeToMySQLDatetime(new Date(date));
+}
 
-export default JSDatetimeToMySQLDatetime;
+export {JSDatetimeToMySQLDatetime , MySQLDatetimeToJSDatetime};

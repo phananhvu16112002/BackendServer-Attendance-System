@@ -3,6 +3,7 @@ import StudentController from "../controllers/StudentController";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
 const StudentRouter = express.Router();
 
+//Student Authentication 
 StudentRouter.post("/register", StudentController.register);
 StudentRouter.post("/verifyRegister", StudentController.verifyRegister);
 StudentRouter.post("/login",StudentController.login);
@@ -11,6 +12,7 @@ StudentRouter.post("/verifyForgotPassword", StudentController.verifyForgotPasswo
 StudentRouter.post("/resetPassword",VerifyResetToken,StudentController.resetPassword);
 StudentRouter.post("/resendOTP",StudentController.resendOTP);
 
-///
+//Student Use Cases
+
 
 export default StudentRouter;
