@@ -1,6 +1,6 @@
 import express from "express";
 import TestController from "../controllers/TestController";
-import verifyAccessToken from "../middlewares/verifyAccessToken";
+import VerifyAccessToken from "../middlewares/VerifyAccessToken";
 const TestRouter = express.Router();
 
 TestRouter.get("/createStudentTable", TestController.testCreateStudentTable)
