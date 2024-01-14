@@ -1,5 +1,6 @@
 import express, {Request, Response} from "express";
 import DB from './src/config/db.config';
+import "reflect-metadata";
 import bodyParser from "body-parser";
 import StudentRouter from "./src/routes/StudentRouter";
 import TestRouter from "./src/routes/TestRouter";

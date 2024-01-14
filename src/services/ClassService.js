@@ -1,8 +1,7 @@
-import { AppDataSource } from "../config/db.config";
+import { AppDataSource, entityManager } from "../config/db.config";
 import { Classes } from "../models/Classes";
 
 const classRepository = AppDataSource.getRepository(Classes);
-
 class ClassService {
     getClassByID = async (classID) => {
         try {
@@ -14,15 +13,7 @@ class ClassService {
 
     getAllStudentsByClassID = async (classID) => {
         try {
-            return await classRepository.findOne
-            ({
-                where: {
-                    classID : classID
-                },
-                relations : {
-                    studentClass : true
-                },
-            })
+            return null;
         } catch (e) {
             return null;
         }
@@ -41,6 +32,17 @@ class ClassService {
             })
 
         } catch (e) {
+            return null;
+        }
+    }
+
+    getClassesByTeacherID = async (teacherID) => {
+        try {
+            return await classRepository.createQueryBuilder("classes").
+            where("classes.teacherID = :teacherID", {teacherID : teacherID}). 
+            getMany();
+        } catch (e) {
+            console.log(e);
             return null;
         }
     }
