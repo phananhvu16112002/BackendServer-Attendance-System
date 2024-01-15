@@ -8,8 +8,7 @@ const TeacherRouter = express.Router();
 
 //Insert  VerifyAccessToken, Authorization("teacher") for authenticate and authorize
 //A route for create attendance form
-TeacherRouter.post("/createAttendanceForm", VerifyAccessToken, 
-                    Authorization("teacher"), AttendanceFormController.createAttendanceForm);
+TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 TeacherRouter.post("/getClasses", TeacherController.getClasses);
 
