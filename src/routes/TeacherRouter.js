@@ -10,6 +10,6 @@ const TeacherRouter = express.Router();
 //A route for create attendance form
 TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
-TeacherRouter.post("/getClasses", TeacherController.getClasses);
+TeacherRouter.post("/getClasses", TeacherController.getClassesWithCourse);
 
 export default TeacherRouter;
