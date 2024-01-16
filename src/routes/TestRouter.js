@@ -38,6 +38,9 @@ TestRouter.get("/getAllAttendanceForm", AttendanceFormController.getAllFormByCla
 //Test Imgur
 TestRouter.post("/imgur", TestController.testImgur)
 
+//Test File Excel
+TestRouter.post("/uploadExcel", TestController.uploadExcel)
+
 export default TestRouter
 
 

@@ -18,6 +18,7 @@ import ClassService from '../services/ClassService';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonContains } from 'typeorm';
 import AttendanceFormDTO from '../dto/AttendanceFormDTO';
+import Excel from "exceljs";
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
 
@@ -399,6 +400,26 @@ class Test {
 
     testImgur = async (req, res) => {
         res.json(await UploadImageService.uploadAttendanceEvidenceFile(req.files.file)); 
+    }
+
+    uploadExcel = async (req, res) => {
+        const excelFile = req.files.file;
+        const buffer = excelFile.data;
+
+        const workbook = new Excel.Workbook();
+        const content = await workbook.xlsx.load(buffer, { type: "buffer" });
+        
+        const worksheet = content.worksheets[0];
+        worksheet.eachRow((row, rowNumber) => {
+            const cellValue1 = row.getCell(1).value; // Value in column B
+            // Iterate through cells in the row:
+            row.eachCell((cell, colNumber) => {
+                // Access cell value and format
+                console.log(`Cell at (${rowNumber}, ${colNumber}): ${cell.value}`);
+            });
+        })
+
+        res.json({message: "Oke"});
     }
 }
 
