@@ -10,15 +10,19 @@ import StudentClassService from "./src/services/StudentClassService";
 import TeacherRouter from "./src/routes/TeacherRouter";
 
 const app = express();
+const cors = require('cors');
 DB();
 
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/student", StudentRouter)
 app.use("/api/teacher", TeacherRouter)
 app.use("/test", TestRouter)
+
+
 
 app.listen(8080, () => {
     console.log("Hello");
