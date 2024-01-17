@@ -16,12 +16,13 @@ class AttendanceFormService {
 
             return attendanceForm;
         } catch (e) {
+            console.log(e);
             return null;
         }
     }
 
 
-    createFormEntity = async (classes, startTime, endTime, dateOpen, type,
+    createFormEntity = (classes, startTime, endTime, dateOpen, type,
                                 location, latitude, longitude, radius) => {
         let form = new AttendanceForm();
         form.formID = uuidv4();

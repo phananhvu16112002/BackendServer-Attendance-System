@@ -8,7 +8,8 @@ const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 
 class AttendanceDetailService {
-    createDefaultAttendanceDetailEntitiesForStudents = async (listOfStudentClass, attendanceForm) => {
+    createDefaultAttendanceDetailEntitiesForStudents = (listOfStudentClass, attendanceForm) => {
+        console.log(listOfStudentClass);
         let listOfAttendanceDetail = []
         for (let i = 0; i < listOfStudentClass.length; i++){
             let studentClass = listOfStudentClass[i]
