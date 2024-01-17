@@ -413,6 +413,7 @@ class Test {
         worksheet.eachRow((row, rowNumber) => {
             const cellValue1 = row.getCell(1).value; // Value in column B
             // Iterate through cells in the row:
+            console.log(row.getCell(2).text)
             row.eachCell((cell, colNumber) => {
                 // Access cell value and format
                 console.log(`Cell at (${rowNumber}, ${colNumber}): ${cell.value}`);

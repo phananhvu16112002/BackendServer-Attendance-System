@@ -46,6 +46,19 @@ class ClassService {
             return null;
         }
     }
+
+    getClassesWithCoursesByTeacherID = async (teacherID) => {
+        try {
+            return await classRepository.find({where : {
+                teacher : {
+                    teacherID : teacherID
+                }
+            }})
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
 }
 
 export default new ClassService();
