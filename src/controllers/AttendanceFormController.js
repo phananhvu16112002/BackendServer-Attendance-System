@@ -15,17 +15,17 @@ class AttendanceFormController {
 
             const location = req.body.location;
             const latitude = req.body.latitude;
-            const longtitude = req.body.longtitude;
+            const longitude = req.body.longitude;
             const radius = req.body.radius;
 
-            const classes = await ClassService.getClassByID(classID);
+            const classes = await ClassService.getClassByIDWithStudents(classID);
             if (classes == null){
                 return res.status(422).json({message : `Class with the id: ${classID} does not exist`});
             }
 
             //Create entities before inserting into database
-            const attendanceFormEntity = AttendanceFormService.createFormEntity(classes, startTime, endTime, dateOpen, type);
-            const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceForm);
+            const attendanceFormEntity = AttendanceFormService.createFormEntity(classes, startTime, endTime, dateOpen, type, location, latitude, longitude, radius);
+            const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceFormEntity);
         
             //Make transactions to insert into database
             const form = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);

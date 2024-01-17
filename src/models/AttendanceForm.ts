@@ -26,10 +26,10 @@ export class AttendanceForm {
     @Column({default: 0})
     type: number
 
-    @Column({type: "decimal", precision: 10, scale: 10, default: 0, nullable: true})
+    @Column({type: "double", default: 0, nullable: true})
     latitude: number
 
-    @Column({type: "decimal", precision: 10, scale: 10, default: 0, nullable: true})
+    @Column({type: "double", default: 0, nullable: true})
     longitude: number
 
     @Column({default: 0})

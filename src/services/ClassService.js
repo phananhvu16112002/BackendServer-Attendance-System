@@ -11,6 +11,17 @@ class ClassService {
         }
     }
 
+    getClassByIDWithStudents = async (classID) => {
+        try {
+            return await classRepository.findOne({
+                where : {classID : classID},
+                relations : {studentClass : true}
+            });
+        } catch (e) {
+            return null;
+        }
+    }
+
     getAllStudentsByClassID = async (classID) => {
         try {
             return null;

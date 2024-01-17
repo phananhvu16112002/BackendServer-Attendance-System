@@ -16,12 +16,14 @@ class AttendanceFormService {
 
             return attendanceForm;
         } catch (e) {
+            console.log(e);
             return null;
         }
     }
 
 
-    createFormEntity = async (classes, startTime, endTime, dateOpen, type) => {
+    createFormEntity = (classes, startTime, endTime, dateOpen, type,
+                                location, latitude, longitude, radius) => {
         let form = new AttendanceForm();
         form.formID = uuidv4();
         form.classes = classes;
@@ -30,6 +32,10 @@ class AttendanceFormService {
         form.dateOpen = dateOpen;
         form.status = true;
         form.type = type;
+        form.location = location;
+        form.latitude = latitude;
+        form.longitude = longitude;
+        form.radius = radius;
 
         //await attendanceFormRepository.save(form);
         return form;
