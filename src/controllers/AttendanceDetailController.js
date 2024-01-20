@@ -88,6 +88,7 @@ class AttendanceDetailController {
         attendanceDetail.latitude = latitude;
         attendanceDetail.longitude = longtitude;
         attendanceDetail.result = 1;
+        attendanceDetail.dateAttendanced = dateTimeAttendance;
         attendanceDetailRepository.save(attendanceDetail);
         res.status(442).json(attendanceDetail);
     }
