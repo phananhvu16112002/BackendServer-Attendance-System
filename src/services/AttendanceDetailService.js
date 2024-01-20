@@ -40,13 +40,14 @@ class AttendanceDetailService {
                 where : {
                     studentDetail : studentID,
                     classDetail: classID,
-                    formID : formID 
+                    attendanceForm : formID 
                 },
                 relations : {
                     attendanceForm : true
                 }
             })
         } catch (e) {
+            console.log(e);
             return null;
         }
     }

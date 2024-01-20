@@ -19,9 +19,9 @@ class UploadImageService {
             const response = await client.upload({
                 image: file.data
             })
-            console.log(response.success)
-            return response;
+            return response.success ? response.data : null;
         } catch (e) {
+            console.log(e);
             return null;
         }
     }
@@ -67,6 +67,14 @@ class UploadImageService {
         }
 
         await studentImageRepository.remove(images);
+    }
+
+    deleteImageByImageHash = async (imageHash) => {
+        try {
+            await client.deleteImage(imageHash);
+        } catch (e) {
+            return null;
+        }
     }
 }
 
