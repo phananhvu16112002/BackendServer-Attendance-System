@@ -479,6 +479,9 @@ class Test {
             let response = await client.upload({
                 image: files[file].data,
             })
+            if (response == null){
+                return res.json({message: "Call api failed"})
+            }
             let payload = response.data;
             if (payload != null){
                 let id = payload.id;
@@ -490,7 +493,7 @@ class Test {
                 await studentImageRepository.save(studentImage);
             }
         }
-        res.json({message: "oke"});
+        res.status(200).json({message: "oke"});
     }
 
     fetchImage = async (req,res) => {
@@ -534,17 +537,41 @@ class Test {
         for (let i in studentClasses){
             const total = await attendanceDetailRepository.countBy({
                 studentDetail : studentClasses[i].studentDetail.studentID,
-                classDetail: studentClasses[i].classDetail.classID
+                classDetail: studentClasses[i].classDetail.classID,
             });
+            let totalPresence = 0;
+            let totalLate = 0;
+            let totalAbsence = 0;
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                totalPresence = await attendanceDetailRepository.countBy({
+                    studentDetail : studentClasses[i].studentDetail.studentID,
+                    classDetail: studentClasses[i].classDetail.classID,
+                    result : 1
+                });
+                totalLate = await attendanceDetailRepository.countBy({
+                    studentDetail : studentClasses[i].studentDetail.studentID,
+                    classDetail: studentClasses[i].classDetail.classID,
+                    result : 0.5
+                });
+                totalAbsence = await attendanceDetailRepository.countBy({
+                    studentDetail : studentClasses[i].studentDetail.studentID,
+                    classDetail: studentClasses[i].classDetail.classID,
+                    result : 0
+                });    
+            })
+            console.log(totalPresence, totalLate, totalAbsence);
             const progress = (total / studentClasses[i].classDetail.course.totalWeeks)*100
             console.log("Total attendance:", total)
             console.log("Progress:", progress)
             studentClasses[i].progress = progress;
             studentClasses[i].total = total;
+            studentClasses[i].totalPresence = totalPresence;
+            studentClasses[i].totalAbsence = totalAbsence;
+            studentClasses[i].totalLate = totalLate;
             console.log(studentClasses[i]);
         }
 
-        res.json(studentClasses);
+        res.status(200).json(studentClasses);
     }
 }
 
