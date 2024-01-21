@@ -41,10 +41,10 @@ class FaceMatchingService {
         console.log("Matching");
 
         //Matching
-        const threshold = 0.6;
+        const threshold = 0.52;
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
         const results = faceMatcher.findBestMatch(faceDescription.descriptor);
-
+        console.log(results);
         //check result
         if (results.label == "unknown"){
             return false;

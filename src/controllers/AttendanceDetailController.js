@@ -83,14 +83,14 @@ class AttendanceDetailController {
 
 
         //after all work successfully, store attendance detail in server
-        attendanceDetail.url = data.url;
+        attendanceDetail.url = data.link;
         attendanceDetail.location = location;
         attendanceDetail.latitude = latitude;
         attendanceDetail.longitude = longtitude;
         attendanceDetail.result = 1;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
         attendanceDetailRepository.save(attendanceDetail);
-        res.status(442).json(attendanceDetail);
+        res.status(200).json(attendanceDetail);
     }
 
     getAttendanceRecordsOfStudents = async (req,res) => {
