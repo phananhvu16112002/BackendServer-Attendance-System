@@ -8,8 +8,10 @@ import fileUpload from "express-fileupload";
 import UploadImageService from "./src/services/UploadImageService";
 import StudentClassService from "./src/services/StudentClassService";
 import TeacherRouter from "./src/routes/TeacherRouter";
+import cors from "cors";
 
 const app = express();
+app.use(cors())
 DB();
 
 app.use(fileUpload());

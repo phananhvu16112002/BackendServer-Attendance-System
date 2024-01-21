@@ -514,6 +514,9 @@ class Test {
                     classID : true,
                     roomNumber : true,
                     shiftNumber : true,
+                    classType : true,
+                    group : true,
+                    subGroup : true,
                     teacher : {
                         teacherID : true,
                         teacherName : true
@@ -560,15 +563,20 @@ class Test {
                 });    
             })
             console.log(totalPresence, totalLate, totalAbsence);
-            const progress = (total / studentClasses[i].classDetail.course.totalWeeks)*100
+            console.log("Test double: " + parseFloat(totalPresence + ".0"))
+
+            const progress = (total / studentClasses[i].classDetail.course.totalWeeks);
             console.log("Total attendance:", total)
             console.log("Progress:", progress)
+            console.log("TotalPresence", `${totalPresence}.0` ),
+            console.log("totalAbsence", `${totalAbsence}.0` ),
+            console.log("totalLate", `${totalLate}.0` ),
             studentClasses[i].progress = progress;
             studentClasses[i].total = total;
-            studentClasses[i].totalPresence = totalPresence;
-            studentClasses[i].totalAbsence = totalAbsence;
-            studentClasses[i].totalLate = totalLate;
-            console.log(studentClasses[i]);
+            studentClasses[i].totalPresence = `${totalPresence}.0`;
+            studentClasses[i].totalAbsence = `${totalAbsence}.0`;
+            studentClasses[i].totalLate = `${totalLate}.0`;
+            console.log(studentClasses[i].totalPresence);
         }
 
         res.status(200).json(studentClasses);
