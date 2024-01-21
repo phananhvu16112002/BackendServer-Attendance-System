@@ -45,7 +45,7 @@ TestRouter.post("/uploadExcel", TestController.uploadExcel)
 TestRouter.post("/uploadMultipleFiles", TestController.uploadMultipleFiles)
 TestRouter.get("/fetchImage", TestController.fetchImage);
 TestRouter.post("/testGetClassesVersion1", TestController.testGetClassesVersion1);
-
+TestRouter.post("/testGetAttendanceDetailVersion1", TestController.testGetAttendanceDetailVersion1)
 export default TestRouter
 
 

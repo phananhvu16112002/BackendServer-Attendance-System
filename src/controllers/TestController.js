@@ -581,6 +581,28 @@ class Test {
 
         res.status(200).json(studentClasses);
     }
+
+    testGetAttendanceDetailVersion1 = async (req,res) => {
+        const studentID = req.body.studentID;
+        const classID = req.body.classID;
+        const attendanceDetails = await attendanceDetailRepository.find({
+            where : {
+                studentClass : {
+                    studentDetail : studentID,
+                    classDetail : classID
+                }
+            },
+            relations : {
+                attendanceForm : true
+            },
+            order : {
+                dateAttendanced : {
+                    direction : "DESC"
+                }
+            }
+        })
+        res.status(200).json(attendanceDetails);
+    }
 }
 
 export default new Test();
