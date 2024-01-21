@@ -25,6 +25,9 @@ import { StudentImage } from '../models/StudentImage';
 import StudentService from '../services/StudentService';
 
 const studentImageRepository = AppDataSource.getRepository(StudentImage);
+const classRepository = AppDataSource.getRepository(Classes);
+const studentClassRepository = AppDataSource.getRepository(StudentClass);
+const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 
 class BufferArrayToStream extends Transform {
     constructor(buffers) {
@@ -494,6 +497,54 @@ class Test {
         const data = await client.getImage("loYz6HE");
         console.log(data);
         res.json({message: "oke"});
+    }
+
+    testGetClassesVersion1 = async (req,res) => {
+        const studentID = req.body.studentID;
+        const studentClasses = await studentClassRepository.find({
+            where: {studentDetail : studentID},
+            select : {
+                studentDetail : {
+                    studentID : true,
+                },
+                classDetail : {
+                    classID : true,
+                    roomNumber : true,
+                    shiftNumber : true,
+                    teacher : {
+                        teacherID : true,
+                        teacherName : true
+                    },
+                    course : {
+                        courseID : true,
+                        courseName : true,
+                        totalWeeks : true
+                    }
+                }
+            },
+            relations: {
+                studentDetail: true,
+                classDetail : {
+                    teacher : true,
+                    course : true,
+                }
+            }
+        })
+
+        for (let i in studentClasses){
+            const total = await attendanceDetailRepository.countBy({
+                studentDetail : studentClasses[i].studentDetail.studentID,
+                classDetail: studentClasses[i].classDetail.classID
+            });
+            const progress = (total / studentClasses[i].classDetail.course.totalWeeks)*100
+            console.log("Total attendance:", total)
+            console.log("Progress:", progress)
+            studentClasses[i].progress = progress;
+            studentClasses[i].total = total;
+            console.log(studentClasses[i]);
+        }
+
+        res.json(studentClasses);
     }
 }
 

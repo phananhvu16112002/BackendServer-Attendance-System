@@ -44,6 +44,8 @@ TestRouter.post("/uploadExcel", TestController.uploadExcel)
 //Test upload multiple files to imgur
 TestRouter.post("/uploadMultipleFiles", TestController.uploadMultipleFiles)
 TestRouter.get("/fetchImage", TestController.fetchImage);
+TestRouter.post("/testGetClassesVersion1", TestController.testGetClassesVersion1);
+
 export default TestRouter
 
 

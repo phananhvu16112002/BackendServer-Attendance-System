@@ -92,6 +92,10 @@ class AttendanceDetailController {
         attendanceDetailRepository.save(attendanceDetail);
         res.status(442).json(attendanceDetail);
     }
+
+    getAttendanceRecordsOfStudents = async (req,res) => {
+        
+    }
 }
 
 export default new AttendanceDetailController();
