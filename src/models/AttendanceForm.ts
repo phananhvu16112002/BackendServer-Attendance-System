@@ -30,7 +30,7 @@ export class AttendanceForm {
     latitude: number
 
     @Column({type: "double", default: 0, nullable: true})
-    longitude: number
+    longtitude: number
 
     @Column({default: 0})
     radius: number

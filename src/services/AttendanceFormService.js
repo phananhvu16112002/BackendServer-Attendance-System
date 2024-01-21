@@ -23,7 +23,7 @@ class AttendanceFormService {
 
 
     createFormEntity = (classes, startTime, endTime, dateOpen, type,
-                                location, latitude, longitude, radius) => {
+                                location, latitude, longtitude, radius) => {
         let form = new AttendanceForm();
         form.formID = uuidv4();
         form.classes = classes;
@@ -34,7 +34,7 @@ class AttendanceFormService {
         form.type = type;
         form.location = location;
         form.latitude = latitude;
-        form.longitude = longitude;
+        form.longtitude = longtitude;
         form.radius = radius;
 
         //await attendanceFormRepository.save(form);

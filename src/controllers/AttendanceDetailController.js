@@ -41,7 +41,7 @@ class AttendanceDetailController {
             return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
         }
 
-        res.status(200).json({message: });
+        res.status(200).json({message: "" });
 
         //Send image to Imgur
 
