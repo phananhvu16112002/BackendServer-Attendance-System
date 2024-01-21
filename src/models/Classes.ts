@@ -29,7 +29,7 @@ export class Classes {
     @Column({default: ""})
     subGroup: string
 
-    @ManyToOne(() => Course, Course => Course.classes, {eager : true})
+    @ManyToOne(() => Course, Course => Course.classes)
     @JoinColumn({name:"courseID", referencedColumnName:"courseID"})
     course: Course
 

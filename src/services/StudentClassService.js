@@ -5,7 +5,16 @@ const studentClassRepository = AppDataSource.getRepository(StudentClass);
 class StudentClassService {
     getStudentClass = async (studentID, classID) => {
         try {
-            return await studentClassRepository.findOne({where : {studentDetail : studentID, classDetail : classID}});
+            return await studentClassRepository.findOne({
+                where : {
+                    studentDetail : studentID, 
+                    classDetail : classID
+                },
+                relations : {
+                    studentDetail : true,
+                    classDetail : true
+                }
+            });
         } catch (e) {
             console.log(e);
             return null;

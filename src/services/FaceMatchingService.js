@@ -1,9 +1,11 @@
+import 'dotenv/config';
 import fs from "fs/promises";
 import * as tf from "@tensorflow/tfjs-node";
 import * as faceapi from "@vladmandic/face-api";
 import canvas from "canvas";
 import { AppDataSource } from "../config/db.config";
 import { StudentImage } from "../models/StudentImage";
+import axios from "axios";
 
 const studentImageRepository = AppDataSource.getRepository(StudentImage);
 const { Canvas, Image, ImageData } = canvas;
@@ -18,25 +20,30 @@ async function LoadModels() {
 LoadModels();
 
 class FaceMatchingService {
-    faceMatching = async (files, studentID) => {
-        const canvasImg = await canvas.loadImage(files.file.data);
-        const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+    faceMatching = async (image, studentID) => {
+        let canvasImg = await canvas.loadImage(image.data);
+        let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
         faceDescription = faceapi.resizeResults(faceDescription, canvasImg);
         
         const labels = await this.getLabels(studentID);
 
         const labeledFaceDescriptors = await Promise.all(
             labels.map(async label => {
-                const canvasImg = await faceapi.fetchImage(label);
+                const response = await axios.get(label, {responseType: 'arraybuffer'});
+                console.log(response.data);
+                const canvasImg = await canvas.loadImage(response.data);
                 const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
-                return new faceapi.LabeledFaceDescriptors(label, faceDescription);
+                
+                return new faceapi.LabeledFaceDescriptors(label, [faceDescription.descriptor]);
             })
         )
+
+        console.log("Matching");
 
         //Matching
         const threshold = 0.6;
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
-        const results = faceMatcher.findBestMatch(faceDescription);
+        const results = faceMatcher.findBestMatch(faceDescription.descriptor);
 
         //check result
         if (results.label == "unknown"){

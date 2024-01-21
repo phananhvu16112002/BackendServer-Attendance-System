@@ -19,8 +19,48 @@ import { v4 as uuidv4 } from 'uuid';
 import { JsonContains } from 'typeorm';
 import AttendanceFormDTO from '../dto/AttendanceFormDTO';
 import Excel from "exceljs";
+import {ImgurClient} from "imgur";
+import {Readable, Transform} from "stream";
+import { StudentImage } from '../models/StudentImage';
+import StudentService from '../services/StudentService';
+
+const studentImageRepository = AppDataSource.getRepository(StudentImage);
+const classRepository = AppDataSource.getRepository(Classes);
+const studentClassRepository = AppDataSource.getRepository(StudentClass);
+const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
+
+class BufferArrayToStream extends Transform {
+    constructor(buffers) {
+        super({ objectMode: true });
+        this._buffers = buffers;
+        this._index = 0;
+      }
+    
+      _transform(chunk, encoding, callback) {
+        if (this._index < this._buffers.length) {
+          this.push(this._buffers[this._index++]);
+        } else {
+          callback(); // Signal end of stream
+        }
+    }
+}
+
+class TransformToReadable extends Readable {
+    constructor(transformStream) {
+      super();
+      this._transformStream = transformStream;
+      this._transformStream.on('data', (chunk) => this.push(chunk));
+      this._transformStream.on('end', () => this.push(null));
+    }
+}
 
 const secretKey = process.env.STUDENT_RESET_TOKEN_SECRET;
+
+const client = new ImgurClient({
+    clientId: process.env.IMGUR_CLIENT_ID,
+    clientSecret: process.env.IMGUR_CLIENT_SECRET,
+    refreshToken: process.env.IMGUR_CLIENT_REFRESH_TOKEN
+})
 
 class Test {
     testCreateStudentTable = async (req,res) => {
@@ -421,6 +461,90 @@ class Test {
         })
 
         res.json({message: "Oke"});
+    }
+
+    uploadMultipleFiles = async (req,res) => {
+        const studentId = req.body.studentID;
+        const files = req.files;
+        const images = []
+        let student = await StudentService.checkStudentExist(studentId);
+        if (student == null){
+            return res.json({message: "Student with id does not exist"})
+        }
+        // if (student.active == false){
+        //     return res.json({message: "Student is not active"});
+        // }
+        //Array of buffers
+        for (let file in files){
+            let response = await client.upload({
+                image: files[file].data,
+            })
+            let payload = response.data;
+            if (payload != null){
+                let id = payload.id;
+                let url = payload.link;
+                let studentImage = new StudentImage();
+                studentImage.imageHash = id;
+                studentImage.imageURL = url;
+                studentImage.studentID = student;
+                await studentImageRepository.save(studentImage);
+            }
+        }
+        res.json({message: "oke"});
+    }
+
+    fetchImage = async (req,res) => {
+        const data = await client.getImage("loYz6HE");
+        console.log(data);
+        res.json({message: "oke"});
+    }
+
+    testGetClassesVersion1 = async (req,res) => {
+        const studentID = req.body.studentID;
+        const studentClasses = await studentClassRepository.find({
+            where: {studentDetail : studentID},
+            select : {
+                studentDetail : {
+                    studentID : true,
+                },
+                classDetail : {
+                    classID : true,
+                    roomNumber : true,
+                    shiftNumber : true,
+                    teacher : {
+                        teacherID : true,
+                        teacherName : true
+                    },
+                    course : {
+                        courseID : true,
+                        courseName : true,
+                        totalWeeks : true
+                    }
+                }
+            },
+            relations: {
+                studentDetail: true,
+                classDetail : {
+                    teacher : true,
+                    course : true,
+                }
+            }
+        })
+
+        for (let i in studentClasses){
+            const total = await attendanceDetailRepository.countBy({
+                studentDetail : studentClasses[i].studentDetail.studentID,
+                classDetail: studentClasses[i].classDetail.classID
+            });
+            const progress = (total / studentClasses[i].classDetail.course.totalWeeks)*100
+            console.log("Total attendance:", total)
+            console.log("Progress:", progress)
+            studentClasses[i].progress = progress;
+            studentClasses[i].total = total;
+            console.log(studentClasses[i]);
+        }
+
+        res.json(studentClasses);
     }
 }
 

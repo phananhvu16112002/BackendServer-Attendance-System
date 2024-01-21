@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
 import { Classes } from "./Classes"
 import { Teacher } from "./Teacher"
-
+import { AttendanceDetail } from "./AttendanceDetail"
 @Entity()
 export class AttendanceForm {
     @PrimaryColumn()
@@ -34,4 +34,7 @@ export class AttendanceForm {
 
     @Column({default: 0})
     radius: number
+
+    // @OneToMany(() => AttendanceDetail, (AttendanceDetail) => AttendanceDetail.attendanceForm)
+    // attendanceDetail: AttendanceDetail[]
 }
