@@ -566,13 +566,14 @@ class Test {
             console.log(totalPresence, totalLate, totalAbsence);
             console.log("Test double: " + parseFloat(totalPresence + ".0"))
             const progress = (total / studentClasses[i].classDetail.course.totalWeeks);
+            console.log('Total Attendance:', typeof total);
             console.log("Total attendance:", total)
             console.log("Progress:", progress)
             console.log("TotalPresence", `${totalPresence}.0` ),
             console.log("totalAbsence", `${totalAbsence}.0` ),
             console.log("totalLate", `${totalLate}.0` ),
             studentClasses[i].progress = progress;
-            studentClasses[i].total = total;
+            studentClasses[i].total = `${total}.0`;
             studentClasses[i].totalPresence = `${totalPresence}.0`;
             studentClasses[i].totalAbsence = `${totalAbsence}.0`;
             studentClasses[i].totalLate = `${totalLate}.0`;
@@ -601,6 +602,51 @@ class Test {
                 }
             }
         })
+
+        for (let i in attendanceDetails){
+            // Log the entire object
+            const total = await attendanceDetailRepository.countBy({
+                studentDetail : attendanceDetails[i].studentDetail.studentID,
+                classDetail: attendanceDetails[i].classDetail.classID,
+            });
+            let totalPresence = 0;
+            let totalLate = 0;
+            let totalAbsence = 0;
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                totalPresence = await attendanceDetailRepository.countBy({
+                    studentDetail : attendanceDetails[i].studentDetail.studentID,
+                    classDetail: attendanceDetails[i].classDetail.classID,
+                    result : 1
+                });
+                totalLate = await attendanceDetailRepository.countBy({
+                    studentDetail : attendanceDetails[i].studentDetail.studentID,
+                    classDetail: attendanceDetails[i].classDetail.classID,
+                    result : 0.5
+                });
+                totalAbsence = await attendanceDetailRepository.countBy({
+                    studentDetail : attendanceDetails[i].studentDetail.studentID,
+                    classDetail: attendanceDetails[i].classDetail.classID,
+                    result : 0
+                });    
+            })
+            console.log(totalPresence, totalLate, totalAbsence);
+            console.log("Test double: " + parseFloat(totalPresence + ".0"))
+            // const progress = (total / attendanceDetails[i].classDetail.course.totalWeeks);
+            console.log('Total Attendance:', typeof total);
+            console.log("Total attendance:", total)
+            // console.log("Progress:", progress)
+            console.log("TotalPresence", `${totalPresence}.0` ),
+            console.log("totalAbsence", `${totalAbsence}.0` ),
+            console.log("totalLate", `${totalLate}.0` ),
+            // attendanceDetails[i].progress = progress;
+            attendanceDetails[i].total = `${total}.0`;
+            attendanceDetails[i].totalPresence = `${totalPresence}.0`;
+            attendanceDetails[i].totalAbsence = `${totalAbsence}.0`;
+            attendanceDetails[i].totalLate = `${totalLate}.0`;
+            console.log(attendanceDetails[i].totalPresence);
+        }
+
+
         res.status(200).json(attendanceDetails);
     }
 }

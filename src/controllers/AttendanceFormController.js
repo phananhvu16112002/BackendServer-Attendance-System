@@ -26,7 +26,7 @@ class AttendanceFormController {
             console.log(type);
             console.log(location);
             console.log(latitude);
-            console.log(longitude);
+            console.log(longtitude);
             console.log(radius);
 
             const classes = await ClassService.getClassByIDWithStudents(classID);
