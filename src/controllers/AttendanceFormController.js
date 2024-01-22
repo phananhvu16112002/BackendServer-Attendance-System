@@ -18,6 +18,17 @@ class AttendanceFormController {
             const longtitude = req.body.longtitude;
             const radius = req.body.radius;
 
+            console.log(classID);
+            console.log(startTime);
+            console.log(endTime);
+            console.log(startTime);
+            console.log(dateOpen);
+            console.log(type);
+            console.log(location);
+            console.log(latitude);
+            console.log(longitude);
+            console.log(radius);
+
             const classes = await ClassService.getClassByIDWithStudents(classID);
             if (classes == null){
                 return res.status(422).json({message : `Class with the id: ${classID} does not exist`});
