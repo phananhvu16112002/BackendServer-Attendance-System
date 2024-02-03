@@ -63,8 +63,8 @@ class ClassService {
             return await classRepository.find({where : {
                 teacher : {
                     teacherID : teacherID
-                }
-            }})
+                },
+            }, relations: {course : true}})
         } catch (e) {
             console.log(e);
             return null;

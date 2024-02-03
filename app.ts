@@ -9,6 +9,7 @@ import UploadImageService from "./src/services/UploadImageService";
 import StudentClassService from "./src/services/StudentClassService";
 import TeacherRouter from "./src/routes/TeacherRouter";
 import cors from "cors";
+import TokenRouter from "./src/routes/TokenRouter";
 
 const app = express();
 app.use(cors())
@@ -20,6 +21,7 @@ app.use(express.json());
 
 app.use("/api/student", StudentRouter)
 app.use("/api/teacher", TeacherRouter)
+app.use("/api/token", TokenRouter)
 app.use("/test", TestRouter)
 
 app.listen(8080, () => {

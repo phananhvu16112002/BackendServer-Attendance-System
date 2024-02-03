@@ -11,7 +11,6 @@ TestRouter.get("/createFormTable", TestController.testCreateFormTable)
 TestRouter.get("/takeAttendance", TestController.testTakeAttendance)
 
 TestRouter.get("/getAttendanceDetail", TestController.testGetAttendanceDetail)
-TestRouter.get("/getStudentClass", TestController.testGetStudentClasses)
 TestRouter.get("/getStudent", TestController.testGetStudent)
 TestRouter.get("/getTeacher", TestController.testGetTeacher)
 TestRouter.get("/getCourse", TestController.testGetCourse)

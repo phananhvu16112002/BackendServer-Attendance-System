@@ -22,11 +22,15 @@ LoadModels();
 class FaceMatchingService {
     faceMatching = async (image, studentID) => {
         let canvasImg = await canvas.loadImage(image.data);
+        console.log(canvasImg);
+
+        console.log("before detection");
         let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
         faceDescription = faceapi.resizeResults(faceDescription, canvasImg);
         
         const labels = await this.getLabels(studentID);
-
+        console.log(labels.length);
+        
         const labeledFaceDescriptors = await Promise.all(
             labels.map(async label => {
                 const response = await axios.get(label, {responseType: 'arraybuffer'});
