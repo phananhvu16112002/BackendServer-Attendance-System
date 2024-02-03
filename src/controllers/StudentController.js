@@ -114,8 +114,8 @@ class StudentController{
                 return res.status(422).json({message: "Email or password incorrect"});
             }
 
-            const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1h' })
-            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' })
+            const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '30s' })
+            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1m' })
 
             await StudentService.updateStudentAccessTokenAndRefreshToken(student, accessToken, refreshToken);
             res.status(200).json({

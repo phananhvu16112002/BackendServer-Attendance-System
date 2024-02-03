@@ -451,13 +451,12 @@ class Test {
         
         const worksheet = content.worksheets[0];
         worksheet.eachRow((row, rowNumber) => {
-            const cellValue1 = row.getCell(1).value; // Value in column B
-            // Iterate through cells in the row:
-            console.log(row.getCell(2).text)
-            row.eachCell((cell, colNumber) => {
-                // Access cell value and format
-                console.log(`Cell at (${rowNumber}, ${colNumber}): ${cell.value}`);
-            });
+            
+            let student = new Student();
+            student.studentID = row.getCell(1).text;
+            student.studentName = row.getCell(2).text;
+            student.studentEmail = row.getCell(3).text;
+            console.log(student);
         })
 
         res.json({message: "Oke"});
@@ -564,19 +563,14 @@ class Test {
                 });    
             })
             console.log(totalPresence, totalLate, totalAbsence);
-            console.log("Test double: " + parseFloat(totalPresence + ".0"))
+
             const progress = (total / studentClasses[i].classDetail.course.totalWeeks);
-            console.log('Total Attendance:', typeof total);
-            console.log("Total attendance:", total)
-            console.log("Progress:", progress)
-            console.log("TotalPresence", `${totalPresence}.0` ),
-            console.log("totalAbsence", `${totalAbsence}.0` ),
-            console.log("totalLate", `${totalLate}.0` ),
+            
             studentClasses[i].progress = progress;
-            studentClasses[i].total = `${total}.0`;
-            studentClasses[i].totalPresence = `${totalPresence}.0`;
-            studentClasses[i].totalAbsence = `${totalAbsence}.0`;
-            studentClasses[i].totalLate = `${totalLate}.0`;
+            studentClasses[i].total = total;
+            studentClasses[i].totalPresence = totalPresence; 
+            studentClasses[i].totalAbsence = totalAbsence;
+            studentClasses[i].totalLate = totalLate;
             console.log(studentClasses[i].totalPresence);
         }
 

@@ -11,8 +11,8 @@ class TokenController {
                 const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
                 let userID = decoded.userID;
                 let role = decoded.role;
-                const accessToken = jwt.sign({userID, role}, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '45s'})
-                return res.status(200).json({message: "Access Token Successfully Refreshed",accessToken});
+                const accessToken = jwt.sign({userID, role}, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '30s'})
+                return res.status(200).json({message: "Access Token Successfully Refreshed", accessToken : accessToken});
             }
 
         } catch (e) {
