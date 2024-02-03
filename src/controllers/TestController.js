@@ -172,11 +172,11 @@ class Test {
 
             //Ket noi student va class trong StudentClass
             let studentClass = new StudentClass()
-            studentClass.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0696"})
             studentClass.classDetail = classes
 
             let studentClass2 = new StudentClass()
-            studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0380"})
+            studentClass2.studentDetail = await AppDataSource.getRepository(Student).findOneBy({studentID: "520H0696"})
             studentClass2.classDetail = classes2
 
             // let studentClass3 = new StudentClass()
