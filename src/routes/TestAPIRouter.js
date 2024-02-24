@@ -122,7 +122,7 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
             finalResult.push(result[index]);
         }
     })
-    return res.json(finalResult);
+    return res.json({data: finalResult, all: 0, pass: 0, ban: 0, warning: 0});
 })
 
 export default TestAPIRouter
