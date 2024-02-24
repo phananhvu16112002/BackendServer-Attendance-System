@@ -1,8 +1,10 @@
 import express from "express";
 import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
+import { StudentClass } from "../models/StudentClass";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
+const studentClassRepository = AppDataSource.getRepository(StudentClass);
 
 const TestAPIRouter = express.Router();
 
@@ -74,6 +76,53 @@ TestAPIRouter.get("/attendanceDetail", async (req,res) => {
         }
     })
     res.json(result);
+})
+
+TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
+    const classID = '520300_09_t0133'
+    const result = await studentClassRepository.find(
+        {
+            where: {
+                classDetail: classID,
+            },
+            select: {
+                studentDetail: {
+                    studentID: true,
+                    studentEmail: true,
+                    studentName: true,
+                }
+            },
+            relations: {
+                studentDetail: true
+            }
+        }
+    );
+
+    let finalResult = []
+    
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+        for (let index = 0; index < result.length; index++){
+            const fetch = await attendanceDetailRepository.find(
+                {
+                    where: {
+                        studentDetail: result[index].studentDetail.studentID,
+                        classDetail: result[index].classDetail
+                    },
+                    select: {
+                        attendanceForm: true,
+                        result: true,
+                        dateAttendanced: true,
+                        location: true,
+                        note: true,
+                        url: true
+                    }
+                }
+            )
+            result[index].attendanceDetail = fetch
+            finalResult.push(result[index]);
+        }
+    })
+    return res.json(finalResult);
 })
 
 export default TestAPIRouter
