@@ -40,6 +40,10 @@ class AttendanceFormController {
         
             //Make transactions to insert into database
             const form = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);
+
+            //Get danh sach student trong danh sach cam thi, trong danh sach warning
+            //Send notification
+            
             if (form == null){
                 return res.status(503).json({message : "Attendance Form cannot be created. Please try again!"});
             }

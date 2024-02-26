@@ -2,9 +2,12 @@ import express from "express";
 import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { StudentClass } from "../models/StudentClass";
+import { idText } from "typescript";
+import { Classes } from "../models/Classes";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
+const classRepository = AppDataSource.getRepository(Classes);
 
 const TestAPIRouter = express.Router();
 
@@ -79,11 +82,11 @@ TestAPIRouter.get("/attendanceDetail", async (req,res) => {
 })
 
 TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
-    const classID = '520300_09_t0133'
+    const classID = await classRepository.findOne({where: {classID: '520300_09_t0133'}, relations: {course: true}});
     const result = await studentClassRepository.find(
         {
             where: {
-                classDetail: classID,
+                classDetail: classID.classID
             },
             select: {
                 studentDetail: {
@@ -93,7 +96,7 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
                 }
             },
             relations: {
-                studentDetail: true
+                studentDetail: true,
             }
         }
     );
@@ -102,7 +105,7 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
     
     await AppDataSource.transaction(async (transactionalEntityManager) => {
         for (let index = 0; index < result.length; index++){
-            const fetch = await attendanceDetailRepository.find(
+            let fetch = await attendanceDetailRepository.find(
                 {
                     where: {
                         studentDetail: result[index].studentDetail.studentID,
@@ -117,8 +120,27 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
                         url: true
                     }
                 }
-            )
+            );
             result[index].attendanceDetail = fetch
+            
+            let sum = 0;
+            for (let id = 0; id < fetch.length; id ++){
+                if (fetch[id].result == 0){
+                    sum+=1;
+                }else if (fetch[id].result == 0.5){
+                    sum+=0.5;
+                }
+            }
+
+            let status;
+            if (sum > (classID.course.totalWeeks - classID.course.requiredWeeks)){
+                status = "Ban";
+            } else if (sum == (classID.course.totalWeeks - classID.course.requiredWeeks)){
+                status = "Warning";
+            }
+
+            result[index].status = status 
+            //result[index].status = fetch.map(f => {if (f.result != 1) return f.result})
             finalResult.push(result[index]);
         }
     })
