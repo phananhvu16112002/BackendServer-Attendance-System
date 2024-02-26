@@ -10,6 +10,7 @@ import StudentClassService from "./src/services/StudentClassService";
 import TeacherRouter from "./src/routes/TeacherRouter";
 import cors from "cors";
 import TokenRouter from "./src/routes/TokenRouter";
+import TestAPIRouter from "./src/routes/TestAPIRouter";
 
 const app = express();
 app.use(cors())
@@ -25,7 +26,7 @@ app.use("/api/teacher", TeacherRouter)
 app.use("/api/token", TokenRouter)
 app.use("/test", TestRouter)
 
-
+app.use("/test/api", TestAPIRouter)
 
 app.listen(8080, () => {
     console.log("Hello");

@@ -52,6 +52,56 @@ class AttendanceDetailService {
         }
     }
 
+    getAttendanceDetailByClassID = async (studentID, classID) => {
+        try{
+            return await attendanceDetailRepository.find({where: {
+                studentDetail : studentID,
+                classDetail: classID,
+            },
+            select: {
+                result: true,
+                dateAttendanced: true,
+                location: true, 
+                note: true,
+                latitude: true,
+                longitude: true,
+                url: true,
+                attendanceForm: {
+                    formID: true,
+                    status: true,
+                    type: true,
+                    status: true,
+                    startTime: true,
+                    endTime: true,
+                    classes: {
+                        roomNumber: true,
+                        shiftNumber: true,
+                        startTime: true,
+                        endTime: true,
+                        classType: true,
+                        group: true,
+                        subGroup: true,
+                        course: {
+                            courseID: true,
+                            courseName: true
+                        }
+                    }
+                },
+            },
+            relations : {
+                attendanceForm: {
+                    classes: {
+                        course : true
+                    }
+                }
+            }
+        });
+        
+        } catch (e) {
+            return null;
+        }
+    }
+
     // takeAttendance = async () => {
 
     // }

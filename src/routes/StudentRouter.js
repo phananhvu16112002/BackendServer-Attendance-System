@@ -19,5 +19,7 @@ StudentRouter.post("/resendOTP",StudentController.resendOTP);
 
 //Student Use Cases
 StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
+StudentRouter.get("/getAttendanceDetail", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
+
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 export default StudentRouter;

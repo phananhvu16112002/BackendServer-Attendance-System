@@ -93,8 +93,16 @@ class AttendanceDetailController {
         res.status(200).json(attendanceDetail);
     }
 
-    getAttendanceRecordsOfStudents = async (req,res) => {
-        
+    getAttendanceRecordsOfStudentByClassID = async (req,res) => {
+        const studentID = req.payload.userID;
+        const classID = req.query.classID;
+        const result = await AttendanceDetailService.getAttendanceDetailByClassID(studentID, classID);
+
+        if (result == null){
+            return res.status(500).json({message: "Your records is empty"});
+        } else {
+            return res.status(200).json(result);
+        }
     }
 }
 
