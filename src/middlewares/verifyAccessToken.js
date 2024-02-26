@@ -17,7 +17,7 @@ const VerifyAccessToken = (req, res, next) => {
         }else if (e.message == "jwt expired"){
             return res.status(401).json({ message: 'Access Token is expired' }) //Flutter recieved 401, immediately send a refresh token to refresh new access token
         }else {
-            return res.status(500).json({message: e.message});
+            return res.status(501).json({message: e.message});
         }
     }
 };
