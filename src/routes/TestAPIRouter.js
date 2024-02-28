@@ -81,7 +81,7 @@ TestAPIRouter.get("/attendanceDetail", async (req,res) => {
 })
 
 // 6th pass, 7th ban, 15th warning, 11 th tuan kiet waning
-TestAPIRouter.get("/getStudentFakeAPI", async (req,res) => {
+TestAPIRouter.get("/getStudentFakeAPI", (req,res) => {
     let data = [];
     let a = {
         studentDetail: {
@@ -127,49 +127,59 @@ TestAPIRouter.get("/getStudentFakeAPI", async (req,res) => {
     }
 
     for (let passIndex = 0; passIndex < 6; passIndex++){
-        let temp = a;
+        let temp = JSON.parse(JSON.stringify(a));
         temp.studentDetail.studentID = passIndex + "id";
         temp.studentDetail.studentEmail = passIndex + "email";
         temp.studentDetail.studentName = passIndex + "name";
+        temp.attendanceDetail[0].result = 1;
+        temp.attendanceDetail[1].result = 1;
+        temp.attendanceDetail[2].result = 1;
+        temp.attendanceDetail[3].result = 1;
+        temp.status = "Pass";
         data.push(temp);
     }
 
-    // for (let ban = 0; ban < 7; ban++){
-    //     let temp = a;
-    //     temp.studentDetail.studentID = ban + "id";
-    //     temp.studentDetail.studentEmail = ban + "email";
-    //     temp.studentDetail.studentName = ban + "name";
-    //     temp.attendanceDetail[0].result = 0;
-    //     temp.attendanceDetail[1].result = 0;
-    //     temp.attendanceDetail[2].result = 0;
-    //     temp.status = "Ban";
-    //     data.push(temp);
-    // }
+    for (let i = 0; i < 7; i++){
+        let temp = JSON.parse(JSON.stringify(a));
+        temp.studentDetail.studentID = i + "id";
+        temp.studentDetail.studentEmail = i + "email";
+        temp.studentDetail.studentName = i + "name";
+        temp.attendanceDetail[0].result = 1;
+        temp.attendanceDetail[1].result = 1;
+        temp.attendanceDetail[2].result = 0;
+        temp.attendanceDetail[3].result = 0;
+        temp.status = "Ban";
+        data.push(temp);
+    }
 
     for (let warningIndex = 0; warningIndex < 4; warningIndex++){
-        let temp = a;
-        temp.studentDetail.studentID = banIndex + "id";
-        temp.studentDetail.studentEmail = banIndex + "email";
-        temp.studentDetail.studentName = banIndex + "name";
+        let temp = JSON.parse(JSON.stringify(a));
+        temp.studentDetail.studentID = warningIndex + "id";
+        temp.studentDetail.studentEmail = warningIndex + "email";
+        temp.studentDetail.studentName = warningIndex + "name";
         temp.attendanceDetail[0].result = 0;
-        temp.attendanceDetail[1].result = 0;
+        temp.attendanceDetail[1].result = 1;
+        temp.attendanceDetail[2].result = 1;
+        temp.attendanceDetail[3].result = 1;
         temp.status = "Warning";
         data.push(temp);
     }
 
     for (let trungTen = 0; trungTen < 11; trungTen++){
-        let temp = a;
-        temp.studentDetail.studentID = banIndex + "id";
-        temp.studentDetail.studentEmail = banIndex + "email";
+        let temp = JSON.parse(JSON.stringify(a));
+        temp.studentDetail.studentID = trungTen + "id";
+        temp.studentDetail.studentEmail = trungTen + "email";
         temp.studentDetail.studentName = "Ho Tuan Kiet";
         temp.attendanceDetail[0].result = 0;
-        temp.attendanceDetail[1].result = 0;
+        temp.attendanceDetail[1].result = 1;
+        temp.attendanceDetail[2].result = 1;
+        temp.attendanceDetail[3].result = 1;
         temp.status = "Warning";
         data.push(temp);
     }
 
     let result = {data: data, all: 28, pass: 6, ban: 7, warning: 11};
-    res.status(200).json(result);
+    return res.status(200).json(result);
 });
 
 TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
