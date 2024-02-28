@@ -103,6 +103,7 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
 
     let finalResult = []
     
+    
     await AppDataSource.transaction(async (transactionalEntityManager) => {
         for (let index = 0; index < result.length; index++){
             let fetch = await attendanceDetailRepository.find(
