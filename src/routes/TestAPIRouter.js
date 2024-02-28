@@ -2,7 +2,6 @@ import express from "express";
 import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { StudentClass } from "../models/StudentClass";
-import { idText } from "typescript";
 import { Classes } from "../models/Classes";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -80,6 +79,98 @@ TestAPIRouter.get("/attendanceDetail", async (req,res) => {
     })
     res.json(result);
 })
+
+// 6th pass, 7th ban, 15th warning, 11 th tuan kiet waning
+TestAPIRouter.get("/getStudentFakeAPI", async (req,res) => {
+    let data = [];
+    let a = {
+        studentDetail: {
+            studentID: "a",
+            studentName: "a",
+            studentEmail: "a",
+        },
+        attendanceDetail: [
+            {
+                attendanceForm: "fa80bf1f-7256-4ffd-9550-b6a1656c6997",
+                result: 1,
+                dateAttendanced: "2024-01-17T14:15:00.000Z",
+                location: "Ton Duc Thang",
+                note: "",
+                url: "https://i.imgur.com/4bSNcPK.jpg"
+            },
+            {
+                attendanceForm: "fa80bf1f-7256-4ffd-9550-b6a1656c6997",
+                result: 1,
+                dateAttendanced: "2024-01-17T14:15:00.000Z",
+                location: "Ton Duc Thang",
+                note: "",
+                url: "https://i.imgur.com/4bSNcPK.jpg"
+            },
+            {
+                attendanceForm: "fa80bf1f-7256-4ffd-9550-b6a1656c6997",
+                result: 1,
+                dateAttendanced: "2024-01-17T14:15:00.000Z",
+                location: "Ton Duc Thang",
+                note: "",
+                url: "https://i.imgur.com/4bSNcPK.jpg"
+            },
+            {
+                attendanceForm: "fa80bf1f-7256-4ffd-9550-b6a1656c6997",
+                result: 1,
+                dateAttendanced: "2024-01-17T14:15:00.000Z",
+                location: "Ton Duc Thang",
+                note: "",
+                url: "https://i.imgur.com/4bSNcPK.jpg"
+            },
+        ],
+        status: "Pass",
+    }
+
+    for (let passIndex = 0; passIndex < 6; passIndex++){
+        let temp = a;
+        temp.studentDetail.studentID = passIndex + "id";
+        temp.studentDetail.studentEmail = passIndex + "email";
+        temp.studentDetail.studentName = passIndex + "name";
+        data.push(temp);
+    }
+
+    // for (let ban = 0; ban < 7; ban++){
+    //     let temp = a;
+    //     temp.studentDetail.studentID = ban + "id";
+    //     temp.studentDetail.studentEmail = ban + "email";
+    //     temp.studentDetail.studentName = ban + "name";
+    //     temp.attendanceDetail[0].result = 0;
+    //     temp.attendanceDetail[1].result = 0;
+    //     temp.attendanceDetail[2].result = 0;
+    //     temp.status = "Ban";
+    //     data.push(temp);
+    // }
+
+    for (let warningIndex = 0; warningIndex < 4; warningIndex++){
+        let temp = a;
+        temp.studentDetail.studentID = banIndex + "id";
+        temp.studentDetail.studentEmail = banIndex + "email";
+        temp.studentDetail.studentName = banIndex + "name";
+        temp.attendanceDetail[0].result = 0;
+        temp.attendanceDetail[1].result = 0;
+        temp.status = "Warning";
+        data.push(temp);
+    }
+
+    for (let trungTen = 0; trungTen < 11; trungTen++){
+        let temp = a;
+        temp.studentDetail.studentID = banIndex + "id";
+        temp.studentDetail.studentEmail = banIndex + "email";
+        temp.studentDetail.studentName = "Ho Tuan Kiet";
+        temp.attendanceDetail[0].result = 0;
+        temp.attendanceDetail[1].result = 0;
+        temp.status = "Warning";
+        data.push(temp);
+    }
+
+    let result = {data: data, all: 28, pass: 6, ban: 7, warning: 11};
+    res.status(200).json(result);
+});
 
 TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
     const classID = await classRepository.findOne({where: {classID: '520300_09_t0133'}, relations: {course: true}});
