@@ -27,7 +27,7 @@ export class AttendanceDetail {
     studentClass : StudentClass
 
     @PrimaryColumn({type: "string", name: "formID"})
-    @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm.formID)
+    @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm)
     @JoinColumn({name:"formID", referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
 
