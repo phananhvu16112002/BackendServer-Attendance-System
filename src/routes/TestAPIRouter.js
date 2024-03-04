@@ -3,10 +3,12 @@ import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { StudentClass } from "../models/StudentClass";
 import { Classes } from "../models/Classes";
+import { AttendanceForm } from "../models/AttendanceForm";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const classRepository = AppDataSource.getRepository(Classes);
+const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 
 const TestAPIRouter = express.Router();
 
@@ -182,6 +184,122 @@ TestAPIRouter.get("/getStudentFakeAPI", (req,res) => {
     return res.status(200).json(result);
 });
 
+TestAPIRouter.get("/getStudentsAttendanceDetailsRecords", async (req,res) => {
+    const classID = req.query.classID;
+    const formID = req.query.formID;
+    const attendanceForm = await attendanceFormRepository.findOne({where: {
+        formID: formID,
+        classes: {
+            classID: classID
+        }
+    }});
+
+    const attendanceDetails = await attendanceDetailRepository.find(
+        {where: {
+            attendanceForm: attendanceForm.formID,
+        }}
+    )
+
+    res.status(200).json({attendanceForm, attendanceDetails});
+})
+////////////////////////////////////////////////////////////////////
+TestAPIRouter.get("/fakeAttendanceDetailsRecord", async (req,res) => {
+    const classID = req.query.classID || "";
+    const formID = req.query.formID || "";
+
+    let attendanceDetails = []
+    
+    for (let i = 10; i < 35; i++){
+        let id = "520H03" + i;
+        let a = {
+            studentDetail : id,
+            classDetail : classID,
+            attendanceForm: formID,
+            result: 0,
+            dateAttendanced: "2024-03-03T10:57:55.000Z",
+            location: "",
+            note: "",
+            latitude: 0,
+            longitude: 0,
+            url: "",
+        }
+        attendanceDetails.push(a);
+    }
+
+    res.status(200).json({data: attendanceDetails, all: attendanceDetails.length, present : 0, absent: attendanceDetails.length, late: 0});
+})
+
+TestAPIRouter.get("/fakeAttendanceDetailsRecordWith7Presence", async (req,res) => {
+    const classID = req.query.classID || "";
+    const formID = req.query.formID || "";
+
+    let attendanceDetails = []
+    
+    for (let i = 10; i < 35; i++){
+        let id = "520H03" + i;
+        let a = {
+            studentDetail : id,
+            classDetail : classID,
+            attendanceForm: formID,
+            result: 0,
+            dateAttendanced: "2024-03-03T10:57:55.000Z",
+            location: "",
+            note: "",
+            latitude: 0,
+            longitude: 0,
+            url: "",
+        }
+        attendanceDetails.push(a);
+    }
+
+    attendanceDetails[0].result = 1;
+    attendanceDetails[5].result = 1;
+    attendanceDetails[6].result = 1;
+    attendanceDetails[8].result = 1;
+    attendanceDetails[9].result = 1;
+    attendanceDetails[11].result = 1;
+    attendanceDetails[16].result = 1;
+
+    res.status(200).json({data: attendanceDetails, all: attendanceDetails.length, present : 7, absent: attendanceDetails.length - 7, late: 0});
+})
+
+TestAPIRouter.get("/fakeAttendanceDetailsRecordWith7PresenceAnd2Late", async (req,res) => {
+    const classID = req.query.classID || "";
+    const formID = req.query.formID || "";
+
+    let attendanceDetails = []
+    
+    for (let i = 10; i < 35; i++){
+        let id = "520H03" + i;
+        let a = {
+            studentDetail : id,
+            classDetail : classID,
+            attendanceForm: formID,
+            result: 0,
+            dateAttendanced: "2024-03-03T10:57:55.000Z",
+            location: "",
+            note: "",
+            latitude: 0,
+            longitude: 0,
+            url: "",
+        }
+        attendanceDetails.push(a);
+    }
+
+    attendanceDetails[0].result = 1;
+    attendanceDetails[5].result = 1;
+    attendanceDetails[6].result = 1;
+    attendanceDetails[8].result = 1;
+    attendanceDetails[9].result = 1;
+    attendanceDetails[11].result = 1;
+    attendanceDetails[16].result = 1;
+    attendanceDetails[12].result = 0.5;
+    attendanceDetails[20].result = 0.5;
+
+    res.status(200).json({data: attendanceDetails, all: attendanceDetails.length, present : 7, absent: attendanceDetails.length - 9, late: 2});
+})
+
+///////////////////////////////////////////////////////////////////
 TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
     const classID = await classRepository.findOne({where: {classID: '520300_09_t0133'}, relations: {course: true}});
     const result = await studentClassRepository.find(
