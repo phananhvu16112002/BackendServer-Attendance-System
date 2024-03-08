@@ -6,6 +6,8 @@ import TeacherController from "../controllers/TeacherController";
 
 const TeacherRouter = express.Router();
 
+TeacherRouter.post("/register", TeacherController)
+
 //Insert  VerifyAccessToken, Authorization("teacher") for authenticate and authorize
 //A route for create attendance form
 TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);

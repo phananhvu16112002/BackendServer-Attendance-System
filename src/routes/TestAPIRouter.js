@@ -372,4 +372,18 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
 
 export default TestAPIRouter
 
+TestAPIRouter.post("/feedback", (req,res) => {
+    //edit student attendance detail
+
+    //update the report status
+
+    //add the feedback 
+})
+
+TestAPIRouter.post("/edit", (req,res) => {
+    //edit student attendance detail
+
+    //add edition history
+})
+
 

@@ -14,10 +14,10 @@ export class Classes {
     @Column({default: 0})
     shiftNumber: number
 
-    @Column({type: "datetime", nullable: false})
+    @Column({type: "time", nullable: false})
     startTime: string
 
-    @Column({type: "datetime", nullable: false})
+    @Column({type: "time", nullable: false})
     endTime: string
 
     @Column({default: ""})

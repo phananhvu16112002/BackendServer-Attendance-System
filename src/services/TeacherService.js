@@ -1,9 +1,114 @@
 import { AppDataSource } from "../config/db.config";
 import { Teacher } from "../models/Teacher";
+import bcrypt from "bcrypt";
+import { MySQLDatetimeToJSDatetime } from "../utils/TimeConvert";
+import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 
 const teacherRepository = AppDataSource.getRepository(Teacher);
 
 class TeacherService {
+    checkTeacherExist = async (teacherID) => {
+        try {
+            let teacher = await teacherRepository.findOneBy({teacherID: teacherID});
+            return teacher;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    updateTeacherPasswordAndOTP = async (teacher, hashedPassword, OTP) => {
+        try {
+            teacher.teacherHashedPassword = hashedPassword;
+            teacher.hashedOTP = OTP;
+            await teacherRepository.save(teacher);
+        } catch (e) {
+            return null;
+        }
+    } 
+
+    checkTeacherOTPRegister = async (email, OTP) => {
+        try {   
+            let username = email.split('@')[0];
+            let teacher = await teacherRepository.findOneBy({teacherID: username});
+            let hashedOTP = teacher.hashedOTP;
+
+            let result = await bcrypt.compare(OTP, hashedOTP);
+            if (result == false){
+                return false;
+            }
+            teacher.active = true;
+            await teacherRepository.save(teacher);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    login = async (teacher, email, password) => {
+        try {
+            let result = await bcrypt.compare(password, teacher.teacherHashedPassword);
+            if (email.toLowerCase() == teacher.teacherEmail.toLowerCase() && result == true){
+                return true;
+            }
+            return false;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    updateTeacherAccessTokenAndRefreshToken = async (teacher, accessToken, refreshToken) => {
+        try {
+            teacher.accessToken = accessToken;
+            teacher.refreshToken = refreshToken;
+            await teacherRepository.save(teacher);
+        } catch (e) {
+            //logging error message
+        }
+    }
+
+    updateTeacherOTP = async (teacher, OTP) => {
+        try{
+            let currentDate = new Date();
+            currentDate.setMinutes(currentDate.getMinutes() + 1);
+
+            teacher.hashedOTP = OTP;
+            teacher.timeToLiveOTP = JSDatetimeToMySQLDatetime(currentDate);
+            await teacherRepository.save(teacher);
+        } catch(e){
+
+        }
+    }
+
+    checkTeacherOTPExpired = (teacher) => {
+        try{
+            return MySQLDatetimeToJSDatetime(teacher.timeToLiveOTP) < JSDatetimeToMySQLDatetime(new Date());
+        } catch(e){
+            return false;
+        }
+    }
+
+    checkTeacherOTPReset = async (teacher, OTP) => {
+        try{
+            return await bcrypt.compare(OTP, teacher.hashedOTP);
+        } catch(e){
+            return false;
+        }
+    }
+
+    updateTeacherResetToken= async (teacher, resetToken) => {
+        teacher.resetToken = resetToken;
+        await teacherRepository.save(teacher);
+    }
+
+    updateTeacherPassword = async (teacher, password) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+        teacher.hashedOTP = "";
+        teacher.resetToken = "";
+        teacher.studentHashedPassword = hashPassword;
+        await teacherRepository.save(teacher);
+    }
+
     getClassesByTeacherID = async (teacherID) => {
         try {
             const classes = await teacherRepository.findOne(
