@@ -60,14 +60,15 @@ class ClassService {
 
     getClassesWithCoursesByTeacherID = async (teacherID) => {
         try {
-            return await classRepository.find({where : {
+            let data = await classRepository.find({where : {
                 teacher : {
                     teacherID : teacherID
                 },
             }, relations: {course : true}})
+
+            return {data, error: null};
         } catch (e) {
-            console.log(e);
-            return null;
+            return {data: [], error: "Failed fetching data"};
         }
     }
 }

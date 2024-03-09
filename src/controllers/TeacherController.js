@@ -196,31 +196,6 @@ class TeacherController {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }
-
-
-    getClasses = async (req,res) => {
-        //Will need to change to get payload
-        const teacherID = req.body.teacherID;
-
-        const classes = await classService.getClassesByTeacherID(teacherID);
-
-        if (classes == null){
-            return res.status(503).json({message : "Teacher is not enrolled in any class"});
-        }
-
-        res.status(200).json(classes);
-    }
-
-    getClassesWithCourse = async (req,res) => {
-        const teacherID = req.body.teacherID;
-        const classes = await classService.getClassesWithCoursesByTeacherID(teacherID);
-
-        if (classes == null){
-            return res.status(503).json({message : "Teacher is not enrolled in any class"});
-        }
-
-        res.status(200).json(classes);
-    }
 }
 
 export default new TeacherController();
