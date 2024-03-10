@@ -166,13 +166,13 @@ class AttendanceDetailController {
             return res.status(500).json({message: "Cannot upload image. Please take attendance again."});
         }
 
-        if (attendanceForm.type == 1){
-            let check = await FaceMatchingService.faceMatching(image, studentID);
-            if (!check){
-                await UploadImageService.deleteImageByImageHash(data.id);
-                return res.status(422).json({message: "Your face does not match"});
-            }
+        
+        let check = await FaceMatchingService.faceMatching(image, studentID);
+        if (!check){
+            await UploadImageService.deleteImageByImageHash(data.id);
+            return res.status(422).json({message: "Your face does not match"});
         }
+        
         //If only type == 1
             //After send image success, do face matching
 

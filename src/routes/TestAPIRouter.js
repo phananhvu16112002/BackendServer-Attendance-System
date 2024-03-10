@@ -5,6 +5,8 @@ import { StudentClass } from "../models/StudentClass";
 import { Classes } from "../models/Classes";
 import { AttendanceForm } from "../models/AttendanceForm";
 import ClassService from "../services/ClassService";
+import { Course } from "../models/Course";
+import { Teacher } from "../models/Teacher";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -392,7 +394,38 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
     orderBy('attendancedetail.dateAttendanced', 'ASC').
     where("classes.classID = :id", {id : 1}).getOne();
-    res.json(data);
+    
+    let data1 = await classRepository.createQueryBuilder("classes"). 
+    innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    select('classes.*'). 
+    addSelect('COUNT(studentclass.studentID) as TotalStudents').
+    groupBy('classes.classID').
+    where("classes.classID = :id", {id : 1}).getRawOne()
+
+    ///oke for total presence, absence, late
+    let data2 = await studentClassRepository.createQueryBuilder("student_class"). 
+    innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
+    innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
+    innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").
+    innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    select('student_class.*'). 
+    addSelect('COUNT(*) as Total').
+    addSelect(
+        `SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS TotalLate`,
+    ).
+    addSelect('classes.*').
+    addSelect('course.*').
+    addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+    groupBy('student_class.classID').
+    where("student_class.studentID = :id", {id : "520H0380"}).getRawMany()
+
+    res.json(data2);
     // let data = await classRepository.findOne({
     //     where: {
     //         classID: "1"
