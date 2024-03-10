@@ -22,4 +22,5 @@ StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("studen
 StudentRouter.get("/getAttendanceDetail", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
+StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);
 export default StudentRouter;

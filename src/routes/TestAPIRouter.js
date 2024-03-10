@@ -4,6 +4,7 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import { StudentClass } from "../models/StudentClass";
 import { Classes } from "../models/Classes";
 import { AttendanceForm } from "../models/AttendanceForm";
+import ClassService from "../services/ClassService";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -370,8 +371,6 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
     return res.json({data: final, all: 0, pass: 0, ban: 0, warning: 0});
 })
 
-export default TestAPIRouter
-
 TestAPIRouter.post("/feedback", (req,res) => {
     //edit student attendance detail
 
@@ -385,5 +384,45 @@ TestAPIRouter.post("/edit", (req,res) => {
 
     //add edition history
 })
+
+
+TestAPIRouter.get("/getClasses", async (req,res) => {
+    let data = await classRepository.createQueryBuilder("classes").
+    innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
+    orderBy('attendancedetail.dateAttendanced', 'ASC').
+    where("classes.classID = :id", {id : 1}).getOne();
+    res.json(data);
+    // let data = await classRepository.findOne({
+    //     where: {
+    //         classID: "1"
+    //     }, 
+    //     select: {
+    //         teacher: {
+    //             teacherID: true,
+    //             teacherEmail: true,
+    //             teacherName: true
+    //         },
+    //         studentClass: {
+    //             studentDetail: {
+    //                 studentID: true,
+    //                 studentEmail: true,
+    //                 studentName: true
+    //             }
+    //         }
+    //     },
+    //     relations: {
+    //         teacher: true,
+    //         course: true,
+    //         studentClass: {
+    //             studentDetail: true
+    //         }
+    //     }
+    // });
+    // res.json(data.studentClass);
+})
+
+export default TestAPIRouter
+
 
 

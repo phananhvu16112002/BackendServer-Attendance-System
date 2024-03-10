@@ -19,6 +19,10 @@ TeacherRouter.post("/resendOTP", TeacherController.resendOTP);
 //Insert  VerifyAccessToken, Authorization("teacher") for authenticate and authorize
 //A route for create attendance form
 TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), ClassesController.getClassesWithCourse);
+TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), );
+//check if teacherID is in classID
+//check if 
+
 TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 

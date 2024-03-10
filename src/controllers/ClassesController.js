@@ -12,7 +12,7 @@ class ClassesController {
                 return res.status(500).json({message: error});
             }
             if (data.length == 0){
-                return res.status(204).json(data);
+                return res.status(204).json({message: "Teacher is not in charge of any class"});
             }
             return res.status(200).json(data);
         } catch (e) {
