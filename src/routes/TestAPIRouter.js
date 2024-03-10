@@ -424,8 +424,35 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
     groupBy('student_class.classID').
     where("student_class.studentID = :id", {id : "520H0380"}).getRawMany()
+    ////
 
-    res.json(data2);
+    ///Oke use in home page teacher
+    let data3 = await studentClassRepository.createQueryBuilder("student_class"). 
+    innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
+    //innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    select('student_class.*'). 
+    addSelect('COUNT(attendancedetails.studentDetail) as Total').
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 0.5 THEN 1 else 0 END) AS TotalLate`,
+    ).
+    groupBy('student_class.studentID, attendancedetails.formID').
+
+    addSelect('attendancedetails.*').
+    
+    where("student_class.classID = :id", {id : "2"}).getRawMany()
+
+    // innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    // innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
+    // orderBy('attendancedetail.dateAttendanced', 'ASC').
+    // where("classes.classID = :id", {id : 1}).getRawMany();
+
+    res.json(data3);
     // let data = await classRepository.findOne({
     //     where: {
     //         classID: "1"

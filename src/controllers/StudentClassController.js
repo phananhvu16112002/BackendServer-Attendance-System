@@ -1,23 +1,22 @@
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 
-
 class StudentClassController {
-    getStudentClass = (req,res) => {
-        res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
-    }
+    // getStudentClass = (req,res) => {
+    //     res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
+    // }
 
-    getStudentClasses = async (req,res) => {
-        try {
-            const studentID = req.payload.userID; 
-            const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
+    // getStudentClasses = async (req,res) => {
+    //     try {
+    //         const studentID = req.payload.userID; 
+    //         const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
 
-            return res.status(200).json(studentClasses);
+    //         return res.status(200).json(studentClasses);
             
-        } catch (e) {
-            return res.status(500).json({message: "Cannot get classes"});
-        }
-    }
+    //     } catch (e) {
+    //         return res.status(500).json({message: "Cannot get classes"});
+    //     }
+    // }
 
     //oke
     getStudentsWithAllAttendanceDetails = async (req,res) => {
@@ -43,6 +42,24 @@ class StudentClassController {
 
         } catch(e){
 
+        }
+    }
+
+    //oke
+    getClassesByStudentID = async (req,res) => {
+        try{
+            const studentID = req.payload.userID;
+            let {data, error} = await StudentClassService.getClassesByStudentID(studentID);
+            
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "Student's not been enrolled in any class"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
         }
     }
 }
