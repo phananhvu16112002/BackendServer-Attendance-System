@@ -35,13 +35,20 @@ class StudentClassController {
             
             //Check if teacher is in charge of this class
             if (teacherID != classData.teacher.teacherID){
-                return res.status().json({message: "Teacher is not in charge of this class"});
+                return res.status(422).json({message: "Teacher is not in charge of this class"});
             }
 
             //get all students along with their attendance Detail
-
+            let {data, err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
+            if (err){
+                return res.status(500).json({message: error});
+            } 
+            if (data.length == 0){
+                return res.status(204).json({message: "There are no recoreds for students' attendance details"});
+            }
+            return res.status(200).json({classData: classData, data: data});
         } catch(e){
-
+            return res.status(500).json({message: "Internal Server Error"});
         }
     }
 

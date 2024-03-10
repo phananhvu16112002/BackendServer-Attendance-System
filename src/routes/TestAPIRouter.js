@@ -429,7 +429,7 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     ///Oke use in home page teacher
     let data3 = await studentClassRepository.createQueryBuilder("student_class"). 
     innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
-    //innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
     select('student_class.*'). 
     addSelect('COUNT(attendancedetails.studentDetail) as Total').
     addSelect(
@@ -444,15 +444,60 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     groupBy('student_class.studentID, attendancedetails.formID').
 
     addSelect('attendancedetails.*').
+    //will be order by created date
+    orderBy('student_class.studentID', 'ASC').addOrderBy('attendancedetails.dateAttendanced', 'ASC').
+    //orderBy('attendancedetails.dateAttendanced', 'ASC').addOrderBy('student_class.studentID', 'ASC').
     
-    where("student_class.classID = :id", {id : "2"}).getRawMany()
+    where("student_class.classID = :id", {id : "1"}).getRawMany()
 
     // innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
     // innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
     // orderBy('attendancedetail.dateAttendanced', 'ASC').
     // where("classes.classID = :id", {id : 1}).getRawMany();
+    
+    let list = [];
+    function transformStudentClassDTO(data){
+        return {
+            studentID: data.studentID,
+            total: data.Total,
+            totalPresence: data.TotalPresence,
+            totalAbsence: data.TotalAbsence,
+            totalLate: data.TotalLate,
+            attendanceDetails: []
+        }
+    }
 
-    res.json(data3);
+    function transformAttendanceDetailDTO(data){
+        return {
+            formID: data.formID,
+            dateAttendanced: data.dateAttendanced,
+            location: data.location,
+            note: data.note,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            result: data.result,
+            url: data.url
+        }
+    }
+    
+    let temp;
+
+    for (let i = 0; i < data3.length; i++){
+        if (list.length == 0){
+            temp = transformStudentClassDTO(data3[i]);
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]));
+            list.push(temp);
+        } else if (temp.studentID == data3[i].studentID){
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]))
+        } else {
+            temp = transformStudentClassDTO(data3[i]);
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]));
+            list.push(temp);
+        }
+    }
+
+    console.log(list);
+    res.json(list);
     // let data = await classRepository.findOne({
     //     where: {
     //         classID: "1"

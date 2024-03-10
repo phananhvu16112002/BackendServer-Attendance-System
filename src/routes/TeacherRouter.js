@@ -5,6 +5,7 @@ import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
 import ClassesController from "../controllers/ClassesController";
+import StudentClassController from "../controllers/StudentClassController";
 
 
 const TeacherRouter = express.Router();
@@ -19,7 +20,7 @@ TeacherRouter.post("/resendOTP", TeacherController.resendOTP);
 //Insert  VerifyAccessToken, Authorization("teacher") for authenticate and authorize
 //A route for create attendance form
 TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), ClassesController.getClassesWithCourse);
-TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), );
+TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsWithAllAttendanceDetails);
 //check if teacherID is in classID
 //check if 
 

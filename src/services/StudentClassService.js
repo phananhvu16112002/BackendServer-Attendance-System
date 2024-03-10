@@ -4,6 +4,7 @@ import { Course } from "../models/Course";
 import { Teacher } from "../models/Teacher";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { Classes } from "../models/Classes";
+import StudentClassDTO from "../dto/StudentClassDTO";
 
 
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -88,6 +89,23 @@ class StudentClassService {
             return {data, error: null};
         } catch(e){
             return {data: null, error: "Fetching failed"};
+        }
+    }
+
+    getStudentsAttendanceDetailsByClassID = async (classID) => {
+        try {
+            let data = await studentClassRepository.createQueryBuilder("student_class"). 
+                innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
+                innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+                select('student_class.*').addSelect('COUNT(attendancedetails.studentDetail) as Total').addSelect(`SUM(CASE WHEN attendancedetails.result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,).
+                addSelect(`SUM(CASE WHEN attendancedetails.result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,).addSelect(`SUM(CASE WHEN attendancedetails.result = 0.5 THEN 1 else 0 END) AS TotalLate`,).
+                groupBy('student_class.studentID, attendancedetails.formID').addSelect('attendancedetails.*').
+                //will be order by created date
+                orderBy('student_class.studentID', 'ASC').addOrderBy('attendancedetails.dateAttendanced', 'ASC').
+                where("student_class.classID = :id", {id : classID}).getRawMany()
+            return {data: StudentClassDTO.listOfStudentsWithAttendanceDetails(data), error: null};
+        } catch (e) {
+            return {data: [], error: "Failed fecthing"};
         }
     }
 }
