@@ -5,6 +5,7 @@ import UploadImageService from "../services/UploadImageService";
 import FaceMatchingService from "../services/FaceMatchingService";
 import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
+import StudentClassService from "../services/StudentClassService";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail); 
 class AttendanceDetailController {
@@ -93,16 +94,39 @@ class AttendanceDetailController {
         res.status(200).json(attendanceDetail);
     }
 
+    //oke
     getAttendanceRecordsOfStudentByClassID = async (req,res) => {
-        const studentID = req.payload.userID;
-        const classID = req.query.classID;
-        const result = await AttendanceDetailService.getAttendanceDetailByClassID(studentID, classID);
+        try {
+            const studentID = req.payload.userID;
+            const classID = req.params.id;
+            let {data,error} = await StudentClassService.checkStudentEnrolledInClass(studentID, classID);
 
-        if (result == null){
-            return res.status(500).json({message: "Your records is empty"});
-        } else {
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(422).json({message: "Student is not enrolled in this class"});
+            }
+
+            let {data: result, error: err} = await AttendanceDetailService.getAttendanceDetailByClassID(studentID, classID);
+            if (err){
+                return res.status(503).json({message: error});
+            }
+            if (result.length == 0){
+                return res.status(204).json({message: "You haven't taken any attendance yet!"});
+            }
             return res.status(200).json(result);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
         }
+    }
+
+    //oke
+    getAttendanceDetailsByFormID = async (req,res) => {
+        //check if teacher owns this form
+
+        //getAttendanceDetails
+        
     }
 
     takeAttendanceOffline = async (req, res) => {

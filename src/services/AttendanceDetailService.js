@@ -8,6 +8,7 @@ const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 
 class AttendanceDetailService {
+    //Oke
     createDefaultAttendanceDetailEntitiesForStudents = (listOfStudentClass, attendanceForm) => {
         console.log(listOfStudentClass);
         let listOfAttendanceDetail = []
@@ -17,22 +18,22 @@ class AttendanceDetailService {
 
             attendanceDetail.studentClass = studentClass;
             attendanceDetail.attendanceForm = attendanceForm;
+            attendanceDetail.createdAt = attendanceForm.dateOpened;
 
             listOfAttendanceDetail.push(attendanceDetail);
         }
 
         return listOfAttendanceDetail;
-        //attendanceDetailRepository.save(listOfAttendanceDetail);
     }
 
-    // createAttendanceDetail = async (studentClass, attendanceForm, location) => {
-    //     let attendanceDetail = new AttendanceDetail();
-    //     attendanceDetail.studentClass = studentClass;
-    //     attendanceDetail.attendanceForm = attendanceForm;
-    //     attendanceDetail.location = location;
-    //     await attendanceDetailRepository.save(attendanceDetail);
-    //     return attendanceDetail;
-    // }
+    createAttendanceDetail = async (studentClass, attendanceForm, location) => {
+        let attendanceDetail = new AttendanceDetail();
+        attendanceDetail.studentClass = studentClass;
+        attendanceDetail.attendanceForm = attendanceForm;
+        attendanceDetail.location = location;
+        await attendanceDetailRepository.save(attendanceDetail);
+        return attendanceDetail;
+    }
 
     getAttendanceDetail = async (studentID, classID, formID) => {
         try {
@@ -54,7 +55,7 @@ class AttendanceDetailService {
 
     getAttendanceDetailByClassID = async (studentID, classID) => {
         try{
-            return await attendanceDetailRepository.find({where: {
+            let data = await attendanceDetailRepository.find({where: {
                 studentDetail : studentID,
                 classDetail: classID,
             },
@@ -95,10 +96,12 @@ class AttendanceDetailService {
                     }
                 }
             }
-        });
+            });
+
+        return {data, error: null};
         
         } catch (e) {
-            return null;
+            return {data: null, error: "Failed fetching data"};
         }
     }
 
@@ -106,7 +109,9 @@ class AttendanceDetailService {
 
     // }
 
-    //oke used in StudentClass controller
+    getAttendanceDetailsByClassIDAndFormID = async (classID, formID) => {
+        
+    }
     
 }
 

@@ -7,6 +7,7 @@ import { AttendanceForm } from "../models/AttendanceForm";
 import ClassService from "../services/ClassService";
 import { Course } from "../models/Course";
 import { Teacher } from "../models/Teacher";
+import { Student } from "../models/Student";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -496,8 +497,15 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
         }
     }
 
+    //innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
+    let data4 = await attendanceDetailRepository.createQueryBuilder("attendancedetail"). 
+    innerJoin(Student, "student", "student.studentID = attendancedetail.studentID"). 
+    select("student.studentID, student.studentName").
+    addSelect('attendancedetail.*').
+    where("attendancedetail.formID = :id", {id : 1}).getRawMany();
+
     console.log(list);
-    res.json(list);
+    res.json(data4);
     // let data = await classRepository.findOne({
     //     where: {
     //         classID: "1"

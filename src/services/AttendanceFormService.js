@@ -2,28 +2,30 @@ import { AppDataSource } from "../config/db.config"
 import { AttendanceForm } from "../models/AttendanceForm"
 import { v4 as uuidv4 } from 'uuid';
 import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
+import { Classes } from "../models/Classes";
 
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
+const classRepository = AppDataSource.getRepository(Classes);
 
 class AttendanceFormService {
-
-    createFormTransaction = async (attendanceForm, attendanceDetail) => {
+    //Oke
+    createFormTransaction = async (attendanceForm, attendanceDetails) => {
         try {
             await AppDataSource.transaction(async (transactionalEntityManager) => {
                 await transactionalEntityManager.save(attendanceForm);
-                await transactionalEntityManager.save(attendanceDetail);
+                await transactionalEntityManager.save(attendanceDetails);
             })
 
-            return attendanceForm;
+            return {data: attendanceForm, error: null}
         } catch (e) {
             console.log(e);
-            return null;
+            return {data: null, error: "Failed creating form"};
         }
     }
 
-
+    //Oke
     createFormEntity = (classes, startTime, endTime, dateOpen, type,
-                                location, latitude, longitude, radius) => {
+                        location, latitude, longitude, radius) => {
         let form = new AttendanceForm();
         form.formID = uuidv4();
         form.classes = classes;
@@ -36,29 +38,7 @@ class AttendanceFormService {
         form.latitude = latitude;
         form.longitude = longitude;
         form.radius = radius;
-
-        //await attendanceFormRepository.save(form);
         return form;
-    }
-
-    createForm = async (classes, startTime, endTime, dateOpen, type) => {
-        try {
-
-            let form = new AttendanceForm();
-            form.formID = uuidv4();
-            form.classes = classes;
-            form.startTime = startTime;
-            form.endTime = endTime;
-            form.dateOpen = dateOpen;
-            form.status = true;
-            form.type = type;
-
-            await attendanceFormRepository.save(form);
-            return form;
-        } catch (e) {
-            return null;
-        }
-        
     }
 
     closeFormByID = async (formID) => {
@@ -89,6 +69,30 @@ class AttendanceFormService {
             return null;
         }
     }
-} 
+
+    //Oke
+    getAttendanceFormsByClassID = async (classID) => {
+        try{
+            let data = await classRepository.findOne({
+                where: {
+                    classID: classID
+                },
+                order: {
+                    attendanceForm: {
+                        dateOpen: "DESC"
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    attendanceForm: true
+                }
+            });
+
+            return {data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching data"};
+        }
+    }
+}  
 
 export default new AttendanceFormService();

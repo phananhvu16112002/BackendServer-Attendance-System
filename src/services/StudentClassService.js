@@ -10,23 +10,23 @@ import StudentClassDTO from "../dto/StudentClassDTO";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 
 class StudentClassService {
-    // getStudentClass = async (studentID, classID) => {
-    //     try {
-    //         return await studentClassRepository.findOne({
-    //             where : {
-    //                 studentDetail : studentID, 
-    //                 classDetail : classID
-    //             },
-    //             relations : {
-    //                 studentDetail : true,
-    //                 classDetail : true
-    //             }
-    //         });
-    //     } catch (e) {
-    //         console.log(e);
-    //         return null;
-    //     }
-    // }
+    getStudentClass = async (studentID, classID) => {
+        try {
+            return await studentClassRepository.findOne({
+                where : {
+                    studentDetail : studentID, 
+                    classDetail : classID
+                },
+                relations : {
+                    studentDetail : true,
+                    classDetail : true
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
 
     // getClassesByStudentID = async (studentID) => {
     //     try {
@@ -70,10 +70,23 @@ class StudentClassService {
     //     }
     // }
 
+    checkStudentEnrolledInClass = async (studentID, classID) => {
+        try {
+            let data = await studentClassRepository.findOne({
+                where: {
+                    studentDetail: studentID,
+                    classDetail: classID
+                }
+            });
+            return {data, error: null};
+        } catch (e){
+            return {data: null, error: "Failed fetching data"};
+        }
+    }
+
     //oke used in studentcontroller
     getClassesByStudentID = async (studentID) => {
         try {
-            const studentID = studentID;
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
                 innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
                 innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
@@ -92,6 +105,7 @@ class StudentClassService {
         }
     }
 
+    //oke used in studentcontroller
     getStudentsAttendanceDetailsByClassID = async (classID) => {
         try {
             let data = await studentClassRepository.createQueryBuilder("student_class"). 

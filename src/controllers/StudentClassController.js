@@ -2,21 +2,21 @@ import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 
 class StudentClassController {
-    // getStudentClass = (req,res) => {
-    //     res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
-    // }
+    getStudentClass = (req,res) => {
+        res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
+    }
 
-    // getStudentClasses = async (req,res) => {
-    //     try {
-    //         const studentID = req.payload.userID; 
-    //         const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
+    getStudentClasses = async (req,res) => {
+        try {
+            const studentID = req.payload.userID; 
+            const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
 
-    //         return res.status(200).json(studentClasses);
+            return res.status(200).json(studentClasses);
             
-    //     } catch (e) {
-    //         return res.status(500).json({message: "Cannot get classes"});
-    //     }
-    // }
+        } catch (e) {
+            return res.status(500).json({message: "Cannot get classes"});
+        }
+    }
 
     //oke
     getStudentsWithAllAttendanceDetails = async (req,res) => {
@@ -25,7 +25,7 @@ class StudentClassController {
             const classID = req.params.id;
 
             //Find class with id
-            let {classData, error} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
+            let {data: classData, error} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
             if (error){
                 return res.status(500).json({message: error});
             }
@@ -39,7 +39,7 @@ class StudentClassController {
             }
 
             //get all students along with their attendance Detail
-            let {data, err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
+            let {data, error: err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
             if (err){
                 return res.status(500).json({message: error});
             } 

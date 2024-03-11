@@ -11,14 +11,16 @@ class ClassService {
         }
     }
 
+    //oke used in attendance controller
     getClassByIDWithStudents = async (classID) => {
         try {
-            return await classRepository.findOne({
+            let data = await classRepository.findOne({
                 where : {classID : classID},
                 relations : {studentClass : true}
             });
+            return {data, error: null}
         } catch (e) {
-            return null;
+            return {data: null, error: "Failed fecthing data"};
         }
     }
 
