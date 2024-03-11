@@ -58,16 +58,53 @@ class ClassService {
         }
     }
 
+    ////Oke used in ClassesController
     getClassesWithCoursesByTeacherID = async (teacherID) => {
         try {
-            return await classRepository.find({where : {
+            let data = await classRepository.find({where : {
                 teacher : {
                     teacherID : teacherID
                 },
             }, relations: {course : true}})
+
+            return {data, error: null};
         } catch (e) {
-            console.log(e);
-            return null;
+            return {data: [], error: "Failed fetching data"};
+        }
+    }
+
+    ////Oke used in StudentClassController
+    getClassesWithStudentsCourseTeacher = async (classID) => {
+        try {
+            let data = await classRepository.findOne({
+                where: {
+                    classID: classID
+                }, 
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    },
+                    studentClass: {
+                        studentDetail: {
+                            studentID: true,
+                            studentEmail: true,
+                            studentName: true
+                        }
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true,
+                    studentClass: {
+                        studentDetail: true
+                    }
+                }
+            });
+            return {data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching data"};
         }
     }
 }

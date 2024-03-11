@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
 import { Classes } from "./Classes"
 import { Student } from "./Student"
+import { AttendanceDetail } from "./AttendanceDetail"
 
 @Entity()
 export class StudentClass {
@@ -14,6 +15,6 @@ export class StudentClass {
     @JoinColumn({name:"classID", referencedColumnName:"classID"})
     classDetail: Classes
 
-    // @OneToMany(() => AttendanceDetail, (AttendanceDetail) => AttendanceDetail.studentClass)
-    // attendanceDetail: AttendanceDetail[]
+    // @OneToMany(() => AttendanceDetail, (AttendanceDetail) => AttendanceDetail)
+    // attendanceDetails: AttendanceDetail[]
 }

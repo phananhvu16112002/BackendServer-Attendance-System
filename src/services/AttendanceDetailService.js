@@ -105,6 +105,9 @@ class AttendanceDetailService {
     // takeAttendance = async () => {
 
     // }
+
+    //oke used in StudentClass controller
+    
 }
 
 export default new AttendanceDetailService();

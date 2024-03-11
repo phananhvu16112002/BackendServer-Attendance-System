@@ -28,6 +28,7 @@ class StudentService {
             await studentRepository.save(student);
         } catch (e) {
             //logging error message
+            return null
         }
     }
 

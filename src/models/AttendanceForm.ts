@@ -36,5 +36,5 @@ export class AttendanceForm {
     radius: number
 
     // @OneToMany(() => AttendanceDetail, (AttendanceDetail) => AttendanceDetail.attendanceForm)
-    // attendanceDetail: AttendanceDetail[]
+    // attendanceDetails: AttendanceDetail[]
 }

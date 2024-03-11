@@ -52,6 +52,51 @@ class StudentClassDTO {
             return null;
         }
     }
+
+    transformStudentClassDTO = (data) => {
+        return {
+            studentID: data.studentID,
+            total: data.Total,
+            totalPresence: data.TotalPresence,
+            totalAbsence: data.TotalAbsence,
+            totalLate: data.TotalLate,
+            attendanceDetails: []
+        }
+    }
+
+    transformAttendanceDetailDTO = (data) => {
+        return {
+            formID: data.formID,
+            dateAttendanced: data.dateAttendanced,
+            location: data.location,
+            note: data.note,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            result: data.result,
+            url: data.url
+        }
+    }
+
+    listOfStudentsWithAttendanceDetails = (data) => {
+        let list = [];
+        let temp;
+
+        for (let i = 0; i < data.length; i++){
+            if (list.length == 0){
+                temp = transformStudentClassDTO(data[i]);
+                temp.attendanceDetails.push(transformAttendanceDetailDTO(data[i]));
+                list.push(temp);
+            } else if (temp.studentID == data[i].studentID){
+                temp.attendanceDetails.push(transformAttendanceDetailDTO(data[i]))
+            } else {
+                temp = transformStudentClassDTO(data[i]);
+                temp.attendanceDetails.push(transformAttendanceDetailDTO(data[i]));
+                list.push(temp);
+            }
+        }
+
+        return list;
+    }
 }
 
 export default new StudentClassDTO();

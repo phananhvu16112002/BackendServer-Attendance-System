@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { AttendanceForm } from "./AttendanceForm"
 import { StudentClass } from "./StudentClass"
 import {Report} from "./Report";
@@ -14,11 +14,6 @@ export class AttendanceDetail {
     @PrimaryColumn({name: "classID", type: "string"})
     classDetail: string
 
-    // @PrimaryColumn()
-    // @ManyToOne(() => AttendanceForm, AttendanceForm => AttendanceForm.attendanceDetail)
-    // @JoinColumn()
-    // attendanceForm: string
-
     @ManyToOne(() => StudentClass, StudentClass => StudentClass)
     @JoinColumn([
         {name: "studentID", referencedColumnName: "studentDetail"},
@@ -30,6 +25,19 @@ export class AttendanceDetail {
     @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm)
     @JoinColumn({name:"formID", referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
+
+    // @ManyToOne(() => StudentClass, StudentClass => StudentClass)
+    // @JoinColumn([
+    //     {name: "studentID", referencedColumnName: "studentDetail"},
+    //     {name: "classID", referencedColumnName: "classDetail"},
+    // ])
+    // studentClass: StudentClass
+
+    // @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm.attendanceDetails)
+    // attendanceForm: AttendanceForm
+
+    // @OneToMany(() => Report, (Report) => Report.attendanceDetail)
+    // reports: Report[]
 
     @Column({default: 0})
     result: number
@@ -51,12 +59,4 @@ export class AttendanceDetail {
 
     @Column({default: ""})
     url: string
-
-    // @OneToMany(() => Report, Report => Report.attendanceDetail)
-    // @JoinColumn([
-    //     {name: "studentID", referencedColumnName: "studentDetail"},
-    //     {name: "classID", referencedColumnName: "classDetail"},
-    //     {name: "formID", referencedColumnName: "attendanceForm"},
-    // ])
-    // report: Report[]
 }

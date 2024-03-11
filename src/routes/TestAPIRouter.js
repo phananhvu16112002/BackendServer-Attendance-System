@@ -4,6 +4,9 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import { StudentClass } from "../models/StudentClass";
 import { Classes } from "../models/Classes";
 import { AttendanceForm } from "../models/AttendanceForm";
+import ClassService from "../services/ClassService";
+import { Course } from "../models/Course";
+import { Teacher } from "../models/Teacher";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -371,6 +374,161 @@ TestAPIRouter.get("/getStudentsAttendanceDetails", async (req,res) => {
     return res.status(200).json({data: final, all: 0, pass: 0, ban: 0, warning: 0});
 })
 
+TestAPIRouter.post("/feedback", (req,res) => {
+    //edit student attendance detail
+
+    //update the report status
+
+    //add the feedback 
+})
+
+TestAPIRouter.post("/edit", (req,res) => {
+    //edit student attendance detail
+
+    //add edition history
+})
+
+
+TestAPIRouter.get("/getClasses", async (req,res) => {
+    let data = await classRepository.createQueryBuilder("classes").
+    innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
+    orderBy('attendancedetail.dateAttendanced', 'ASC').
+    where("classes.classID = :id", {id : 1}).getOne();
+    
+    let data1 = await classRepository.createQueryBuilder("classes"). 
+    innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    select('classes.*'). 
+    addSelect('COUNT(studentclass.studentID) as TotalStudents').
+    groupBy('classes.classID').
+    where("classes.classID = :id", {id : 1}).getRawOne()
+
+    ///oke for total presence, absence, late
+    let data2 = await studentClassRepository.createQueryBuilder("student_class"). 
+    innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
+    innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
+    innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").
+    innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    select('student_class.*'). 
+    addSelect('COUNT(*) as Total').
+    addSelect(
+        `SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS TotalLate`,
+    ).
+    addSelect('classes.*').
+    addSelect('course.*').
+    addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+    groupBy('student_class.classID').
+    where("student_class.studentID = :id", {id : "520H0380"}).getRawMany()
+    ////
+
+    ///Oke use in home page teacher
+    let data3 = await studentClassRepository.createQueryBuilder("student_class"). 
+    innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
+    innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    select('student_class.*'). 
+    addSelect('COUNT(attendancedetails.studentDetail) as Total').
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,
+    ).
+    addSelect(
+        `SUM(CASE WHEN attendancedetails.result = 0.5 THEN 1 else 0 END) AS TotalLate`,
+    ).
+    groupBy('student_class.studentID, attendancedetails.formID').
+
+    addSelect('attendancedetails.*').
+    //will be order by created date
+    orderBy('student_class.studentID', 'ASC').addOrderBy('attendancedetails.dateAttendanced', 'ASC').
+    //orderBy('attendancedetails.dateAttendanced', 'ASC').addOrderBy('student_class.studentID', 'ASC').
+    
+    where("student_class.classID = :id", {id : "1"}).getRawMany()
+
+    // innerJoinAndMapMany('classes.studentClass', StudentClass, "studentclass", "studentclass.classID = classes.classID").
+    // innerJoinAndMapMany('studentclass.attendanceDetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentDetail = studentclass.studentID And attendancedetail.classDetail = studentclass.classID").
+    // orderBy('attendancedetail.dateAttendanced', 'ASC').
+    // where("classes.classID = :id", {id : 1}).getRawMany();
+    
+    let list = [];
+    function transformStudentClassDTO(data){
+        return {
+            studentID: data.studentID,
+            total: data.Total,
+            totalPresence: data.TotalPresence,
+            totalAbsence: data.TotalAbsence,
+            totalLate: data.TotalLate,
+            attendanceDetails: []
+        }
+    }
+
+    function transformAttendanceDetailDTO(data){
+        return {
+            formID: data.formID,
+            dateAttendanced: data.dateAttendanced,
+            location: data.location,
+            note: data.note,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            result: data.result,
+            url: data.url
+        }
+    }
+    
+    let temp;
+
+    for (let i = 0; i < data3.length; i++){
+        if (list.length == 0){
+            temp = transformStudentClassDTO(data3[i]);
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]));
+            list.push(temp);
+        } else if (temp.studentID == data3[i].studentID){
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]))
+        } else {
+            temp = transformStudentClassDTO(data3[i]);
+            temp.attendanceDetails.push(transformAttendanceDetailDTO(data3[i]));
+            list.push(temp);
+        }
+    }
+
+    console.log(list);
+    res.json(list);
+    // let data = await classRepository.findOne({
+    //     where: {
+    //         classID: "1"
+    //     }, 
+    //     select: {
+    //         teacher: {
+    //             teacherID: true,
+    //             teacherEmail: true,
+    //             teacherName: true
+    //         },
+    //         studentClass: {
+    //             studentDetail: {
+    //                 studentID: true,
+    //                 studentEmail: true,
+    //                 studentName: true
+    //             }
+    //         }
+    //     },
+    //     relations: {
+    //         teacher: true,
+    //         course: true,
+    //         studentClass: {
+    //             studentDetail: true
+    //         }
+    //     }
+    // });
+    // res.json(data.studentClass);
+})
+
 export default TestAPIRouter
+
 
 
