@@ -1,4 +1,5 @@
 import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
+import StudentClassDTO from "../dto/StudentClassDTO";
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 
@@ -76,6 +77,8 @@ class StudentClassController {
             if (data.length == 0){
                 return res.status(204).json({message: "Student's not been enrolled in any class"});
             }
+
+            StudentClassDTO.transformStudentClassesDTO(data);
             return res.status(200).json(data);
         } catch (e) {
             return res.status(500).json({message: "Internal Server Error"});
