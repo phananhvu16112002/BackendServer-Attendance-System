@@ -88,20 +88,10 @@ class ClassService {
                         teacherEmail: true,
                         teacherName: true
                     },
-                    studentClass: {
-                        studentDetail: {
-                            studentID: true,
-                            studentEmail: true,
-                            studentName: true
-                        }
-                    }
                 },
                 relations: {
                     teacher: true,
                     course: true,
-                    studentClass: {
-                        studentDetail: true
-                    }
                 }
             });
             return {data, error: null};

@@ -504,8 +504,22 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     addSelect('attendancedetail.*').
     where("attendancedetail.formID = :id", {id : 1}).getRawMany();
 
+    // total week 10, required week 8, (10 - 8) = 2 
+    // total date now = 1  
+    // absence = 1 (warning)
+    // late = 1 
+
+    let data5 = await studentClassRepository.createQueryBuilder("student_class"). 
+    //innerJoin(AttendanceDetail, "attendancedetails", "attendancedetails.studentID = student_class.studentID AND student_class.classID = attendancedetails.classDetail").
+    innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+    //select('student_class.*').addSelect('COUNT(attendancedetails.studentDetail) as Total').addSelect(`SUM(CASE WHEN attendancedetails.result = 1 THEN 1 ELSE 0 END) AS TotalPresence`,).
+    //addSelect(`SUM(CASE WHEN attendancedetails.result = 0 THEN 1 ELSE 0 END) AS TotalAbsence`,).addSelect(`SUM(CASE WHEN attendancedetails.result = 0.5 THEN 1 else 0 END) AS TotalLate`,).
+    //groupBy('student_class.studentID, attendancedetails.formID').addSelect('attendancedetails.*').
+    //will be order by created date
+    orderBy('attendancedetail.dateAttendanced', 'ASC').
+    where("student_class.classID = :id", {id : '1'}).getMany();
     console.log(list);
-    res.json(data4);
+    res.json(await ClassService.getClassesWithStudentsCourseTeacher("1"));
     // let data = await classRepository.findOne({
     //     where: {
     //         classID: "1"

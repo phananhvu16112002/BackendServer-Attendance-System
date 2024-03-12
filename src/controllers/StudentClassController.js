@@ -1,3 +1,4 @@
+import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 
@@ -22,6 +23,8 @@ class StudentClassController {
     getStudentsWithAllAttendanceDetails = async (req,res) => {
         try {
             const teacherID = req.payload.userID;
+            console.log(req.payload);
+            console.log(teacherID);
             const classID = req.params.id;
 
             //Find class with id
@@ -44,9 +47,18 @@ class StudentClassController {
                 return res.status(500).json({message: error});
             } 
             if (data.length == 0){
-                return res.status(204).json({message: "There are no recoreds for students' attendance details"});
+                return res.status(204).json({message: "There are no records for students' attendance details"});
             }
-            return res.status(200).json({classData: classData, data: data});
+
+            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(data, offset); 
+
+            classData.total = total;
+            classData.pass = pass;
+            classData.ban = ban;
+            classData.warning = warning;
+
+            return res.status(200).json({classData: classData, data: result});
         } catch(e){
             return res.status(500).json({message: "Internal Server Error"});
         }

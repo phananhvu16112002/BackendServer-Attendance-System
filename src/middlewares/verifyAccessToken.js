@@ -9,6 +9,7 @@ const VerifyAccessToken = (req, res, next) => {
         }else{
             const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
             req.payload = decoded;
+            console.log(req.payload);
             next();
         }
     }catch (e) {
