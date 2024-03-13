@@ -101,7 +101,7 @@ class AttendanceDetailService {
         return {data, error: null};
         
         } catch (e) {
-            return {data: null, error: "Failed fetching data"};
+            return {data: [], error: "Failed fetching data"};
         }
     }
 

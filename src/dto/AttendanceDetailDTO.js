@@ -44,13 +44,13 @@ class AttendanceDetailDTO {
         return {total, pass, ban, warning, data: studentDetails};
     }
 
-    extractSensitiveInformation = (studentDetail) => {
-        // let student = {studentHashedPassword, hashedOTP, accessToken, refreshToken, 
-        //     resetToken, timeToLiveOTP, active, ...studentDetail.student};
-        // console.log(student);
-        // console.log(student);
-        // studentDetail.student = student;
-        // studentDetail = {studentDetail, classDetail, ... studentDetail};
+    extractSensitiveInformation = (StudentDetail) => {
+        StudentDetail.studentID = StudentDetail.student.studentID;
+        StudentDetail.studentName = StudentDetail.student.studentName;
+        StudentDetail.studentEmail = StudentDetail.student.studentEmail;
+        delete StudentDetail.studentDetail;
+        delete StudentDetail.classDetail;
+        delete StudentDetail.student;
     }
 }
 

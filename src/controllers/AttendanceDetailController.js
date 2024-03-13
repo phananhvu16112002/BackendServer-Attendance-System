@@ -110,7 +110,7 @@ class AttendanceDetailController {
 
             let {data: result, error: err} = await AttendanceDetailService.getAttendanceDetailByClassID(studentID, classID);
             if (err){
-                return res.status(503).json({message: error});
+                return res.status(503).json({message: err});
             }
             if (result.length == 0){
                 return res.status(204).json({message: "You haven't taken any attendance yet!"});
