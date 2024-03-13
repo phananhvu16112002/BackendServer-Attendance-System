@@ -643,6 +643,11 @@ class Test {
 
         res.status(200).json(attendanceDetails);
     }
+
+
+    testOffline = (req,res) => {
+        res.status(200).json({messsage: "Hello"});
+    }
 }
 
 export default new Test();
