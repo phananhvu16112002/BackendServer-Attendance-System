@@ -29,6 +29,20 @@ class StudentClassService {
         }
     }
 
+    checkStudentEnrolledInClass = async (studentID, classID) => {
+        try {
+            let data = await studentClassRepository.findOne({
+                where: {
+                    studentDetail: studentID,
+                    classDetail: classID
+                }
+            });
+            return {data, error: null};
+        } catch (e){
+            return {data: null, error: "Failed fetching data"};
+        }
+    }
+
     // getClassesByStudentID = async (studentID) => {
     //     try {
     //         const studentClasses = await studentClassRepository.find({
