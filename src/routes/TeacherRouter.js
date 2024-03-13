@@ -1,5 +1,5 @@
 import express from "express";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import Authorization from "../middlewares/Authorization";
 import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
@@ -26,11 +26,11 @@ TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization(
 
 //TeacherRouter.get("/forms/detail/:id", )
 //Proper post method
-TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+// TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
 
 //Proper post method
 //TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
-///TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
+// TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 
 

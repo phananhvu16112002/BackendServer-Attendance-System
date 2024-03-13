@@ -3,7 +3,7 @@ import StudentController from "../controllers/StudentController";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import StudentClassController from "../controllers/StudentClassController";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import Authorization from "../middlewares/Authorization";
 
 const StudentRouter = express.Router();
