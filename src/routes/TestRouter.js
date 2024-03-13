@@ -32,7 +32,7 @@ TestRouter.post("/testRefreshAccessToken", TestController.testRefreshAccessToken
 TestRouter.get("/studentClass", TestController.getStudentClass)
 TestRouter.get("/attendanceForm", TestController.createAttendanceForm)
 TestRouter.get("/attendanceDetail", TestController.createAttendanceDetail)
-TestRouter.get("/getAllAttendanceForm", AttendanceFormController.getAllFormByClassID)
+//TestRouter.get("/getAllAttendanceForm", AttendanceFormController.getAllFormByClassID)
 
 //Test Imgur
 TestRouter.post("/imgur", TestController.testImgur)

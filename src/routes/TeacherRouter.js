@@ -17,14 +17,20 @@ TeacherRouter.post("/forgotPassword", TeacherController.forgotPassword);
 TeacherRouter.post("/verifyForgotPassword", TeacherController.verifyForgotPassword);
 TeacherRouter.post("/resetPassword", VerifyResetToken, TeacherController.resetPassword)
 TeacherRouter.post("/resendOTP", TeacherController.resendOTP);
-//Insert  VerifyAccessToken, Authorization("teacher") for authenticate and authorize
-//A route for create attendance form
+
+//Proper get method
 TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), ClassesController.getClassesWithCourse);
 TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsWithAllAttendanceDetails);
-//check if teacherID is in classID
-//check if 
+TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.getAttendanceFormsByClassID);
+//TeacherRouter.get("/classes/detail/:classID/forms/:formID", )
 
-TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
+//TeacherRouter.get("/forms/detail/:id", )
+//Proper post method
+TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+
+//Proper post method
+//TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+///TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 
 

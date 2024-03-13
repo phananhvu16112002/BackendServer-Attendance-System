@@ -97,6 +97,20 @@ class StudentClassDTO {
 
         return list;
     }
+
+    //oke
+    transformStudentClassesDTO = (studentClassList) => {
+        for (let i = 0; i < studentClassList.length; i++){
+            let studentClass = studentClassList[i];
+            studentClass.total = parseInt(studentClass.total);
+            studentClass.totalPresence = parseInt(studentClass.totalPresence);
+            studentClass.totalAbsence = parseInt(studentClass.totalAbsence);
+            studentClass.totalLate = parseInt(studentClass.totalLate);
+
+            let progress = studentClass.total / studentClass.totalWeeks;
+            studentClass.progress = progress;     
+        }
+    }
 }
 
 export default new StudentClassDTO();

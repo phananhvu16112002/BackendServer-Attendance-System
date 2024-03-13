@@ -1,31 +1,35 @@
+import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
+import StudentClassDTO from "../dto/StudentClassDTO";
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 
 class StudentClassController {
-    // getStudentClass = (req,res) => {
-    //     res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
-    // }
+    getStudentClass = (req,res) => {
+        res.json(StudentClassService.getStudentClass("520H0380", "5202111_09_t000"));
+    }
 
-    // getStudentClasses = async (req,res) => {
-    //     try {
-    //         const studentID = req.payload.userID; 
-    //         const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
+    getStudentClasses = async (req,res) => {
+        try {
+            const studentID = req.payload.userID; 
+            const studentClasses = await StudentClassService.getClassesByStudentID(studentID);
 
-    //         return res.status(200).json(studentClasses);
+            return res.status(200).json(studentClasses);
             
-    //     } catch (e) {
-    //         return res.status(500).json({message: "Cannot get classes"});
-    //     }
-    // }
+        } catch (e) {
+            return res.status(500).json({message: "Cannot get classes"});
+        }
+    }
 
     //oke
     getStudentsWithAllAttendanceDetails = async (req,res) => {
         try {
             const teacherID = req.payload.userID;
+            console.log(req.payload);
+            console.log(teacherID);
             const classID = req.params.id;
 
             //Find class with id
-            let {classData, error} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
+            let {data: classData, error} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
             if (error){
                 return res.status(500).json({message: error});
             }
@@ -39,14 +43,23 @@ class StudentClassController {
             }
 
             //get all students along with their attendance Detail
-            let {data, err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
+            let {data, error: err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
             if (err){
                 return res.status(500).json({message: error});
             } 
             if (data.length == 0){
-                return res.status(204).json({message: "There are no recoreds for students' attendance details"});
+                return res.status(204).json({message: "There are no records for students' attendance details"});
             }
-            return res.status(200).json({classData: classData, data: data});
+
+            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(data, offset); 
+
+            classData.total = total;
+            classData.pass = pass;
+            classData.ban = ban;
+            classData.warning = warning;
+
+            return res.status(200).json({classData: classData, data: result});
         } catch(e){
             return res.status(500).json({message: "Internal Server Error"});
         }
@@ -64,6 +77,8 @@ class StudentClassController {
             if (data.length == 0){
                 return res.status(204).json({message: "Student's not been enrolled in any class"});
             }
+
+            StudentClassDTO.transformStudentClassesDTO(data);
             return res.status(200).json(data);
         } catch (e) {
             return res.status(500).json({message: "Internal Server Error"});
