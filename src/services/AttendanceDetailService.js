@@ -74,6 +74,7 @@ class AttendanceDetailService {
                     status: true,
                     startTime: true,
                     endTime: true,
+                    dateOpen: true,
                     classes: {
                         roomNumber: true,
                         shiftNumber: true,
