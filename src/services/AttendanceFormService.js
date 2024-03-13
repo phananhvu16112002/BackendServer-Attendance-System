@@ -36,7 +36,7 @@ class AttendanceFormService {
         form.type = type;
         form.location = location;
         form.latitude = latitude;
-        form.longtitude = longtitude;
+        form.longitude = longitude;
         form.radius = radius;
         return form;
     }

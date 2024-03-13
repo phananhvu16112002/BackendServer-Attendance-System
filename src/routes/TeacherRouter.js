@@ -29,7 +29,7 @@ TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization(
 // TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
 
 //Proper post method
-//TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 

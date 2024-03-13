@@ -1,6 +1,9 @@
 import ClassService from "../services/ClassService";
 import TeacherService from "../services/TeacherService";
 import jwt from "jsonwebtoken";
+import otpGenerator from "otp-generator";
+import bcrypt from "bcrypt";
+import EmailService from '../services/EmailService';
 
 const teacherService = TeacherService;
 const classService = ClassService;
@@ -58,7 +61,7 @@ class TeacherController {
             const password = req.body.password;
             const teacherID = email.split('@')[0];
 
-            let teacher = await teacherService.checkTeacherExist(teacher);
+            let teacher = await teacherService.checkTeacherExist(teacherID);
 
             if (teacher == null) {
                 return res.status(422).json({message: "Account does not exist"});

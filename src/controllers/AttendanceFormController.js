@@ -16,7 +16,7 @@ class AttendanceFormController {
 
             const location = req.body.location;
             const latitude = req.body.latitude;
-            const longtitude = req.body.longtitude;
+            const longitude = req.body.longitude;
             const radius = req.body.radius;
 
             const {data: classes, error: err} = await ClassService.getClassByIDWithStudents(classID);
@@ -28,7 +28,7 @@ class AttendanceFormController {
             }
 
             //Create entities before inserting into database
-            const attendanceFormEntity = AttendanceFormService.createFormEntity(classes, startTime, endTime, dateOpen, type, location, latitude, longtitude, radius);
+            const attendanceFormEntity = AttendanceFormService.createFormEntity(classes, startTime, endTime, dateOpen, type, location, latitude, longitude, radius);
             const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceFormEntity);
         
             //Make transactions to insert into database
@@ -46,6 +46,7 @@ class AttendanceFormController {
 
             return res.status(200).json(AttendanceFormDTO.excludeClasses(form));
         } catch (e) {
+            console.log(e);
             return res.status(500).json({message : "Internal Server"});
         }
     }
