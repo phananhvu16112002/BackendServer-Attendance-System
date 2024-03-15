@@ -8,6 +8,8 @@ import ClassService from "../services/ClassService";
 import { Course } from "../models/Course";
 import { Teacher } from "../models/Teacher";
 import { Student } from "../models/Student";
+import TeacherRouter from "./TeacherRouter";
+import UploadImageService from "../services/UploadImageService";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -549,6 +551,12 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
     // });
     // res.json(data.studentClass);
 })
+
+TestAPIRouter.post("/sendImage", async (req,res) => {
+    console.log(req.files.image);
+    
+    return res.json({message: await UploadImageService.uploadFile(req.files.image)});
+});
 
 export default TestAPIRouter
 

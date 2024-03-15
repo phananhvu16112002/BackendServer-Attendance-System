@@ -84,7 +84,10 @@ class UploadImageService {
                 image: image.data
             });
 
+            console.log(response);
+
             if (response.success){
+                console.log(response.success);
                 return {link: response.data.link, imageHash: response.data.id, error: null};
             }
             return {link: null, id: null, error: "Failed uploading file"};
