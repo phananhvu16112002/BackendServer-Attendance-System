@@ -77,23 +77,21 @@ class UploadImageService {
         }
     }
 
+    //send around 3 images
+    //ensure 1 of 3 image is uploaded
+
     //testable
     uploadFile = async (image) => {
         try {       
-            const response = await client.upload({
-                image: image.data
-            });
-
-            console.log(response);
-
+            const response = await client.upload({image: image.data});
             if (response.success){
                 console.log(response.success);
                 return {link: response.data.link, imageHash: response.data.id, error: null};
             }
-            return {link: null, id: null, error: "Failed uploading file"};
+            return {link: null, imageHash: null, error: "Failed uploading file"};
         } catch (e) {
             console.log(e);
-            return {link: null, id: null, error: "Failed uploading file"};
+            return {link: null, imageHash: null, error: "Failed uploading file"};
         }
     }
 
@@ -101,10 +99,8 @@ class UploadImageService {
     deleteFile = async (imageHash) => {
         try {
             const response = await client.deleteImage(imageHash);
-            if (response.status){
-                return true;
-            }
-            return false;
+            
+            return response.status;
         } catch (e) {
             console.log(e);
             return false;

@@ -9,6 +9,12 @@ export class Report {
     reportID: number
 
     @Column()
+    topic: string
+
+    @Column()
+    problem: string
+
+    @Column()
     message: string
 
     @Column()

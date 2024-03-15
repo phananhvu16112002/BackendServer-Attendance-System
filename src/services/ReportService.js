@@ -27,6 +27,29 @@ class ReportService {
         
         return report;
     }
+
+    //oke testable
+    reportObject = (data, topic, problem, message, imageReportList) => {
+        let report = new Report();
+        report.attendanceDetail = data;
+        report.topic = topic;
+        report.problem = problem;
+        report.message = message;
+        report.reportImage = imageReportList;
+        report.status = "Pending";
+        return report;
+    }
+
+    //oke testable
+    loadReportWithImages = async (data, topic, problem, message, imageReportList) => {
+        try {
+            let report = this.reportObject(data, topic, problem, message, imageReportList);
+            let data = await reportRepository.save(report);
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed creating report"};
+        }
+    }
 }
 
 export default new ReportService();
