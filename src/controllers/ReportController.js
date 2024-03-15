@@ -6,7 +6,7 @@ class ReportController {
     //oke 
     submitReport = async (req,res) => {
         try{
-            const studentID = req.body.studentID;
+            const studentID = req.payload.userID;
             const classID = req.body.classID;
             const formID = req.body.formID;
             const topic = req.body.topic;
@@ -34,7 +34,7 @@ class ReportController {
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }
 
-            //transactions
+            //Transactions
             let {data: result, error: err} = await ReportService.loadReportWithImages(data, topic, problem, message, imageReportList);
             if (err){
                 return res.status(503).json({message: err});
