@@ -3,6 +3,7 @@ import ReportImageService from "../services/ReportImageService";
 import ReportService from "../services/ReportService";
 
 class ReportController {
+    //oke 
     submitReport = async (req,res) => {
         try{
             const studentID = req.body.studentID;
