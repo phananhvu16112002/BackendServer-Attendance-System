@@ -221,7 +221,7 @@ class TeacherController {
             if (await EmailService.sendEmail(email, OTP) == false){
                 return res.status(503).json({ message: 'OTP failed' });
             }
-            await teacherService.updateTeacherOTP(teacher, OTP);
+            await teacherService.updateTeacherOTP(teacher, hashOTP);
             res.status(200).json({ message: 'OTP has been sent to your email' });
         } catch (e) {
             res.status(500).json({ message: 'Internal Server Error' });
@@ -246,7 +246,7 @@ class TeacherController {
             if (await EmailService.sendEmail(email, OTP) == false){
                 return res.status(503).json({ message: 'OTP failed' });
             }
-            await teacherService.updateTeacherOTP(teacher, OTP);
+            await teacherService.updateTeacherOTP(teacher, hashOTP);
             res.status(200).json({ message: 'OTP has been sent to your email' });
         } catch (e) {
             res.status(500).json({ message: 'Internal Server Error' });
