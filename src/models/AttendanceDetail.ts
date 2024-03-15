@@ -60,6 +60,6 @@ export class AttendanceDetail {
     @Column({default: ""})
     url: string
 
-    // @Column({type: "datetime", nullable: true})
-    // createdAt: string
+    @Column({type: "datetime", nullable: true})
+    createdAt: string
 }
