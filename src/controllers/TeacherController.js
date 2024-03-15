@@ -173,7 +173,35 @@ class TeacherController {
         }
     }
 
-    resendOTP = async (req,res) => {
+    resendOTPRegister = async (req,res) => {
+        try{
+            const email = req.body.email;
+            const teacherID = email.split('@')[0];
+
+            let teacher = await teacherService.checkTeacherExist(teacherID);
+            if (teacher == null){
+                return res.status(422).json({message: "Email address does not exist"});
+            }
+            // if (teacher.active == false){
+            //     return res.status(422).json({message: "Account with this email address is not active"});
+            // }
+            //Generate OTP
+            const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            const salt = await bcrypt.genSalt(10)
+            const hashOTP = await bcrypt.hash(OTP, salt)
+            //Send OTP
+            if (await EmailService.sendEmail(email, OTP) == false){
+                return res.status(503).json({ message: 'OTP failed' });
+            }
+            await teacherService.updateTeacherOTP(teacher, OTP);
+            res.status(200).json({ message: 'OTP has been sent to your email' });
+        } catch (e) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
+
+    resendOTPForgotPassword = async (req,res) => {
         try{
             const email = req.body.email;
             const teacherID = email.split('@')[0];

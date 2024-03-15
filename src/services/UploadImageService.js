@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import {ImgurClient} from "imgur";
+import { ImgurClient } from 'imgur';
 import { StudentImage } from '../models/StudentImage';
 import { AppDataSource } from '../config/db.config';
 import { ReportImage } from '../models/ReportImage';
