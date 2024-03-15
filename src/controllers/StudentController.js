@@ -264,6 +264,37 @@ class StudentController{
         }
     }
 
+    resendOTPRegister = async (req,res) => {
+        try {
+            const email = req.body.email;
+            const studentID = StudentService.transformEmailToID(email);
+
+            //Check user input
+            let student = await StudentService.checkStudentExist(studentID);
+            if (student == null){
+                return res.status(422).json({message: "Email address does not exist"});
+            }
+            
+            //Generate OTP
+            const OTP = otpGenerator.generate(6, { digits: true, upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            const salt = await bcrypt.genSalt(10)
+            const hashOTP = await bcrypt.hash(OTP, salt)
+
+            //Send OTP
+            if (await EmailService.sendEmail(email, OTP) == false){
+                return res.status(503).json({ message: 'OTP failed' });
+            }
+
+            //Update OTP in database
+            await StudentService.updateStudentOTP(student, hashOTP);
+            res.status(200).json({ message: 'OTP has been sent to your email' });
+
+        } catch(error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
     takeAttendance = async (req,res) => {
         const studentID = req.body.studentID;
         const classID = req.body.classID;

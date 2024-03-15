@@ -76,6 +76,37 @@ class UploadImageService {
             return null;
         }
     }
+
+    //testable
+    uploadFile = async (image) => {
+        try {       
+            const response = await client.upload({
+                image: image.data
+            });
+
+            if (response.success){
+                return {link: response.data.link, imageHash: response.data.id, error: null};
+            }
+            return {link: null, id: null, error: "Failed uploading file"};
+        } catch (e) {
+            console.log(e);
+            return {link: null, id: null, error: "Failed uploading file"};
+        }
+    }
+
+    //testable
+    deleteFile = async (imageHash) => {
+        try {
+            const response = await client.deleteImage(imageHash);
+            if (response.status){
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
 }
 
 export default new UploadImageService();

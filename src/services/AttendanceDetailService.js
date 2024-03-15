@@ -113,7 +113,22 @@ class AttendanceDetailService {
     getAttendanceDetailsByClassIDAndFormID = async (classID, formID) => {
         
     }
-    
+
+    checkAttendanceDetailExist = async (studentID, classID, formID) => {
+        try{
+            let data = await attendanceDetailRepository.findOne({
+                where: {
+                    studentDetail: studentID, 
+                    classDetail: classID, 
+                    attendanceForm: formID
+                }
+            });
+            return {data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: null, error: "Failed fetching data"};
+        }
+    }
 }
 
 export default new AttendanceDetailService();
