@@ -29,6 +29,9 @@ StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("stude
 
 StudentRouter.post("/report/submit", VerifyAccessToken, Authorization("student"), ReportController.submitReport);
 
+
+
+
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);
 export default StudentRouter;

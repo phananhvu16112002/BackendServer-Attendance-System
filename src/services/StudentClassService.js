@@ -134,7 +134,7 @@ class StudentClassService {
         try {
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
                 innerJoinAndMapOne("student_class.student", Student, "student", "student.studentID = student_class.studentID").
-                innerJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+                leftJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
                 //will be sorted by created date
                 orderBy('attendancedetail.dateAttendanced', 'ASC').
                 where("student_class.classID = :id", {id : classID}).getMany();

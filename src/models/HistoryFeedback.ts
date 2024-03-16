@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
-import { Report } from "./Report"
+import { HistoryReport } from "./HistoryReport"
 
 @Entity()
-export class Feedback {
+export class HistoryFeedback {
     @PrimaryGeneratedColumn()
-    feedbackID: number
+    historyFeedbackID: number
 
     @Column()
     topic: string 
@@ -18,7 +18,7 @@ export class Feedback {
     @Column({type: "datetime", nullable: true})
     createdAt: string
 
-    @OneToOne(() => Report, (report) => report.feedback)
-    @JoinColumn({name:"reportID", referencedColumnName:"reportID"})
-    report: Report
+    @OneToOne(() => HistoryReport, (historyReport) => historyReport.historyFeedbacks)
+    @JoinColumn({name:"historyReportID", referencedColumnName:"historyReportID"})
+    historyReport: HistoryReport
 }

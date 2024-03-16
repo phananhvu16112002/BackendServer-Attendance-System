@@ -559,6 +559,10 @@ TestAPIRouter.post("/sendImage", async (req,res) => {
     return res.json({message: Object.keys(req.files).length});
 });
 
+TestAPIRouter.get("/", async (req,res) => {
+    
+})
+
 export default TestAPIRouter
 
 

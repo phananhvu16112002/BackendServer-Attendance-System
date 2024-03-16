@@ -37,18 +37,34 @@ class ReportService {
         report.message = message;
         report.reportImage = imageReportList;
         report.status = "Pending";
+        report.important = false;
+        report.new = true;
         return report;
     }
 
-    //oke testable
+    //oke testable, test it
     loadReportWithImages = async (data, topic, problem, message, imageReportList) => {
         try {
             let report = this.reportObject(data, topic, problem, message, imageReportList);
-            let data = await reportRepository.save(report);
-            return {data: data, error: null};
+            let result = await reportRepository.save(report);
+            return {data: result, error: null};
         } catch (e) {
             return {data: null, error: "Failed creating report"};
         }
+    }
+
+    //
+    getAllReportsByStudentID = async (studentID) => {
+        try{
+            
+        } catch (e) {
+
+        }
+    }
+
+    //
+    getAllReportsByStudentID_ClassID = async () => {
+        
     }
 }
 

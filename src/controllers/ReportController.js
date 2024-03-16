@@ -45,6 +45,10 @@ class ReportController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
+
+    editReport = async (req,res) => {
+        //
+    }
 }
 
 export default new ReportController();

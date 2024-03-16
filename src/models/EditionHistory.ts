@@ -15,6 +15,9 @@ export class EditionHistory {
     @Column()
     confirmStatus: string
 
+    @Column({type: "datetime", nullable: true})
+    createdAt: string
+
     @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail)
     @JoinColumn([
         {name: "studentID", referencedColumnName: "studentDetail"},
