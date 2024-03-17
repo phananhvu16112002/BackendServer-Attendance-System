@@ -29,7 +29,7 @@ class FeedbackController {
                 return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
             }
             if (checkAuth.teacher.teacherID != teacherID){
-                return res.status(503).json({message: "Action Denied. Teacher is not authorized"});
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
             }
 
             let feedback = FeedbackService.feedBackObject(topic, message, confirmStatus, createdAt);
