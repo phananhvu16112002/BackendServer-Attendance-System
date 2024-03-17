@@ -3,6 +3,7 @@ import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { AppDataSource } from "../config/db.config";
 import { Report } from "../models/Report";
+import { EditionHistory } from "../models/EditionHistory";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -124,6 +125,26 @@ class AttendanceDetailService {
 
     getAttendanceDetailsByClassIDAndFormID = async (classID, formID) => {
         
+    }
+
+    //testable
+    getAttendanceDetailByStudentIDClassIDFormID = async (studentID, classID, formID) => {
+        try {
+            let data = await attendanceDetailRepository.createQueryBuilder("attendancedetail").
+            leftJoinAndMapMany("attendancedetail.histories", EditionHistory, 'history', 
+            'attendancedetail.studentID = history.studentID AND attendancedetail.classID = history.classID AND attendancedetail.formID = history.formID').
+            leftJoinAndMapOne('attendancedetail.report', Report, 'report', 
+            'attendancedetail.studentID = report.studentID AND attendancedetail.classID = report.classID AND attendancedetail.formID = report.formID AND report.new = 1').
+            where('attendancedetail.studentID = :studentid', {studentid: studentID}).
+            andWhere('attendancedetail.classID = :classid', {classid: classID}).
+            andWhere('attendancedetail.formID = :formid', {formid: formID}).
+            getOne();
+
+            return {data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: null, error: "Failed fetching data"};
+        }
     }
 
     checkAttendanceDetailExist = async (studentID, classID, formID) => {

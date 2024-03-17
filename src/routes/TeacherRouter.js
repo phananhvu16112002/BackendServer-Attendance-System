@@ -7,6 +7,7 @@ import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import FeedbackController from "../controllers/FeedbackController";
+import AttendanceDetailController from "../controllers/AttendanceDetailController";
 
 const TeacherRouter = express.Router();
 //Authentication
@@ -23,11 +24,9 @@ TeacherRouter.post("/resendOTP", TeacherController.resendOTP);
 TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), ClassesController.getClassesWithCourse);
 TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsWithAllAttendanceDetails);
 TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.getAttendanceFormsByClassID);
-//TeacherRouter.get("/classes/detail/:classID/forms/:formID", )
 
-//TeacherRouter.get("/forms/detail/:id", )
-//Proper post method
-// TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+
+TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getAttendanceDetailByStudentIDClassIDFormID);
 
 //Proper post method
 TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
