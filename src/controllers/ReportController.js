@@ -27,6 +27,15 @@ class ReportController {
             if (data == null){
                 return res.status(422).json({message: "Your attendance records do not exist"}); 
             }
+
+            //check report exists
+            let {data: reportData, error: reportError} = await ReportService.checkReportExist(data);
+            if (reportError){
+                return res.status(503).json({message: reportError});
+            }
+            if (reportData){
+                return res.status(422).json({message: "Report's only been created once. Please edit report"});
+            }
             
             //send files to Imgur
             let imageReportList = await ReportImageService.imageReportListFromImage(files);
