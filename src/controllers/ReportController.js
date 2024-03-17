@@ -108,6 +108,44 @@ class ReportController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
+
+    //oke
+    getReportByID = async (req,res) => {
+        try {
+            const studentID = req.payload.userID;
+            const reportID = req.params.id;
+
+            let {data, error} = await ReportService.getReportDetail(reportID);
+            if (error){
+                return res.status(503).json({message: error}); 
+            }
+            if (data == null){
+                return res.status(204).json({message: "Report with this id does not exist"});
+            }
+            if (compareCaseInsentitive(studentID, data.attendanceDetail.studentDetail) == false){
+                return res.status(403).json({message: "Action Denied. Student is not authorized"});
+            }
+
+            delete data.attendanceDetail;
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    //
+    getReportsByStudentIDInClassID = async (req,res) => {
+        try{
+            const studentID = req.payload.userID;
+            const classID = req.params.classid;
+
+
+        } catch (e) {   
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default new ReportController();
