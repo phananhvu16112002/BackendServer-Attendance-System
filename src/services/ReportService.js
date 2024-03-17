@@ -12,6 +12,22 @@ const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 
 class ReportService {
+    getReportByID = async (reportID) => {
+        try {
+            let data = await reportRepository.findOne({
+                where: {reportID: reportID},
+                relations: {
+                    attendanceDetail: true,
+                    feedback: true
+                }
+            });
+            return {data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching report"};
+        }
+    }
+
+    //oke
     checkReportExist = async (attendanceDetail) => {
         try {
             let data = await reportRepository.findOne({
