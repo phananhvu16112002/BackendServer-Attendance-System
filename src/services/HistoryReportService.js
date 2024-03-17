@@ -11,15 +11,38 @@ class HistoryReportService {
         report.createdAt = createdAt;
         report.message = message;
         report.topic = topic;
-        if (imageReportList.length > 0){
-            report.reportImage = imageReportList;
-        }
+        
+        let oldImage = report.reportImage;
+
+        report.reportImage = imageReportList;
         report.problem = problem;
         try {
-            await AppDataSource.transaction(async (transactionalEntityManager) => {
-                await transactionalEntityManager.save(report);
-                await transactionalEntityManager.save(historyReport);
-            })
+            if (report.feedback != null && oldImage.length > 0){
+                await AppDataSource.transaction(async (transactionalEntityManager) => {
+                    await transactionalEntityManager.remove(oldImage);
+                    await transactionalEntityManager.save(report);
+                    await transactionalEntityManager.remove(report.feedback);
+                    await transactionalEntityManager.save(historyReport);
+                });
+            } else if (report.feedback == null && oldImage.length > 0){
+                await AppDataSource.transaction(async (transactionalEntityManager) => {
+                    await transactionalEntityManager.remove(oldImage);
+                    await transactionalEntityManager.save(report);
+                    await transactionalEntityManager.save(historyReport);
+                });
+            } else if (report.feedback != null && oldImage.length == 0) {
+                await AppDataSource.transaction(async (transactionalEntityManager) => {
+                    await transactionalEntityManager.save(report);
+                    await transactionalEntityManager.remove(report.feedback);
+                    await transactionalEntityManager.save(historyReport);
+                });
+            } else {
+                await AppDataSource.transaction(async (transactionalEntityManager) => {
+                    await transactionalEntityManager.save(report);
+                    await transactionalEntityManager.save(historyReport);
+                });
+            }
+            
             return {data: report, error: null};
         } catch (e) {
             console.log(e);
@@ -56,6 +79,9 @@ class HistoryReportService {
     }
 
     copyFeedback = (feedback) => {
+        if (feedback == null){
+            return null;
+        }
         let historyFeedback = new HistoryFeedback();
         historyFeedback.topic = feedback.topic;
         historyFeedback.confirmStatus = feedback.confirmStatus;

@@ -31,7 +31,7 @@ TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization(
 
 //Proper post method
 TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
-
+TeacherRouter.put("/feedback/edit/:id", )
 
 TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
