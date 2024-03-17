@@ -28,8 +28,7 @@ StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("stude
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
 StudentRouter.post("/report/submit", VerifyAccessToken, Authorization("student"), ReportController.submitReport);
-
-
+StudentRouter.put("/report/edit/:id", VerifyAccessToken, Authorization("student"), ReportController.editReport);
 
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);

@@ -41,6 +41,23 @@ class ReportService {
         }
     }
 
+    //oke
+    getReportWithRelation = async (reportID) => {
+        try {
+            let data = await reportRepository.findOne({
+                where: {reportID: reportID},
+                relations: {
+                    attendanceDetail: true,
+                    reportImage: true,
+                    feedback: true
+                }
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting report"};
+        }
+    }
+
     //not oke
     createReport = async (message, studentID, classID, formID) => {
         let studentClass = await studentClassRepository.findOneBy({studentID: studentID, classID : classID});
