@@ -5,6 +5,7 @@ import AttendanceDetailController from "../controllers/AttendanceDetailControlle
 import StudentClassController from "../controllers/StudentClassController";
 import Authorization from "../middlewares/Authorization";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
+import ReportController from "../controllers/ReportController";
 
 const StudentRouter = express.Router();
 
@@ -26,7 +27,10 @@ StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("stude
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
-StudentRouter.post("/report/submit", );
+StudentRouter.post("/report/submit", VerifyAccessToken, Authorization("student"), ReportController.submitReport);
+
+
+
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);

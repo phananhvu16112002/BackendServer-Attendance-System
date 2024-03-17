@@ -10,6 +10,7 @@ import { Teacher } from "../models/Teacher";
 import { Student } from "../models/Student";
 import TeacherRouter from "./TeacherRouter";
 import UploadImageService from "../services/UploadImageService";
+import ReportImageService from "../services/ReportImageService";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -553,10 +554,14 @@ TestAPIRouter.get("/getClasses", async (req,res) => {
 })
 
 TestAPIRouter.post("/sendImage", async (req,res) => {
-    console.log(req.files.image);
-    
-    return res.json({message: await UploadImageService.uploadFile(req.files.image)});
+    console.log(Object.keys(req.files));
+    //let data = await ReportImageService.imageReportListFromImage(req.files);
+    return res.json({message: Object.keys(req.files).length});
 });
+
+TestAPIRouter.get("/", async (req,res) => {
+    
+})
 
 export default TestAPIRouter
 

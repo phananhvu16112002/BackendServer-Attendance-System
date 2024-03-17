@@ -6,6 +6,7 @@ import VerifyResetToken from "../middlewares/verifyResetToken";
 import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
+import FeedbackController from "../controllers/FeedbackController";
 
 const TeacherRouter = express.Router();
 //Authentication
@@ -29,6 +30,9 @@ TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization(
 // TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
 
 //Proper post method
+TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
+
+
 TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///

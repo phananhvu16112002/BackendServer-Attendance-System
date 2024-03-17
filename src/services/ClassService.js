@@ -3,9 +3,16 @@ import { Classes } from "../models/Classes";
 
 const classRepository = AppDataSource.getRepository(Classes);
 class ClassService {
+    //oke
     getClassByID = async (classID) => {
         try {
-            return await classRepository.findOneBy({classID : classID});
+            return await classRepository.findOne({
+                where: {
+                    classID: classID
+                }, relations: {
+                    teacher : true
+                }
+            })
         } catch (e) {
             return null;
         }

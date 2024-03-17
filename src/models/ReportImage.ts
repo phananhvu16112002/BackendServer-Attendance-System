@@ -3,14 +3,11 @@ import {Report} from "./Report";
 
 @Entity()
 export class ReportImage {
-    @PrimaryGeneratedColumn()
-    imageID: number
+    @PrimaryColumn()
+    imageID: string
 
     @Column()
     imageURL: string
-
-    @Column()
-    imageHash: string
 
     @ManyToOne(() => Report, Report => Report.reportImage)
     @JoinColumn({name:"reportID", referencedColumnName:"reportID"})

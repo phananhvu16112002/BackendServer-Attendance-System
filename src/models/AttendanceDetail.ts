@@ -39,7 +39,7 @@ export class AttendanceDetail {
     // @OneToMany(() => Report, (Report) => Report.attendanceDetail)
     // reports: Report[]
 
-    @Column({default: 0})
+    @Column({type: "double", default: 0.0})
     result: number
 
     @Column({type: "datetime", nullable: true})
@@ -60,6 +60,6 @@ export class AttendanceDetail {
     @Column({default: ""})
     url: string
 
-    // @Column({type: "datetime", nullable: true})
-    // createdAt: string
+    @Column({type: "datetime", nullable: true})
+    createdAt: string
 }
