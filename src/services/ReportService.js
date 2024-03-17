@@ -131,8 +131,9 @@ class ReportService {
                 innerJoinAndMapOne("report.classes", Classes, "classes", 'report.classID = classes.classID').
                 innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
                 innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = classes.courseID").
-                select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName')
-                .where("report.studentID = :id", {id: studentID}).getRawMany();
+                select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+                orderBy("report.createdAt", "DESC").
+                where("report.studentID = :id", {id: studentID}).getRawMany();
             return {data: data, error: null};
         } catch (e) {
             console.log(e);
