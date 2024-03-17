@@ -2,7 +2,7 @@ import { StudentClass } from "../models/StudentClass";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import { AppDataSource } from "../config/db.config";
-
+import { Report } from "../models/Report";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -53,55 +53,67 @@ class AttendanceDetailService {
         }
     }
 
+    //oke
     getAttendanceDetailByClassID = async (studentID, classID) => {
         try{
-            let data = await attendanceDetailRepository.find({where: {
-                studentDetail : studentID,
-                classDetail: classID,
-            },
-            select: {
-                result: true,
-                dateAttendanced: true,
-                location: true, 
-                note: true,
-                latitude: true,
-                longitude: true,
-                url: true,
-                attendanceForm: {
-                    formID: true,
-                    status: true,
-                    type: true,
-                    status: true,
-                    startTime: true,
-                    endTime: true,
-                    dateOpen: true,
-                    classes: {
-                        roomNumber: true,
-                        shiftNumber: true,
-                        startTime: true,
-                        endTime: true,
-                        classType: true,
-                        group: true,
-                        subGroup: true,
-                        course: {
-                            courseID: true,
-                            courseName: true
-                        }
-                    }
-                },
-            },
-            relations : {
-                attendanceForm: {
-                    classes: {
-                        course : true
-                    }
-                }
-            }
-            });
+            //
+            let result = await attendanceDetailRepository.createQueryBuilder("attendancedetail"). 
+            innerJoinAndMapOne("attendancedetail.attendanceForm", AttendanceForm, 'attendanceform', 'attendancedetail.formID = attendanceform.formID').
+            leftJoinAndMapOne("attendancedetail.report", Report, 'report',
+            'report.studentID = attendancedetail.studentID AND report.classID = attendancedetail.classID AND report.formID = attendancedetail.formID').
+            where("attendancedetail.studentID = :studentid", {studentid: studentID}).
+            andWhere("attendancedetail.classID = :classid", {classid: classID}).
+            orderBy('attendancedetail.createdAt', 'DESC').
+            getMany();
 
-        return {data, error: null};
+            // let data = await attendanceDetailRepository.find({where: {
+            //     studentDetail : studentID,
+            //     classDetail: classID,
+            // },
+            // select: {
+            //     result: true,
+            //     dateAttendanced: true,
+            //     location: true, 
+            //     note: true,
+            //     latitude: true,
+            //     longitude: true,
+            //     url: true,
+            //     attendanceForm: {
+            //         formID: true,
+            //         status: true,
+            //         type: true,
+            //         status: true,
+            //         startTime: true,
+            //         endTime: true,
+            //         dateOpen: true,
+            //         classes: {
+            //             roomNumber: true,
+            //             shiftNumber: true,
+            //             startTime: true,
+            //             endTime: true,
+            //             classType: true,
+            //             group: true,
+            //             subGroup: true,
+            //             course: {
+            //                 courseID: true,
+            //                 courseName: true
+            //             }
+            //         }
+            //     },
+            // },
+            // relations : {
+            //     attendanceForm: {
+            //         classes: {
+            //             course : true
+            //         }
+            //     }
+            // }
+            // });
+
+        return {data: result, error: null};
         
         } catch (e) {
+            console.log(e);
             return {data: [], error: "Failed fetching data"};
         }
     }
