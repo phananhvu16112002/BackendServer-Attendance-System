@@ -23,6 +23,8 @@ StudentRouter.post("/resendOTP",StudentController.resendOTP);
 StudentRouter.get("/classes", VerifyAccessToken, Authorization("student"), StudentClassController.getClassesByStudentID);
 StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
+StudentRouter.get("/reports/detail/:id", VerifyAccessToken, Authorization("student"), ReportController.getReportByID);
+StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization("student"), );
 //Student Use Cases test
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
