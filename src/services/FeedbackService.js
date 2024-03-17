@@ -1,6 +1,7 @@
 import { Feedback } from "../models/Feedback";
 import { AppDataSource } from "../config/db.config";
 import { Report } from "../models/Report";
+import { AttendanceDetail } from "../models/AttendanceDetail";
 
 const reportRepository = AppDataSource.getRepository(Report);
 
@@ -11,12 +12,23 @@ class FeedbackService {
         report.new = false;
         report.status = status;
         report.feedback = feedback;
-        report.attendanceDetail.result = result;
+        
+        let attendanceDetail = report.attendanceDetail;
+        attendanceDetail.result = result;
+        report.attendanceDetail = attendanceDetail;
 
         try {
-            await reportRepository.save(report);
+            //await reportRepository.save(report);
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.save(report);
+                await transactionalEntityManager.update(AttendanceDetail, {
+                    studentDetail: attendanceDetail.studentDetail, 
+                    classDetail: attendanceDetail.classDetail, 
+                    attendanceForm: attendanceDetail.attendanceForm}, {result: result});
+            })
             return {data: feedback, error: null};
         } catch (e) {
+            console.log(e);
             return {data: null, error: "Failed creating feedback"};
         }
     }
