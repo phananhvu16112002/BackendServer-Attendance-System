@@ -23,10 +23,10 @@ export class HistoryReport {
     @Column({type: "datetime", nullable: true})
     createdAt: string
 
-    @OneToOne(() => HistoryFeedback, (feedback) => feedback.historyReport)
+    @OneToOne(() => HistoryFeedback, (feedback) => feedback.historyReport, {cascade: true})
     historyFeedbacks: HistoryFeedback
 
-    @OneToMany(() => HistoryReportImage, ReportImage => ReportImage.historyReport)
+    @OneToMany(() => HistoryReportImage, ReportImage => ReportImage.historyReport, {cascade: true})
     historyReportImages: HistoryReportImage[]
 
     @ManyToOne(() => Report, (Report) => Report.historyReports)

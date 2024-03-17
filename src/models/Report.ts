@@ -38,10 +38,10 @@ export class Report {
     ])
     attendanceDetail: AttendanceDetail
 
-    @OneToMany(() => ReportImage, ReportImage => ReportImage.report)
+    @OneToMany(() => ReportImage, ReportImage => ReportImage.report, {cascade: true})
     reportImage: ReportImage[]
 
-    @OneToOne(() => Feedback, (feedback) => feedback.report)
+    @OneToOne(() => Feedback, (feedback) => feedback.report, {cascade: true})
     feedback: Feedback
 
     @OneToMany(() => HistoryReport, (HistoryReport) => HistoryReport.report)

@@ -100,7 +100,7 @@ class UploadImageService {
         try {
             const response = await client.deleteImage(imageHash);
             
-            return response.status;
+            return response.success;
         } catch (e) {
             console.log(e);
             return false;

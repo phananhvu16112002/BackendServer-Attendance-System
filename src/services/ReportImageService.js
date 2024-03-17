@@ -29,6 +29,13 @@ class ReportImageService {
         reportImage.imageURL = data.link;
         return reportImage;
     }
+
+    deleteImageReportList = async (imageReportList) => {
+        for (let i = 0; i < imageReportList.length; i++){
+            let imageReport = imageReportList[i];
+            await UploadImageService.deleteFile(imageReport.imageID);
+        }
+    }
 }
 
 export default new ReportImageService();

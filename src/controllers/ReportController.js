@@ -37,6 +37,7 @@ class ReportController {
             //Transactions
             let {data: result, error: err} = await ReportService.loadReportWithImages(data, topic, problem, message, imageReportList);
             if (err){
+                await ReportImageService.deleteImageReportList(imageReportList);
                 return res.status(503).json({message: err});
             }
             return res.status(200).json(result);

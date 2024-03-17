@@ -3,6 +3,7 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import { AttendanceForm } from "../models/AttendanceForm";
 import { Report } from "../models/Report";
 import { StudentClass } from "../models/StudentClass";
+import UploadImageService from "./UploadImageService";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -39,6 +40,7 @@ class ReportService {
         report.status = "Pending";
         report.important = false;
         report.new = true;
+        report.createdAt = JSDatetimeToMySQLDatetime(new Date());
         return report;
     }
 
