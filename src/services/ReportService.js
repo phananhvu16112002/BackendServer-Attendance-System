@@ -5,6 +5,7 @@ import { Report } from "../models/Report";
 import { StudentClass } from "../models/StudentClass";
 import UploadImageService from "./UploadImageService";
 import {JSDatetimeToMySQLDatetime} from '../utils/TimeConvert';
+import { Feedback } from "../models/Feedback";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -130,8 +131,20 @@ class ReportService {
     }
 
     //
-    getAllReportsByStudentID_ClassID = async () => {
-        
+    getAllReportsByStudentID_ClassID = async (studentID, classID) => {
+        try {
+            let data = await reportRepository.createQueryBuilder("report").
+            leftJoinAndMapOne("report.feedback", Feedback, 'feedback', 'feedback.reportID = report.reportID').
+            orderBy("report.createdAt", "DESC"). 
+            where("report.studentID = :studentid", {studentid: studentID}). 
+            andWhere("report.classID = :classid", {classid: classID}).
+            getMany();
+
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: [], error: "Failed fetching reports"};
+        }
     }
 }
 

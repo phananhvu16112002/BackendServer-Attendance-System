@@ -24,7 +24,7 @@ StudentRouter.get("/classes", VerifyAccessToken, Authorization("student"), Stude
 StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
 StudentRouter.get("/reports/detail/:id", VerifyAccessToken, Authorization("student"), ReportController.getReportByID);
-StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization("student"), );
+StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization("student"), ReportController.getReportsByStudentIDInClassID);
 //Student Use Cases test
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
