@@ -12,8 +12,9 @@ class ReportImageService {
             }
             
             let imageReportList = [];
-            for (let file in files){
-                let data = await UploadImageService.uploadFile(files[file]);
+            for (let i =0 ; i < files.length; i++){
+                // console.log(files[i]);
+                let data = await UploadImageService.uploadFile(files[i]);
                 if (data.error == null) 
                     imageReportList.push(this.imageReportObject(data));
             }     

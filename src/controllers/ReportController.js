@@ -13,9 +13,12 @@ class ReportController {
             const problem = req.body.problem;
             const message = req.body.message;
 
-            let files = req.files;
-
-            if (files != null && Object.keys(files).length > 3){
+            let files = req.files.file;
+            console.log(files);
+            if (Array.isArray(files) == false){
+                files = [files];
+            }
+            if (files != null && files.length > 3){
                 return res.status(422).json({message: "Only three image files allowed"}); 
             }
 
