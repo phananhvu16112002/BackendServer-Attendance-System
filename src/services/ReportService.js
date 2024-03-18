@@ -10,12 +10,14 @@ import { Classes } from "../models/Classes";
 import { Teacher } from "../models/Teacher";
 import { Course } from "../models/Course";
 import { Student } from "../models/Student";
+import { HistoryReport } from "../models/HistoryReport";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const classesRepository = AppDataSource.getRepository(Classes);
+const historyReportRepository = AppDataSource.getRepository(HistoryReport);
 
 class ReportService {
     //oke
@@ -191,6 +193,21 @@ class ReportService {
                 }
             });
             return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching report detail"};
+        }
+    }
+
+    getHistoryReportByHistoryID = async (historyID) => {
+        try {
+            let data = await historyReportRepository.findOne({
+                where: {historyReportID: historyID},
+                relations: {
+                    historyFeedbacks: true,
+                    historyReportImages: true
+                }
+            })
+            return {data, error: null};
         } catch (e) {
             return {data: null, error: "Failed fetching report detail"};
         }
