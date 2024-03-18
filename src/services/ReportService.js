@@ -5,6 +5,10 @@ import { Report } from "../models/Report";
 import { StudentClass } from "../models/StudentClass";
 import UploadImageService from "./UploadImageService";
 import {JSDatetimeToMySQLDatetime} from '../utils/TimeConvert';
+import { Feedback } from "../models/Feedback";
+import { Classes } from "../models/Classes";
+import { Teacher } from "../models/Teacher";
+import { Course } from "../models/Course";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -123,15 +127,35 @@ class ReportService {
     //
     getAllReportsByStudentID = async (studentID) => {
         try{
-            
+            let data = await reportRepository.createQueryBuilder("report"). 
+                innerJoinAndMapOne("report.classes", Classes, "classes", 'report.classID = classes.classID').
+                innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
+                innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = classes.courseID").
+                select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+                orderBy("report.createdAt", "DESC").
+                where("report.studentID = :id", {id: studentID}).getRawMany();
+            return {data: data, error: null};
         } catch (e) {
-
+            console.log(e);
+            return {data: [], error: "Failed fetching data"};
         }
     }
 
     //
-    getAllReportsByStudentID_ClassID = async () => {
-        
+    getAllReportsByStudentID_ClassID = async (studentID, classID) => {
+        try {
+            let data = await reportRepository.createQueryBuilder("report").
+            leftJoinAndMapOne("report.feedback", Feedback, 'feedback', 'feedback.reportID = report.reportID').
+            orderBy("report.createdAt", "DESC"). 
+            where("report.studentID = :studentid", {studentid: studentID}). 
+            andWhere("report.classID = :classid", {classid: classID}).
+            getMany();
+
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: [], error: "Failed fetching reports"};
+        }
     }
 }
 

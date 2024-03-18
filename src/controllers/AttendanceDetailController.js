@@ -6,7 +6,8 @@ import FaceMatchingService from "../services/FaceMatchingService";
 import { AppDataSource } from "../config/db.config";
 import { AttendanceDetail } from "../models/AttendanceDetail";
 import StudentClassService from "../services/StudentClassService";
-
+import ClassService from "../services/ClassService";
+import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail); 
 class AttendanceDetailController {
     takeAttendance = async (req, res) => {
@@ -214,6 +215,37 @@ class AttendanceDetailController {
         attendanceDetail.dateAttendanced = dateTimeAttendance;
         attendanceDetailRepository.save(attendanceDetail);
         res.status(200).json(attendanceDetail);
+    }
+
+    getAttendanceDetailByStudentIDClassIDFormID = async (req,res) => {
+        try {
+            const studentID = req.params.studentid;
+            const classID = req.params.classid;
+            const formID = req.params.formid;
+            const teacherID = req.payload.userID;
+
+            let checkAuth = await ClassService.getClassByID(classID);
+            if (checkAuth == null){
+                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
+            }
+                
+            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            }
+
+            let {data, error} = await AttendanceDetailService.getAttendanceDetailByStudentIDClassIDFormID(studentID, classID, formID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(422).json({message: "There is no attendace record found"});
+            }
+
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
     }
 }
 

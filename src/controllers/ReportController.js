@@ -134,15 +134,42 @@ class ReportController {
         }
     }
 
-    //
+    //oke
     getReportsByStudentIDInClassID = async (req,res) => {
         try{
             const studentID = req.payload.userID;
             const classID = req.params.classid;
 
+            let {data, error} = await ReportService.getAllReportsByStudentID_ClassID(studentID, classID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "There is no reports in this class"});
+            }
 
+            return res.status(200).json(data);
         } catch (e) {   
             console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    //oke
+    getReportsByStudentID = async (req,res) => {
+        try {
+            const studentID = req.payload.userID;
+            let {data, error} = await ReportService.getAllReportsByStudentID(studentID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "There is no reports in this class"});
+            }
+
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e); 
             return res.status(500).json({message: "Internal Server Error"});
         }
     }

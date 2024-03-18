@@ -19,19 +19,21 @@ StudentRouter.post("/resetPassword",VerifyResetToken,StudentController.resetPass
 StudentRouter.post("/resendOTPRegister", StudentController.resendOTPRegister);
 StudentRouter.post("/resendOTP",StudentController.resendOTP);
 
-//Proper student use case
+//Proper student use case (classes)
 StudentRouter.get("/classes", VerifyAccessToken, Authorization("student"), StudentClassController.getClassesByStudentID);
 StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
+//Proper student use case (report)
+StudentRouter.get("/reports", VerifyAccessToken, Authorization("student"), ReportController.getReportsByStudentID);
 StudentRouter.get("/reports/detail/:id", VerifyAccessToken, Authorization("student"), ReportController.getReportByID);
-StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization("student"), );
-//Student Use Cases test
-//StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
-//StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
-
+StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization("student"), ReportController.getReportsByStudentIDInClassID);
 StudentRouter.post("/report/submit", VerifyAccessToken, Authorization("student"), ReportController.submitReport);
 StudentRouter.put("/report/edit/:id", VerifyAccessToken, Authorization("student"), ReportController.editReport);
 
+
+//Student Use Cases test
+//StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
+//StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);
