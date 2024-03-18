@@ -216,6 +216,34 @@ class ReportController {
             return res.status(500).json({message: "Internal Server"});
         }   
     }
+
+    //testable
+    getHistoryReportByHistoryID = async (req,res) => {
+        const historyID = req.params.historyid;
+        const classID = req.params.classid; 
+        const teacherID = req.payload.userID;
+
+        try {
+            let checkAuth = await ClassService.getClassByID(classID);
+            if (checkAuth == null){
+                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
+            }     
+            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            }
+
+            let {data, error} = await ReportService.getHistoryReportByHistoryID(historyID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "Report detail cannot be found"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new ReportController();
