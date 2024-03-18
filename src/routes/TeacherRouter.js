@@ -11,6 +11,7 @@ import AttendanceDetailController from "../controllers/AttendanceDetailControlle
 import ReportController from "../controllers/ReportController";
 
 const TeacherRouter = express.Router();
+
 //Authentication
 TeacherRouter.post("/register", TeacherController.register);
 TeacherRouter.post("/verifyRegister", TeacherController.verifyRegister);

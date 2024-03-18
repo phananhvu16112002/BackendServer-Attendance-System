@@ -170,7 +170,7 @@ class ReportService {
             innerJoinAndMapOne("classes.course", Course, 'course', "course.courseID = classes.courseID").
             innerJoinAndMapOne("classes.student", Student, 'student', "report.studentID = student.studentID").
             select('classes.*').addSelect("course.*").addSelect("report.*").addSelect('student.studentID, student.studentEmail ,student.studentName').
-            orderBy("report.createdAt", "DESC").
+            orderBy('report.new', "DESC").addOrderBy("report.createdAt", "DESC").
             where("classes.teacherID = :id", {id: teacherID}). 
             getRawMany();
 
