@@ -8,6 +8,7 @@ import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import FeedbackController from "../controllers/FeedbackController";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
+import ReportController from "../controllers/ReportController";
 
 const TeacherRouter = express.Router();
 //Authentication
@@ -25,6 +26,10 @@ TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), Class
 TeacherRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsWithAllAttendanceDetails);
 TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.getAttendanceFormsByClassID);
 
+TeacherRouter.get("/reports", VerifyAccessToken, Authorization('teacher'), ReportController.getAllReportsByTeacherID);
+
+TeacherRouter.get("/reports/detail/:reportid/:classid", VerifyAccessToken, Authorization('teacher'), ReportController.getReportDetailByReportID);
+//TeacherRouter.get("/historyreports/detail/:historyid/:classid", VerifyAccessToken, Authorization('teacher'), ReportController);
 
 TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getAttendanceDetailByStudentIDClassIDFormID);
 

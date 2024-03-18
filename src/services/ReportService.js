@@ -9,11 +9,13 @@ import { Feedback } from "../models/Feedback";
 import { Classes } from "../models/Classes";
 import { Teacher } from "../models/Teacher";
 import { Course } from "../models/Course";
+import { Student } from "../models/Student";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
+const classesRepository = AppDataSource.getRepository(Classes);
 
 class ReportService {
     //oke
@@ -155,6 +157,42 @@ class ReportService {
         } catch (e) {
             console.log(e);
             return {data: [], error: "Failed fetching reports"};
+        }
+    }
+
+    //
+    getAllReportsByTeacherID = async (teacherID) => {
+        try {
+            let data = await classesRepository.createQueryBuilder("classes"). 
+            innerJoinAndMapMany("classes.report", Report, 'report', "report.classID = classes.classID").
+            innerJoinAndMapOne("classes.course", Course, 'course', "course.courseID = classes.courseID").
+            innerJoinAndMapOne("classes.student", Student, 'student', "report.studentID = student.studentID").
+            select('classes.*').addSelect("course.*").addSelect("report.*").addSelect('student.studentID, student.studentEmail ,student.studentName').
+            orderBy("report.createdAt", "DESC").
+            where("classes.teacherID = :id", {id: teacherID}). 
+            getRawMany();
+
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: [], error: "Failed fetching reports"};
+        }
+    }
+
+    //
+    getReportDetailByReportID = async (reportID) => {
+        try {
+            let data = await reportRepository.findOne({
+                where: {reportID: reportID},
+                relations: {
+                    attendanceDetail: true,
+                    feedback: true,
+                    historyReports: true
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching report detail"};
         }
     }
 }
