@@ -8,6 +8,7 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import StudentClassService from "../services/StudentClassService";
 import ClassService from "../services/ClassService";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
+import AttendanceFormService from "../services/AttendanceFormService";
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail); 
 class AttendanceDetailController {
     takeAttendance = async (req, res) => {
@@ -121,14 +122,6 @@ class AttendanceDetailController {
             console.log(e);
             return res.status(500).json({message: "Internal Server Error"});
         }
-    }
-
-    //oke
-    getAttendanceDetailsByFormID = async (req,res) => {
-        //check if teacher owns this form
-
-        //getAttendanceDetails
-        
     }
 
     takeAttendanceOffline = async (req, res) => {
@@ -246,6 +239,15 @@ class AttendanceDetailController {
             console.log(e);
             return res.status(500).json({message: "Internal Server Error"});
         }
+    }
+
+    //oke
+    getAttendanceDetailsByFormID = async (req,res) => {
+        //check if teacher owns this form
+        const teacherID = req.payload.userID;
+        const formID = req.params.id;
+        //getAttendanceDetails
+        return res.status(200).json(await AttendanceFormService.getAttendanceFormByFormID(formID));
     }
 }
 
