@@ -190,6 +190,13 @@ class ReportService {
                     attendanceDetail: true,
                     feedback: true,
                     historyReports: true
+                },
+                order : {
+                    historyReports: {
+                        createdAt: {
+                            direction : "DESC"
+                        }
+                    }
                 }
             });
             return {data: data, error: null};
