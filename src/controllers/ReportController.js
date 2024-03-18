@@ -170,6 +170,24 @@ class ReportController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
+
+    //testable
+    getAllReportsByTeacherID = async (req,res) => {
+        try{
+            const teacherID = req.payload.userID;
+            let {data,error} = await ReportService.getAllReportsByTeacherID(teacherID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "There is no reports yet"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e); 
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default new ReportController();
