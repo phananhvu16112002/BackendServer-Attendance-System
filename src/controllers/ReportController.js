@@ -4,6 +4,7 @@ import ReportImageService from "../services/ReportImageService";
 import ReportService from "../services/ReportService";
 import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
+import ClassService from "../services/ClassService";
 class ReportController {
     //oke 
     submitReport = async (req,res) => {
@@ -187,6 +188,33 @@ class ReportController {
             console.log(e); 
             return res.status(500).json({message: "Internal Server Error"});
         }
+    }
+
+    //testable
+    getReportDetailByReportID = async (req,res) => {
+        const reportID = req.params.reportid;
+        const classID = req.params.classid; 
+        const teacherID = req.payload.userID;
+
+        try{
+            let checkAuth = await ClassService.getClassByID(classID);
+            if (checkAuth == null){
+                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
+            }     
+            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            }
+            let {data,error} = await ReportService.getReportDetailByReportID(reportID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "Report detail cannot be found"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }   
     }
 }
 

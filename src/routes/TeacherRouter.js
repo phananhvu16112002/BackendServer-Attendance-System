@@ -28,6 +28,9 @@ TeacherRouter.get("/classes/detail/:id/forms", VerifyAccessToken, Authorization(
 
 TeacherRouter.get("/reports", VerifyAccessToken, Authorization('teacher'), ReportController.getAllReportsByTeacherID);
 
+TeacherRouter.get("/reports/detail/:reportid/:classid", VerifyAccessToken, Authorization('teacher'), ReportController.getReportDetailByReportID);
+//TeacherRouter.get("/historyreports/detail/:historyid/:classid", VerifyAccessToken, Authorization('teacher'), ReportController);
+
 TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getAttendanceDetailByStudentIDClassIDFormID);
 
 //Proper post method

@@ -178,6 +178,23 @@ class ReportService {
             return {data: [], error: "Failed fetching reports"};
         }
     }
+
+    //
+    getReportDetailByReportID = async (reportID) => {
+        try {
+            let data = await reportRepository.findOne({
+                where: {reportID: reportID},
+                relations: {
+                    attendanceDetail: true,
+                    feedback: true,
+                    historyReports: true
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching report detail"};
+        }
+    }
 }
 
 export default new ReportService();
