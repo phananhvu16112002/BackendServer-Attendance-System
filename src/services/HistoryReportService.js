@@ -4,7 +4,7 @@ import { HistoryReportImage } from "../models/HistoryReportImage";
 import { AppDataSource } from "../config/db.config";
 
 class HistoryReportService {
-    updateReportAndInsertHistory = async (report, historyReport, imageReportList, topic, message, status, createdAt, problem) => {
+    updateReportAndInsertHistory = async (report, historyReport, imageReportList, editImageReportList,topic, message, status, createdAt, problem) => {
         report.new = true;
         report.important = true;
         report.status = status;
@@ -12,7 +12,7 @@ class HistoryReportService {
         report.message = message;
         report.topic = topic;
         
-        let oldImage = report.reportImage;
+        let oldImage = editImageReportList;
 
         report.reportImage = imageReportList;
         report.problem = problem;

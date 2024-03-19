@@ -23,7 +23,7 @@ const historyReportRepository = AppDataSource.getRepository(HistoryReport);
 class ReportService {
     //oke
     getEditedReportImage = (editedImage) => {
-        let editReportImageList = []
+        let editReportImageList = [];
         for (let i = 0; i < editedImage.length; i++){
             let editReportImage = new ReportImage();
             editReportImage.imageID = editedImage;
