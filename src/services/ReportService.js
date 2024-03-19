@@ -189,7 +189,8 @@ class ReportService {
                 relations: {
                     attendanceDetail: true,
                     feedback: true,
-                    historyReports: true
+                    historyReports: true,
+                    reportImage: true
                 },
                 order : {
                     historyReports: {
