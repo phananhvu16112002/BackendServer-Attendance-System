@@ -148,7 +148,7 @@ class ReportService {
                 innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
                 innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = classes.courseID").
                 leftJoinAndMapOne("report.feedback", Feedback, "feedback", "report.reportID = feedback.reportID").
-                select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+                select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').addSelect("feedback").
                 orderBy("report.createdAt", "DESC").
                 where("report.studentID = :id", {id: studentID}).getRawMany();
             return {data: data, error: null};
