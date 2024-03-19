@@ -111,7 +111,8 @@ class ReportController {
             console.log(data.reportImage);
             console.log(listDelete);
 
-            let editImageReportList = ReportService.getEditedReportImage(listDelete); //need to check
+            let editImageReportList= ReportService.getEditedReportImage(listDelete); //need to check
+            
             let historyReport = HistoryReportService.copyReport(data);
 
             let imageReportList = await ReportImageService.imageReportListFromImage(files);
@@ -119,7 +120,7 @@ class ReportController {
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }
 
-            let {data: result, error: err} = await HistoryReportService.updateReportAndInsertHistory(data, historyReport, imageReportList, topic, message, status, createdAt, problem);
+            let {data: result, error: err} = await HistoryReportService.updateReportAndInsertHistory(data, historyReport, imageReportList, editImageReportList,topic, message, status, createdAt, problem);
             if (err){
                 await ReportImageService.deleteImageReportList(imageReportList);
                 return res.status(503).json({message: err});
