@@ -21,12 +21,24 @@ const classesRepository = AppDataSource.getRepository(Classes);
 const historyReportRepository = AppDataSource.getRepository(HistoryReport);
 
 class ReportService {
+    getInfoReportImage = (editedImage, imageReportList) => {
+        let keepImageReportList = [];
+        let editReportImageList = [];
+        for (let i = 0; i < imageReportList.length; i++){
+            if (editedImage.includes(imageReportList[i].imageID)){
+                editReportImageList.push(imageReportList[i])
+            }else {
+                keepImageReportList.push(imageReportList[i])
+            }
+        }
+        return {keepImageReportList, editReportImageList};
+    }
     //oke
     getEditedReportImage = (editedImage) => {
         let editReportImageList = [];
         for (let i = 0; i < editedImage.length; i++){
             let editReportImage = new ReportImage();
-            editReportImage.imageID = editedImage;
+            editReportImage.imageID = editedImage[i];
             editReportImage.imageURL = "https://i.imgur.com/" + editedImage[i] + ".png";
             editReportImageList.push(editReportImage);
         }

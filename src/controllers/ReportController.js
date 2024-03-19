@@ -16,9 +16,17 @@ class ReportController {
             const problem = req.body.problem;
             const message = req.body.message;
 
-            let files = req.files;
+            let files = req.files.file;
 
-            if (files != null && Object.keys(files).length > 3){
+            if (files == null){
+                files = [];
+            }
+
+            if (!Array.isArray(files)){
+                files = [files];
+            }
+
+            if (files.length > 3){
                 return res.status(422).json({message: "Only three image files allowed"}); 
             }
 
@@ -108,7 +116,7 @@ class ReportController {
             console.log(data.reportImage);
             console.log(listDelete);
 
-            let editImageReportList= ReportService.getEditedReportImage(listDelete); //need to check
+            let {keep, edit} = ReportService.getInfoReportImage(listDelete, data.reportImage); //need to check
             
             let historyReport = HistoryReportService.copyReport(data);
 
@@ -117,7 +125,9 @@ class ReportController {
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }
 
-            let {data: result, error: err} = await HistoryReportService.updateReportAndInsertHistory(data, historyReport, imageReportList, editImageReportList,topic, message, status, createdAt, problem);
+            let imageFinalList = imageReportList.concat(keep);
+
+            let {data: result, error: err} = await HistoryReportService.updateReportAndInsertHistory(data, historyReport, imageFinalList, edit ,topic, message, status, createdAt, problem);
             if (err){
                 await ReportImageService.deleteImageReportList(imageReportList);
                 return res.status(503).json({message: err});
