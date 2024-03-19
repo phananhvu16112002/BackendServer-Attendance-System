@@ -11,6 +11,7 @@ import TeacherRouter from "./src/routes/TeacherRouter";
 import cors from "cors";
 import TokenRouter from "./src/routes/TokenRouter";
 import TestAPIRouter from "./src/routes/TestAPIRouter";
+import AdminRouter from "./src/routes/AdminRouter";
 
 const app = express();
 app.use(cors())
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
 app.use(cors());
 
+app.use("/api/admin", AdminRouter)
 app.use("/api/student", StudentRouter)
 app.use("/api/teacher", TeacherRouter)
 app.use("/api/token", TokenRouter)

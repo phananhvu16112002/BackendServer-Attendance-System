@@ -11,6 +11,7 @@ import AttendanceDetailController from "../controllers/AttendanceDetailControlle
 import ReportController from "../controllers/ReportController";
 
 const TeacherRouter = express.Router();
+
 //Authentication
 TeacherRouter.post("/register", TeacherController.register);
 TeacherRouter.post("/verifyRegister", TeacherController.verifyRegister);
@@ -33,6 +34,7 @@ TeacherRouter.get("/historyreports/detail/:historyid/:classid", VerifyAccessToke
 
 TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getAttendanceDetailByStudentIDClassIDFormID);
 
+TeacherRouter.get("/attendance/detail/:id", VerifyAccessToken, Authorization("teacher"), AttendanceDetailController.getAttendanceDetailsByFormID)
 //Proper post method
 TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
 TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teacher'), FeedbackController.editFeedback);

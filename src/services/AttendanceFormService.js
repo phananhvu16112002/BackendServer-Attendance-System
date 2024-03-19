@@ -3,6 +3,8 @@ import { AttendanceForm } from "../models/AttendanceForm"
 import { v4 as uuidv4 } from 'uuid';
 import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 import { Classes } from "../models/Classes";
+import { AttendanceDetail } from "../models/AttendanceDetail";
+import { Student } from "../models/Student";
 
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const classRepository = AppDataSource.getRepository(Classes);
@@ -89,6 +91,31 @@ class AttendanceFormService {
             });
 
             return {data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed fetching data"};
+        }
+    }
+
+    //
+    getAttendanceFormByFormID = async (formID) => {
+        try {
+            let data = await attendanceFormRepository.createQueryBuilder("attendanceform").
+            leftJoinAndMapMany("attendanceform.attendancedetails", AttendanceDetail, "attendancedetail", "attendancedetail.formID = attendanceform.formID").
+            innerJoinAndMapOne("attendancedetail.student", Student, "student", "attendancedetail.studentID = student.studentID").
+            select("attendancedetail.*").addSelect("student.studentName, student.studentEmail").
+            where("attendanceform.formID =:id", {id: formID}).getRawMany();
+
+            let stats = await attendanceFormRepository.createQueryBuilder("attendanceform").
+            leftJoinAndMapMany("attendanceform.attendancedetails", AttendanceDetail, "attendancedetail", "attendancedetail.formID = attendanceform.formID").
+            select("attendanceform.*").
+            addSelect('COUNT(attendancedetail.formID) as total').
+            addSelect(`SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS totalPresence`,).
+            addSelect(`SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS totalAbsence`,).
+            addSelect(`SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS totalLate`,).
+            groupBy("attendancedetail.formID").
+            where("attendanceform.formID =:id", {id: formID}).getRawOne();
+
+            return {data, stats};
         } catch (e) {
             return {data: null, error: "Failed fetching data"};
         }
