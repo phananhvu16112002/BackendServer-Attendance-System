@@ -62,6 +62,8 @@ class ReportController {
     //Oke
     editReport = async (req,res) => {
         try {
+            console.log(req.body);
+
             const reportID = req.params.id;
             const studentID = req.payload.userID;
             const topic = req.body.topic;
@@ -70,9 +72,25 @@ class ReportController {
             const status = "Pending";
             const createdAt = JSDatetimeToMySQLDatetime(new Date());
 
-            let files = req.files;
+            let listDelete = [];
+            if (req.body.listDelete != null){
+                listDelete = req.body.listDelete;
+                listDelete = listDelete.replace(/'/g, '"');
+                listDelete = JSON.parse(listDelete);
+                console.log(listDelete);
+            }
 
-            if (files != null && Object.keys(files).length > 3){
+            let files = req.files.file;
+
+            if (files == null){
+                files = [];
+            }
+
+            if (!Array.isArray(files)){
+                files = [files];
+            }
+
+            if (files.length > 3){
                 return res.status(422).json({message: "Only three image files allowed"}); 
             }
 
@@ -87,10 +105,14 @@ class ReportController {
                 return res.status(403).json({message: "Action Denied. Student is not authorized"});
             }
 
+            console.log(data.reportImage);
+            console.log(listDelete);
+
+            let editImageReportList = ReportService.getEditedReportImage(listDelete); //need to check
             let historyReport = HistoryReportService.copyReport(data);
 
             let imageReportList = await ReportImageService.imageReportListFromImage(files);
-            if (imageReportList.length == 0 && req.files != null){
+            if (imageReportList.length == 0 && files.length > 0){
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }
 

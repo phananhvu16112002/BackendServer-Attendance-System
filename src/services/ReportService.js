@@ -11,6 +11,7 @@ import { Teacher } from "../models/Teacher";
 import { Course } from "../models/Course";
 import { Student } from "../models/Student";
 import { HistoryReport } from "../models/HistoryReport";
+import { ReportImage } from "../models/ReportImage";
 
 const reportRepository = AppDataSource.getRepository(Report);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -20,6 +21,17 @@ const classesRepository = AppDataSource.getRepository(Classes);
 const historyReportRepository = AppDataSource.getRepository(HistoryReport);
 
 class ReportService {
+    //oke
+    getEditedReportImage = (editedImage) => {
+        let editReportImageList = []
+        for (let i = 0; i < editedImage.length; i++){
+            let editReportImage = new ReportImage();
+            editReportImage.imageID = editedImage;
+            editReportImage.imageURL = "https://i.imgur.com/" + editedImage[i] + ".png";
+            editReportImageList.push(editReportImage);
+        }
+        return editReportImageList;
+    }
     //oke
     getReportDetail = async (reportID) => {
         try {
@@ -135,6 +147,7 @@ class ReportService {
                 innerJoinAndMapOne("report.classes", Classes, "classes", 'report.classID = classes.classID').
                 innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
                 innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = classes.courseID").
+                leftJoinAndMapOne("report.feedback", Feedback, "feedback", "report.reportID = feedback.reportID").
                 select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
                 orderBy("report.createdAt", "DESC").
                 where("report.studentID = :id", {id: studentID}).getRawMany();
