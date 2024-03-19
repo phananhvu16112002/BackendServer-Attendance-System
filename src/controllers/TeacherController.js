@@ -76,7 +76,7 @@ class TeacherController {
             }
 
             const accessToken = jwt.sign({userID: teacherID, role: "teacher"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '30s' })
-            const refreshToken = jwt.sign({userID: teacherID, role: "teacher"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1m' })
+            const refreshToken = jwt.sign({userID: teacherID, role: "teacher"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '30m' })
 
             await teacherService.updateTeacherAccessTokenAndRefreshToken(accessToken, refreshToken);
             return res.status(200).json({

@@ -14,6 +14,10 @@ class FeedbackController {
             const message = req.body.message;
             const confirmStatus = req.body.confirmStatus;
             const createdAt = JSDatetimeToMySQLDatetime(new Date());
+            console.log(reportID);
+            console.log(confirmStatus);
+            console.log(topic);
+            console.log(message);
             
             let {data,error} = await ReportService.getReportByID(reportID);
             if (error){
