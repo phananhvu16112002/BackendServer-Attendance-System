@@ -52,6 +52,7 @@ class ReportService {
                 relations: {
                     reportImage: true,
                     attendanceDetail: true,
+                    feedback: true,
                 }
             });
             return {data, error: null};
