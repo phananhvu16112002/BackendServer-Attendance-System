@@ -14,6 +14,14 @@ class AdminController {
         const hashedPassword2 = await bcrypt.hash("520h0696password!", salt2)
         console.log(hashedPassword2);
     }
+
+    uploadStudents = async (req,res) => {
+
+    }
+
+    uploadTeachers = async (req,res) => {
+
+    }
 }
 
 export default new AdminController();
