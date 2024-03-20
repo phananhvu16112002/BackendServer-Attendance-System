@@ -444,6 +444,7 @@ class Test {
     }
 
     uploadExcel = async (req, res) => {
+        console.log(req.body);
         const excelFile = req.files.file;
         // let {data, error} = await ExcelService.readStudentsFromExcel(excelFile);
         // console.log(data, error);
@@ -475,7 +476,8 @@ class Test {
 
     uploadMultipleFiles = async (req,res) => {
         const studentId = req.body.studentID;
-        const files = req.files;
+        const files = req.files.files;
+        console.log(files);
         const images = []
         let student = await StudentService.checkStudentExist(studentId);
         if (student == null){
@@ -485,9 +487,9 @@ class Test {
         //     return res.json({message: "Student is not active"});
         // }
         //Array of buffers
-        for (let file in files){
+        for (let i = 0; i < files.length; i++){
             let response = await client.upload({
-                image: files[file].data,
+                image: files[i].data,
             })
             if (response == null){
                 return res.json({message: "Call api failed"})
