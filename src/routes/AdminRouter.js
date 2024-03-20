@@ -6,7 +6,7 @@ const AdminRouter = express.Router();
 //AdminRouter.get("/login", );
 AdminRouter.post("/submit/teachers", AdminController.uploadTeachers);
 AdminRouter.post("/submit/students", AdminController.uploadStudents);
-AdminRouter.post("/submit/course", AdminController.uploadClasses);
+AdminRouter.post("/submit/course", AdminController.uploadCourses);
 AdminRouter.post("/submit/classes", AdminController.uploadClasses);
 
 export default AdminRouter;

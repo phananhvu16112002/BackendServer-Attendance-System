@@ -11,6 +11,7 @@ import { Classes } from '../models/Classes';
 import { Student } from '../models/Student';
 import ClassService from '../services/ClassService';
 import StudentClassService from '../services/StudentClassService';
+import TeacherService from '../services/TeacherService';
 //$2b$10$Jy/x6brNkjrtIpPRRbHrQu8jh8k8o.l9qXPxAORF6G9fFAvmHr4JO //520h0380password!
 //$2b$10$jf1lWevTaxoTjvYTr34l9.qDb0ZQoDNGFUK2uj2DPdrA7pXrgOc2G //520h0696password!
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -51,14 +52,14 @@ class AdminController {
     uploadTeachers = async (req,res) => {
         try {
             const excelFile = req.files.file;
-            let {data, error} = await ExcelService.readStudentsFromExcel(excelFile);
+            let {data, error} = await ExcelService.readTeachersFromExcel(excelFile);
             if (error){
                 return res.status(503).json({message: error});
             }
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            let {data: result, error: err} = await StudentService.loadStudentsToDatabase(data);
+            let {data: result, error: err} = await TeacherService.loadTeachersToDatabase(data);
             if (err){
                 return res.status(503).json({message: err});
             }
@@ -89,6 +90,7 @@ class AdminController {
         }
     }
 
+    //oke
     uploadClasses = async (req,res) => {
         try {
             const courseID = req.body.courseID;
@@ -104,7 +106,7 @@ class AdminController {
 
             const fileExcel = req.files.file;
 
-            let {data, error} = await ExcelService.readStudentInClassFromExcel(fileExcel, classID);
+            let {data, error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
             if (error){
                 return res.status(503).json({message: error});
             }

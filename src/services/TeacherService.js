@@ -139,6 +139,16 @@ class TeacherService {
             return null;
         }
     }
+
+    //oke
+    loadTeachersToDatabase = async (teacherList) => {
+        try {
+            let data = await teacherRepository.insert(teacherList);
+            return {data: data, error: null}
+        } catch (e) {
+            return {data: null, error: e.message}
+        }
+    }
 }
 
 export default new TeacherService();
