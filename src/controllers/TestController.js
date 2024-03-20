@@ -23,6 +23,7 @@ import {ImgurClient} from "imgur";
 import {Readable, Transform} from "stream";
 import { StudentImage } from '../models/StudentImage';
 import StudentService from '../services/StudentService';
+import ExcelService from '../services/ExcelService';
 
 const studentImageRepository = AppDataSource.getRepository(StudentImage);
 const classRepository = AppDataSource.getRepository(Classes);
@@ -444,22 +445,32 @@ class Test {
 
     uploadExcel = async (req, res) => {
         const excelFile = req.files.file;
-        const buffer = excelFile.data;
+        // let {data, error} = await ExcelService.readStudentsFromExcel(excelFile);
+        // console.log(data, error);
+        // let {data: result, error: err} = await StudentService.loadStudentsToDatabase(data);
+        // console.log(result, err);
+        console.log(excelFile);
 
-        const workbook = new Excel.Workbook();
-        const content = await workbook.xlsx.load(buffer, { type: "buffer" });
+        let {data, error} = await ExcelService.readCoursesFromExcel(excelFile);
+        console.log(data);
+        console.log("error: " + error);
+        res.json({message: "done"});
+        // const buffer = excelFile.data;
+
+        // const workbook = new Excel.Workbook();
+        // const content = await workbook.xlsx.load(buffer, { type: "buffer" });
         
-        const worksheet = content.worksheets[0];
-        worksheet.eachRow((row, rowNumber) => {
-            
-            let student = new Student();
-            student.studentID = row.getCell(1).text;
-            student.studentName = row.getCell(2).text;
-            student.studentEmail = row.getCell(3).text;
-            console.log(student);
-        })
+        // const worksheet = content.worksheets[0];
+        // worksheet.eachRow((row, rowNumber) => {
+        //     console.log(rowNumber);
+        //     let student = new Student();
+        //     student.studentID = row.getCell(1).text;
+        //     student.studentName = row.getCell(2).text;
+        //     student.studentEmail = row.getCell(3).text;
+        //     console.log(student);
+        // })
 
-        res.json({message: "Oke"});
+        // res.json({message: "Oke"});
     }
 
     uploadMultipleFiles = async (req,res) => {
