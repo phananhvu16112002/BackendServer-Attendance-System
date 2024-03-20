@@ -31,7 +31,7 @@ class ReportService {
                 keepImageReportList.push(imageReportList[i])
             }
         }
-        return {keepImageReportList, editReportImageList};
+        return {keep:keepImageReportList,edit: editReportImageList};
     }
     //oke
     getEditedReportImage = (editedImage) => {

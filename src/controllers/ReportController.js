@@ -70,7 +70,7 @@ class ReportController {
     //Oke
     editReport = async (req,res) => {
         try {
-            console.log(req.body);
+            console.log('--------'+req.body.listDelete);
 
             const reportID = req.params.id;
             const studentID = req.payload.userID;
@@ -79,13 +79,13 @@ class ReportController {
             const message = req.body.message;
             const status = "Pending";
             const createdAt = JSDatetimeToMySQLDatetime(new Date());
-
             let listDelete = [];
             if (req.body.listDelete != null){
                 listDelete = req.body.listDelete;
                 listDelete = listDelete.replace(/'/g, '"');
+                console.log('Xuwr ly anh cu:' +listDelete)
                 listDelete = JSON.parse(listDelete);
-                console.log(listDelete);
+                // console.log(listDelete);
             }
 
             let files = req.files.file;
@@ -113,12 +113,14 @@ class ReportController {
                 return res.status(403).json({message: "Action Denied. Student is not authorized"});
             }
 
-            console.log(data.reportImage);
+            // console.log(data.reportImage);
             console.log(listDelete);
+            console.log('Report service run---');
 
             let {keep, edit} = ReportService.getInfoReportImage(listDelete, data.reportImage); //need to check
-            
+            console.log('Danh sach hinh anh duoc giu lai' +keep);
             let historyReport = HistoryReportService.copyReport(data);
+            console.log('Danh sach hinh anh se bi xoa'+edit)
 
             let imageReportList = await ReportImageService.imageReportListFromImage(files);
             if (imageReportList.length == 0 && files.length > 0){
