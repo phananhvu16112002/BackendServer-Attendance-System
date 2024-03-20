@@ -443,6 +443,7 @@ class Test {
     }
 
     uploadExcel = async (req, res) => {
+        console.log(req.body);
         const excelFile = req.files.file;
         const buffer = excelFile.data;
 
