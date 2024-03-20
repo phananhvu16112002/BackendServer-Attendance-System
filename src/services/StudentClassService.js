@@ -143,6 +143,19 @@ class StudentClassService {
             return {data: [], error: "Failed fecthing"};
         }
     }
+
+    //upload class for student 
+    uploadClass = async (classes, studentclass) => {
+        try {
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.save(classes);
+                await transactionalEntityManager.save(studentclass);
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new StudentClassService();

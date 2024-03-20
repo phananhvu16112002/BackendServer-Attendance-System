@@ -130,6 +130,16 @@ class StudentService {
         student.studentHashedPassword = hashPassword;
         await studentRepository.save(student);
     }
+
+    //testable
+    loadStudentsToDatabase = async (studentList) => {
+        try {
+            let data = await studentRepository.insert(studentList);
+            return {data: data, error: null}
+        } catch (e) {
+            return {data: null, error: e.message}
+        }
+    }
 }
 
 export default new StudentService();

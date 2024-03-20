@@ -3,10 +3,10 @@ import AdminController from "../controllers/AdminController";
 
 const AdminRouter = express.Router();
 
-AdminRouter.get("/login", AdminController.login);
-AdminRouter.post("/submit/teachers", );
-AdminRouter.post("/submit/students", );
-AdminRouter.post("/submit/course", );
-AdminRouter.post("/submit/")
+//AdminRouter.get("/login", );
+AdminRouter.post("/submit/teachers", AdminController.uploadTeachers);
+AdminRouter.post("/submit/students", AdminController.uploadStudents);
+AdminRouter.post("/submit/course", AdminController.uploadClasses);
+AdminRouter.post("/submit/classes", AdminController.uploadClasses);
 
 export default AdminRouter;
