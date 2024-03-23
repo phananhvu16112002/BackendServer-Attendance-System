@@ -149,6 +149,22 @@ class TeacherService {
             return {data: null, error: e.message}
         }
     }
+
+    //testable
+    getTeachers = async () => {
+        try {
+            let data = await teacherRepository.find({
+                select: {
+                    teacherID: true,
+                    teacherEmail: true,
+                    teacherName: true
+                }
+            })
+            return {data: data, error: null}
+        } catch (e) {
+            return {data: [], error: "Failed getting teachers"};
+        }
+    }
 }
 
 export default new TeacherService();

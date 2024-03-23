@@ -140,6 +140,23 @@ class StudentService {
             return {data: null, error: e.message}
         }
     }
+
+    //testable
+    getStudents = async () => {
+        try {
+            let data = await studentRepository.find({
+                select: {
+                    studentID: true, 
+                    studentEmail: true,
+                    studentName: true,
+                    studentImage: true
+                }
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting students"};
+        }
+    }
 }
 
 export default new StudentService();

@@ -106,6 +106,33 @@ class ClassService {
             return {data: null, error: "Failed fetching data"};
         }
     }
+
+    //testable
+    getClassesWithCourseAndTeacherByCourseID = async (courseID) => {
+        try {
+            let data = classRepository.find({
+                where: {
+                    course: {
+                        courseID : courseID
+                    }
+                },
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    },
+                },
+                relations: {
+                    teacher: true,
+                    course: true
+                }
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
 }
 
 export default new ClassService();

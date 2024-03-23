@@ -13,6 +13,16 @@ class CourseService {
             return {data: null, error: e.message}
         }
     }
+
+    //testable
+    getCourses = async () => {
+        try {
+            let data = await courseRepository.find();
+            return {data: data, error : null};
+        } catch (e) {
+            return {data: [], error: "Failed getting courses"};
+        }
+    }
 }
 
 export default new CourseService();
