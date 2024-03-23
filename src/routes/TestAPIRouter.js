@@ -564,6 +564,13 @@ TestAPIRouter.post("/form", async (req,res) => {
     res.status(200).json();
 });
 
+TestAPIRouter.get("/addOneStudent", async (req, res) => {
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager.createQueryBuilder()
+    });
+    res.json({message: "oke"});
+})
+
 export default TestAPIRouter
 
 

@@ -210,7 +210,7 @@ class AdminController {
     //testable
     getStudents = async (req,res) => {
         try {
-            let data = await StudentService.getStudents();
+            let {data,error} = await StudentService.getStudents();
             if (error){
                 return res.status(503).json({message: error});
             }
@@ -227,7 +227,7 @@ class AdminController {
     //testable
     getTeachers = async (req,res) => {
         try {
-            let data = await TeacherService.getTeachers();
+            let {data,error} = await TeacherService.getTeachers();
             if (error){
                 return res.status(503).json({message: error});
             }
