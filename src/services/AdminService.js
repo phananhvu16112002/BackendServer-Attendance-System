@@ -1,15 +1,14 @@
 import bcrypt from "bcrypt";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import { AppDataSource } from "../config/db.config";
-import { Admin } from "../models/Admin";
+import { Employee } from "../models/Employee";
 
-const adminRepository = AppDataSource.getRepository(Admin);
-
+const adminRepository = AppDataSource.getRepository(Employee);
 class AdminService {
     checkAdminExist = async (email) => {
         try {
             let admin = await adminRepository.findOneBy({
-                adminEmail: email
+                employeeEmail: email
             });
             return admin;
         } catch(e) {
@@ -19,8 +18,8 @@ class AdminService {
     //testable
     login = async (admin, email, password) => {
         try {
-            let result = await bcrypt.compare(password, admin.adminHashedPassword);
-            if (compareCaseInsentitive(email, admin.adminEmail) && result){
+            let result = await bcrypt.compare(password, admin.employeeHashedPassword);
+            if (compareCaseInsentitive(email, admin.employeeEmail) && result){
                 return true;
             }
             return false;
