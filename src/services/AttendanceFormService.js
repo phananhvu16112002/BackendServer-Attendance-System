@@ -16,6 +16,7 @@ class AttendanceFormService {
             await AppDataSource.transaction(async (transactionalEntityManager) => {
                 await transactionalEntityManager.save(attendanceForm);
                 await transactionalEntityManager.save(attendanceDetails);
+                
             })
 
             return {data: attendanceForm, error: null}

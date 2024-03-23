@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import ExcelService from '../services/ExcelService';
 import StudentService from '../services/StudentService';
 import CourseService from '../services/CourseService';
@@ -12,19 +11,38 @@ import { Student } from '../models/Student';
 import ClassService from '../services/ClassService';
 import StudentClassService from '../services/StudentClassService';
 import TeacherService from '../services/TeacherService';
+import AdminService from '../services/AdminService';
 //$2b$10$Jy/x6brNkjrtIpPRRbHrQu8jh8k8o.l9qXPxAORF6G9fFAvmHr4JO //520h0380password!
 //$2b$10$jf1lWevTaxoTjvYTr34l9.qDb0ZQoDNGFUK2uj2DPdrA7pXrgOc2G //520h0696password!
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 
 class AdminController {
     login = async (req,res) => {
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash("520h0380password!", salt)
-        console.log(hashPassword);
+        try {
+            const email = req.body.email;
+            const password = req.body.password;
 
-        const salt2 = await bcrypt.genSalt(10);
-        const hashedPassword2 = await bcrypt.hash("520h0696password!", salt2)
-        console.log(hashedPassword2);
+            let admin = await AdminService.checkAdminExist(email);
+            if (admin == null){
+                return res.status(422).json({message : "Account does not exist"});
+            }
+            if (await AdminService.login(admin, email, password) == false){
+                return res.status(422).json({message: "Email or password incorrect"});
+            }
+
+            const accessToken = jwt.sign({userID: email, role: "admin"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' });
+            const refreshToken = jwt.sign({userID: email, role: "admin"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '30m' });
+
+            return res.status(200).json({
+                message:"Login Successfully", 
+                refreshToken: refreshToken, 
+                accessToken: accessToken,
+                adminEmail: admin.adminEmail
+            });
+        } catch (e) {
+            console.error(e);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
     }
 
     //oke
