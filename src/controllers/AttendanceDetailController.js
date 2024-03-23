@@ -30,6 +30,9 @@ class AttendanceDetailController {
         console.log("Latitude ", latitude);
         console.log("Longitude ", longtitude)
         console.log("Image ", image);
+        console.log("Attendanced at", dateTimeAttendance);
+
+        let result = 1;
         //Call database to get attendance detail
         let attendanceDetail = await AttendanceDetailService.getAttendanceDetail(studentID, classID, formID);
         if (attendanceDetail == null){
@@ -43,9 +46,9 @@ class AttendanceDetailController {
 
         //will emit later
 
-        // if (distanceInMeter(latitude, longtitude, lat, long) > attendanceForm.radius){
-        //     return res.status(422).json({message: "Your location is not in range"});
-        // }
+        if (distanceInMeter(latitude, longtitude, lat, long) > attendanceForm.radius){
+            return res.status(422).json({message: "Your location is not in range"});
+        }
 
         //Check if attendance Detail exist
         if (attendanceDetail == null){
@@ -58,12 +61,35 @@ class AttendanceDetailController {
         }
 
         //Check form time will emit later
+        let start = MySQLDatetimeToJSDatetime(attendanceForm.startTime); 
+        let end = MySQLDatetimeToJSDatetime(attendanceForm.endTime);
+        let offset = new Date(start);
+        offset.setMinutes(offset.getMinutes() + 10);
 
-        // if (dateTimeAttendance < MySQLDatetimeToJSDatetime(attendanceForm.startTime) 
-        //     || dateTimeAttendance > MySQLDatetimeToJSDatetime(attendanceForm.endTime)){
+
+        if (dateTimeAttendance < start
+            || dateTimeAttendance > end){
             
-        //     return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
-        // }
+            return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
+        }
+
+        if (dateTimeAttendance >= start && dateTimeAttendance <= offset){
+            result = 1;
+        }else if (dateTimeAttendance > offset && dateTimeAttendance <= end) {
+            result = 0.5;
+        } else if (dateTimeAttendance > end) {
+            result = 0;
+        }
+
+        if (attendanceForm.type == 0){
+            attendanceDetail.location = location;
+            attendanceDetail.latitude = latitude;
+            attendanceDetail.longitude = longtitude;
+            attendanceDetail.result = result;
+            attendanceDetail.dateAttendanced = dateTimeAttendance;
+            attendanceDetailRepository.save(attendanceDetail);
+            return res.status(200).json(attendanceDetail);
+        }
 
         //Send image to Imgur
         const data = await UploadImageService.uploadAttendanceEvidenceFile(image);
@@ -93,7 +119,7 @@ class AttendanceDetailController {
         attendanceDetail.result = 1;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
         attendanceDetailRepository.save(attendanceDetail);
-        res.status(200).json(attendanceDetail);
+        return res.status(200).json(attendanceDetail);
     }
 
     //oke

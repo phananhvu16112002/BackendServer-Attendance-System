@@ -127,11 +127,11 @@ class ExcelService {
             let studentClasses = [];
 
             for (let rowIndex = 2; rowIndex < worksheet.rowCount - 1; rowIndex++){
-                
                 let row = worksheet.getRow(rowIndex);
                 let studentClass = new StudentClass();
                 studentClass.studentDetail = row.getCell(1).text;
                 studentClass.classDetail = classID;
+                console.log(studentClass);
                 studentClasses.push(studentClass);
             }
             return {data: studentClasses, error: null};
