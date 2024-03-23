@@ -11,5 +11,6 @@ AdminRouter.post("/submit/classes", AdminController.uploadClasses);
 AdminRouter.get("/teachers", AdminController.getStudents);
 AdminRouter.get("/students", AdminController.getTeachers);
 AdminRouter.get("/courses", AdminController.getCourses);
-AdminRouter.get("/courses/:id/classes", AdminController.getClasses);
+AdminRouter.get("/courses/:id/classes", AdminController.getClassesByCourseID);
+AdminRouter.get("/classes", AdminController.getClasses);
 export default AdminRouter;

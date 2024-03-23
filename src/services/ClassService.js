@@ -133,6 +133,16 @@ class ClassService {
             return {data: [], error: "Failed getting classes"};
         }
     }
+
+    //testable
+    getClasses = async () => {
+        try {
+            let data = await classRepository.find();
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
 }
 
 export default new ClassService();

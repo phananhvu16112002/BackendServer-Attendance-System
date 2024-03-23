@@ -154,11 +154,28 @@ class AdminController {
     }
 
     //testable
-    getClasses = async (req,res) => {
+    getClassesByCourseID = async (req,res) => {
         try {
             const courseID = req.params.id;
             let {data, error} = await ClassService.getClassesWithCourseAndTeacherByCourseID(courseID);
 
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testabel
+    getClasses = async (req,res) => {
+        try {
+            let {data, error} = await ClassService.getClasses();
             if (error){
                 return res.status(503).json({message: error});
             }
