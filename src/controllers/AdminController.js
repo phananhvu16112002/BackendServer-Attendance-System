@@ -42,7 +42,7 @@ class AdminController {
             if (err){
                 return res.status(503).json({message: err});
             }
-            return res.status(200).json({message: `Upload students successfully. Row insert ${result.length}`});
+            return res.status(200).json({data: data, message: `Upload students successfully. Row insert ${result.length}`});
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
@@ -63,7 +63,7 @@ class AdminController {
             if (err){
                 return res.status(503).json({message: err});
             }
-            return res.status(200).json({message: `Upload teachers successfully. Row insert ${result.length}`});
+            return res.status(200).json({data: data, message: `Upload teachers successfully. Row insert ${result.length}`});
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
@@ -84,7 +84,7 @@ class AdminController {
             if (err){
                 return res.status(503).json({message: err});
             }
-            return res.status(200).json({message: `Upload teachers successfully. Row insert ${result.length}`});
+            return res.status(200).json({data: data, message: `Upload teachers successfully. Row insert ${result.length}`});
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
@@ -127,7 +127,7 @@ class AdminController {
             classes.teacher = teacherID;
 
             if (await StudentClassService.uploadClass(classes, data)){
-                return res.status(200).json({message: "Class was formed"});
+                return res.status(200).json({data: classes, message: "Class was formed"});
             }
             return res.status(503).json({message: "Failed creating class"});
         } catch (e) {
