@@ -16,6 +16,10 @@ class ReportController {
             const problem = req.body.problem;
             const message = req.body.message;
 
+            if (req.files == null){
+                return res.status(422).json({message: "Please send at least one image"})
+            }
+
             let files = req.files.file;
 
             if (files == null){
@@ -88,8 +92,11 @@ class ReportController {
                 // console.log(listDelete);
             }
 
-            let files = req.files.file;
-
+            let files = null;
+            if (req.files != null){
+                files = req.files.file;
+            }
+            
             if (files == null){
                 files = [];
             }
