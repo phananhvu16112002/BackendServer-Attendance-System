@@ -35,7 +35,7 @@ class ExcelService {
             const worksheet = content.worksheets[0];
             let students = [];
             
-            for (let rowIndex = 2; rowIndex < worksheet.rowCount - 1; rowIndex++){
+            for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++){
                 let row = worksheet.getRow(rowIndex);
                 let student = new Student();
                 student.studentID = row.getCell(1).text;
@@ -66,7 +66,7 @@ class ExcelService {
             const worksheet = content.worksheets[0];
             let teachers = [];
             
-            for (let rowIndex = 2; rowIndex < worksheet.rowCount - 1; rowIndex++){
+            for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++){
                 let row = worksheet.getRow(rowIndex);
                 let teacher = new Teacher();
                 teacher.teacherID = row.getCell(1).text;
@@ -96,7 +96,7 @@ class ExcelService {
             const worksheet = content.worksheets[0];
             let courses = [];
 
-            for (let rowIndex = 2; rowIndex < worksheet.rowCount - 1; rowIndex++){
+            for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++){
                 
                 let row = worksheet.getRow(rowIndex);
                 let course = new Course();
@@ -126,7 +126,7 @@ class ExcelService {
             const worksheet = content.worksheets[0];
             let studentClasses = [];
 
-            for (let rowIndex = 2; rowIndex < worksheet.rowCount - 1; rowIndex++){
+            for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++){
                 let row = worksheet.getRow(rowIndex);
                 let studentClass = new StudentClass();
                 studentClass.studentDetail = row.getCell(1).text;
