@@ -157,6 +157,29 @@ class StudentService {
             return {data: [], error: "Failed getting students"};
         }
     }
+
+    //testalbe
+    postStudent = async (studentID, studentName, studentEmail) => {
+        try {
+            let student = new Student();
+            student.studentID = studentID;
+            student.studentEmail = studentEmail;
+            student.studentName = studentName;
+            let data = await studentRepository.insert(student);
+            let result = await studentRepository.findOne({
+                where: {
+                    studentID: studentID
+                }, select: {
+                    studentID: true,
+                    studentName: true,
+                    studentEmail: true 
+                }
+            });
+            return {data: result, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed adding student"};
+        }
+    }
 }
 
 export default new StudentService();

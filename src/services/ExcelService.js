@@ -131,7 +131,6 @@ class ExcelService {
                 let studentClass = new StudentClass();
                 studentClass.studentDetail = row.getCell(1).text;
                 studentClass.classDetail = classID;
-                console.log(studentClass);
                 studentClasses.push(studentClass);
             }
             return {data: studentClasses, error: null};

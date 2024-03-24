@@ -102,7 +102,10 @@ class AdminController {
             if (err){
                 return res.status(503).json({message: err});
             }
-            return res.status(200).json({data: data, message: `Upload teachers successfully. Row insert ${result.length}`});
+            if (result.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(result);
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
@@ -145,7 +148,11 @@ class AdminController {
             classes.teacher = teacherID;
 
             if (await StudentClassService.uploadClass(classes, data)){
-                return res.status(200).json({data: classes, message: "Class was formed"});
+                let {data: result, error: err} = await ClassService.getClassesByID(classID);
+                if (err){
+                    return res.status(503).json({message: err});
+                }
+                return res.status(200).json({data: result, message: "Class was formed"});
             }
             return res.status(503).json({message: "Failed creating class"});
         } catch (e) {
@@ -233,6 +240,71 @@ class AdminController {
             }
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testable
+    postStudent = async (req,res) => {
+        try {
+            const studentID = req.body.studentID;
+            const studentName = req.body.studentName;
+            const studentEmail = req.body.studentEmail;
+
+            let {data, error} = await StudentService.postStudent(studentID, studentName, studentEmail);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testable
+    postTeacher = async (req,res) => {
+        try {
+            const teacherID = req.body.teacherID;
+            const teacherName = req.body.teacherName;
+            const teacherEmail = req.body.teacherEmail;
+
+            let {data, error} = await TeacherService.postTeacher(teacherID, teacherName, teacherEmail);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testalbe
+    postCourse = async (req,res) => {
+        try {
+            const courseID = req.body.courseID;
+            const courseName = req.body.courseName;
+            const totalWeeks = req.body.totalWeeks;
+            const requiredWeeks = req.body.requiredWeeks;
+            const credit = req.body.credit;
+
+            let {data, error} = await CourseService.postCourse(courseID, courseName, totalWeeks, requiredWeeks, credit);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "No content"});
             }
             return res.status(200).json(data);
         } catch (e) {

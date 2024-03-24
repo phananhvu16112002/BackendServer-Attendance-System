@@ -165,6 +165,25 @@ class TeacherService {
             return {data: [], error: "Failed getting teachers"};
         }
     }
+
+    //testable
+    postTeacher = async (teacherID, teacherName, teacherEmail) => {
+        try {
+            let teacher = new Teacher();
+            teacher.teacherID = teacherID;
+            teacher.teacherName = teacherName;
+            teacher.teacherEmail = teacherEmail;
+            let data = await teacherRepository.insert(teacher);
+            let result = await teacherRepository.findOne({
+                where: {
+                    teacherID: teacherID
+                }
+            });
+            return {data: result, error: null};
+        } catch (e) {
+            return {data: null, error: e.message};
+        }
+    }
 }
 
 export default new TeacherService();

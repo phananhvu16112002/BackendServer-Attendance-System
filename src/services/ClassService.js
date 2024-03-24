@@ -3,7 +3,7 @@ import { Classes } from "../models/Classes";
 
 const classRepository = AppDataSource.getRepository(Classes);
 class ClassService {
-    //oke
+    //oke check if teacher enrolled in this class
     getClassByID = async (classID) => {
         try {
             return await classRepository.findOne({
@@ -137,10 +137,47 @@ class ClassService {
     //testable
     getClasses = async () => {
         try {
-            let data = await classRepository.find();
+            let data = await classRepository.find({
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true
+                }
+            })
             return {data: data, error: null};
         } catch (e) {
             return {data: [], error: "Failed getting classes"};
+        }
+    }
+
+    //testable
+    getClassesByID = async (classID) => {
+        try {
+            let data = await classRepository.find({
+                where: {
+                    classID: classID,
+                },
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true
+                }
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting classes"};
         }
     }
 }
