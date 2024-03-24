@@ -36,7 +36,7 @@ TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessT
 
 TeacherRouter.get("/attendance/detail/:id", VerifyAccessToken, Authorization("teacher"), AttendanceDetailController.getAttendanceDetailsByFormID)
 
-TeacherRouter.get("/classes/detail/:id/students", StudentClassController.getStudentsByClassID);
+TeacherRouter.get("/classes/detail/:id/students", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsByClassID);
 //Proper post method
 TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
 TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teacher'), FeedbackController.editFeedback);
