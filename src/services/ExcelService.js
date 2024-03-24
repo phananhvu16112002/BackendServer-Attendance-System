@@ -45,7 +45,10 @@ class ExcelService {
                 if (this.checkInfo(student.studentID, student.studentEmail) == false){
                     return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for studentID: ${student.studentID}, studentEmail: ${student.studentEmail}`};
                 }
-                students.push(student);
+                if (student.studentID != ""){
+                    students.push(student);
+                }
+                
             }
     
             return {data: students, error: null};
@@ -76,7 +79,9 @@ class ExcelService {
                 if (this.checkInfo(teacher.teacherID, teacher.teacherEmail) == false){
                     return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for teacherID: ${teacher.teacherID}, teacherEmail: ${teacher.teacherEmail}`};
                 }
-                teachers.push(teacher);
+                if (teacher.teacherID != ""){
+                    teachers.push(teacher);
+                }
             }
     
             return {data: teachers, error: null};
@@ -106,7 +111,9 @@ class ExcelService {
                 course.requiredWeeks = parseInt(row.getCell(4).text);
                 course.credit = parseInt(row.getCell(5).text);
                 console.log(course);
-                courses.push(course);
+                if (course.courseID != ""){
+                    courses.push(course);
+                }
             }
             return {data: courses, error: null};
         } catch (e) {
@@ -131,7 +138,9 @@ class ExcelService {
                 let studentClass = new StudentClass();
                 studentClass.studentDetail = row.getCell(1).text;
                 studentClass.classDetail = classID;
-                studentClasses.push(studentClass);
+                if (studentClass.studentDetail != ""){
+                    studentClasses.push(studentClass);
+                }
             }
             return {data: studentClasses, error: null};
 
