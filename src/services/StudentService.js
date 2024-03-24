@@ -148,8 +148,7 @@ class StudentService {
                 select: {
                     studentID: true, 
                     studentEmail: true,
-                    studentName: true,
-                    studentImage: true
+                    studentName: true
                 }
             })
             return {data: data, error: null};
