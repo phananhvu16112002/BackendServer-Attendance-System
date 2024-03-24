@@ -42,10 +42,11 @@ class ExcelService {
                 student.studentName = row.getCell(2).text;
                 student.studentEmail = row.getCell(3).text;
                 console.log(student);
-                if (this.checkInfo(student.studentID, student.studentEmail) == false){
-                    return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for studentID: ${student.studentID}, studentEmail: ${student.studentEmail}`};
-                }
+
                 if (student.studentID != ""){
+                    if (this.checkInfo(student.studentID, student.studentEmail) == false){
+                        return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for studentID: ${student.studentID}, studentEmail: ${student.studentEmail}`};
+                    }
                     students.push(student);
                 }
                 
@@ -76,10 +77,10 @@ class ExcelService {
                 teacher.teacherName = row.getCell(2).text;
                 teacher.teacherEmail = row.getCell(3).text;
                 console.log(teacher);
-                if (this.checkInfo(teacher.teacherID, teacher.teacherEmail) == false){
-                    return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for teacherID: ${teacher.teacherID}, teacherEmail: ${teacher.teacherEmail}`};
-                }
                 if (teacher.teacherID != ""){
+                    if (this.checkInfo(teacher.teacherID, teacher.teacherEmail) == false){
+                        return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for teacherID: ${teacher.teacherID}, teacherEmail: ${teacher.teacherEmail}`};
+                    }
                     teachers.push(teacher);
                 }
             }
