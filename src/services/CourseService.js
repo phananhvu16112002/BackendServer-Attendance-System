@@ -9,7 +9,7 @@ class CourseService {
     loadCoursesToDatabase = async (courseList) => {
         try {
             let data = await courseRepository.insert(courseList);
-            return {data: data, error: null}
+            return {data: data.generatedMaps, error: null}
         } catch (e) {
             return {data: null, error: e.message}
         }
@@ -35,7 +35,7 @@ class CourseService {
             course.requiredWeeks = requiredWeeks;
             course.credit = credit;
             let data = await courseRepository.insert(course);
-            return {data: data, error: null}
+            return {data: data.generatedMaps[0], error: null}
         } catch (e) {
             return {data: null, error: "Failed adding course"};
         }
