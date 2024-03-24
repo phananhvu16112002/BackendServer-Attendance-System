@@ -105,7 +105,7 @@ class AdminController {
             if (result.length == 0){
                 return res.status(204).json({message: "No content"});
             }
-            return res.status(200).json(result);
+            return res.status(200).json({data: result, message: "Uploading course successfully"});
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }

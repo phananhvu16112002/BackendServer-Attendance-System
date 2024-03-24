@@ -9,7 +9,7 @@ AdminRouter.post("/login", AdminController.login);
 
 AdminRouter.post("/submit/teachers", VerifyAccessToken, Authorization('admin'), AdminController.uploadTeachers);
 AdminRouter.post("/submit/students", VerifyAccessToken, Authorization('admin'), AdminController.uploadStudents);
-AdminRouter.post("/submit/course", VerifyAccessToken, Authorization('admin'), AdminController.uploadCourses);
+AdminRouter.post("/submit/courses", VerifyAccessToken, Authorization('admin'), AdminController.uploadCourses);
 AdminRouter.post("/submit/classes", VerifyAccessToken, Authorization('admin'), AdminController.uploadClasses);
 
 AdminRouter.get("/teachers", VerifyAccessToken, Authorization('admin'), AdminController.getTeachers);
