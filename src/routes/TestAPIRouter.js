@@ -11,6 +11,9 @@ import { Student } from "../models/Student";
 import TeacherRouter from "./TeacherRouter";
 import UploadImageService from "../services/UploadImageService";
 import ReportImageService from "../services/ReportImageService";
+import { Employee } from "../models/Employee";
+import StudentClassService from "../services/StudentClassService";
+import {In} from "typeorm";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -565,10 +568,81 @@ TestAPIRouter.post("/form", async (req,res) => {
 });
 
 TestAPIRouter.get("/addOneStudent", async (req, res) => {
+    let employee = new Employee();
+    employee.employeeEmail = "1";
+    employee.employeeHashedPassword = "available";
+
     await AppDataSource.transaction(async (transactionalEntityManager) => {
-        await transactionalEntityManager.createQueryBuilder()
+        await transactionalEntityManager.createQueryBuilder().insert().into(Employee).values(employee).execute();
     });
     res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/addAllStudent", async (req,res) => {
+    let employee1 = new Employee();
+    employee1.employeeEmail = "1";
+    employee1.employeeHashedPassword = "not available";
+
+    let employee2 = new Employee();
+    employee2.employeeEmail = "2";
+    employee2.employeeHashedPassword = "available";
+    let employeeList = []
+    
+    employeeList.push(employee1);
+    employeeList.push(employee2);
+
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager.createQueryBuilder().insert().into(Employee).values(employeeList).orIgnore().execute();
+    });
+
+    res.json({message: "oke"});
+});
+
+TestAPIRouter.get("/addStudentAfter", async (req,res) => {
+    let employee1 = new Employee();
+    employee1.employeeEmail = "1";
+    employee1.employeeHashedPassword = "not available";
+
+    let employee2 = new Employee();
+    employee2.employeeEmail = "2";
+    employee2.employeeHashedPassword = "not available";
+    let employeeList = []
+    
+    employeeList.push(employee1);
+    employeeList.push(employee2);
+
+    const employeeRepo = AppDataSource.getRepository(Employee);
+    await employeeRepo.save(employeeList);
+
+    res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/takeAttendanceBefore", async (req,res) => {
+    const studentList = ['520H0380', '520H0696', "520H0555"];
+    let data = await studentClassRepository.findBy(
+        {
+            studentDetail: In(studentList), 
+            classDetail: "1"
+        }
+    );
+    const attendanceDetaillist = [];
+    for (let i = 0; i < data.length; i++){
+        let attendanceDetail = new AttendanceDetail();
+        attendanceDetail.attendanceForm = "1";
+        attendanceDetail.studentDetail = data[i].studentDetail;
+        attendanceDetail.classDetail = data[i].classDetail;
+        attendanceDetail.result = 1;
+        console.log(attendanceDetail);
+        attendanceDetaillist.push(attendanceDetail);
+    }
+
+    await attendanceDetailRepository.createQueryBuilder().insert().values(attendanceDetaillist).orIgnore().execute();
+    return res.status(200).json(data);
+})
+
+TestAPIRouter.get("/getstudentinclass", async (req,res) => {
+    let {data, error} = await StudentClassService.getStudentsByClassID("1");
+    return res.json(data);
 })
 
 export default TestAPIRouter
