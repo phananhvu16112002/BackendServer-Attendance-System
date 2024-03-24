@@ -5,6 +5,7 @@ class TokenController {
     refreshAccessToken = (req,res) => {
         try {
             const refreshToken = req.headers.authorization;
+            console.log('RefreshToken AccessToken running' +refreshToken);
             if (!refreshToken){
                 return res.status(498).json({message: "Refresh Token is not provided"});
             }else {
