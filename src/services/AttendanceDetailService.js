@@ -182,7 +182,7 @@ class AttendanceDetailService {
 
             await AppDataSource.transaction(async (transactionalEntityManager) => {
                 await transactionalEntityManager.update(attendanceDetail);
-                await transactionalEntityManager.save(editionHistory);
+                await transactionalEntityManager.insert(editionHistory);
             })
 
             return true;
