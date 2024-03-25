@@ -4,7 +4,7 @@ import { AttendanceDetail } from "./AttendanceDetail"
 @Entity()
 export class EditionHistory {
     @PrimaryGeneratedColumn()
-    feedbackID: number
+    editionHistoryID: number
 
     @Column()
     topic: string 
