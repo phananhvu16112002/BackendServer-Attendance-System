@@ -165,22 +165,24 @@ class AttendanceDetailService {
     }
 
     //test must
-    editAttendanceDetail = async (studentID, classID, formID, note, confirmStatus, topic) => {
+    editAttendanceDetail = async (attendanceDetail, note, confirmStatus, topic) => {
         try {
             let result = this.resultBasedOnConfirmStatus(confirmStatus);
             let date = JSDatetimeToMySQLDatetime(new Date());
+            attendanceDetail.result = result;
+            attendanceDetail.note = note;
+            attendanceDetail.location = "Ton Duc Thang University";
+            attendanceDetail.dateAttendanced = date;
+            let editionHistory = new EditionHistory();
+            editionHistory.attendanceDetail = attendanceDetail;
+            editionHistory.confirmStatus = confirmStatus;
+            editionHistory.createdAt = date;
+            editionHistory.message = note;
+            editionHistory.topic = topic;
 
             await AppDataSource.transaction(async (transactionalEntityManager) => {
-                await transactionalEntityManager.createQueryBuilder().update(AttendanceDetail).
-                set({result: result, note: note, location: "Ton Duc Thang University", dateAttendanced: date}).
-                where("formID = :formid", {formid: formID}).
-                andWhere("studentID = :studentid", {studentid: studentID}).
-                andWhere("classID = :classid", {classid: classID}).
-                execute();
-
-                await transactionalEntityManager.createQueryBuilder().insert().into(EditionHistory).
-                values({topic: topic, message: note, confirmStatus: confirmStatus, createdAt: date}).
-                execute();
+                await transactionalEntityManager.update(attendanceDetail);
+                await transactionalEntityManager.save(editionHistory);
             })
 
             return true;
