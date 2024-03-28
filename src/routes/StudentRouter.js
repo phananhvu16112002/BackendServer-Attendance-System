@@ -12,7 +12,7 @@ const StudentRouter = express.Router();
 //Student Authentication 
 StudentRouter.post("/register", StudentController.register);
 StudentRouter.post("/verifyRegister", StudentController.verifyRegister);
-StudentRouter.post("/login",StudentController.login);
+StudentRouter.post("/login",StudentController.loginWithCheckImage);
 StudentRouter.post("/forgotPassword",StudentController.forgotPassword);
 StudentRouter.post("/verifyForgotPassword", StudentController.verifyForgotPassword);
 StudentRouter.post("/resetPassword",VerifyResetToken,StudentController.resetPassword);
@@ -34,6 +34,7 @@ StudentRouter.put("/report/edit/:id", VerifyAccessToken, Authorization("student"
 //Student Use Cases test
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
+StudentRouter.post("/sendImages", )
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);

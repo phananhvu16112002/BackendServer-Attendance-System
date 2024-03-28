@@ -7,6 +7,23 @@ import { Student } from "../models/Student";
 const studentRepository = AppDataSource.getRepository(Student);
 
 class StudentService {
+    //oke
+    checkStudentExistWithImages = async (studentID) => {
+        try {
+            let data = await studentRepository.findOne({
+                where: {
+                    studentID: studentID
+                },
+                relations: {
+                    studentImage: true
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: null, error: "Failed getting students"};
+        }
+    }
 
     checkStudentExist = async (studentID) => {
         try {

@@ -31,6 +31,9 @@ export class Student {
     @Column({type: "datetime", nullable: true})
     timeToLiveOTP: string
 
+    @Column({type: "datetime", nullable: true})
+    timeToLiveImages: string
+
     @Column({default: false})
     active: boolean
 

@@ -19,6 +19,7 @@ import { AttendanceDetail } from '../models/AttendanceDetail';
 
 import StudentService from '../services/StudentService';
 import EmailService from '../services/EmailService';
+import FaceImageService from '../services/FaceImageService';
 
 const { Canvas, Image, ImageData } = canvas;
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
@@ -91,6 +92,51 @@ class StudentController{
             res.status(200).json({ message: 'OTP is valid' })
         }catch{
             res.status(500).json({ message: 'OTP is not valid' })
+        }
+    }
+
+    //must test
+    loginWithCheckImage = async (req,res) => {
+        try {
+            const email = req.body.email;
+            const password = req.body.password;
+            const studentID = StudentService.transformEmailToID(email);
+
+            let {data: student, error: errorStudent} = await StudentService.checkStudentExistWithImages(studentID);
+            if (errorStudent){
+                return res.status(503).json({message: errorStudent});
+            }
+            if (student == null){
+                return res.status(422).json({message : "Account does not exist"});
+            }
+            if (StudentService.checkStudentStatus(student) == false){
+                return res.status(422).json({message : "Account has not been activated yet. Please register!"});
+            }
+            if (await StudentService.login(student, email, password) == false){
+                return res.status(422).json({message: "Email or password incorrect"});
+            }
+
+            let {data: required, error: err, message: message} = await FaceImageService.checkImagesValid(student.studentImage, student.timeToLiveImages);
+            if (err){
+                return res.status(503).json({message: err});
+            }
+
+            const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' })
+            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '30m' })
+            
+            return res.status(200).json({
+                message:"Login Successfully",
+                note: message, 
+                refreshToken: refreshToken, 
+                accessToken: accessToken,
+                studentID: studentID,
+                studentEmail: email,
+                studentName: student.studentName,
+                requiredImage: !required
+            });
+
+        } catch (e) {
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     }
 
@@ -364,6 +410,51 @@ class StudentController{
         
         await AppDataSource.getRepository(AttendanceDetail).save(attendanceDetail);
         return res.status(200).json({message: "Take attendance successfully"});
+    }
+
+    sendImages = async (req,res) => {
+        try {
+            const studentID = req.payload.userID;
+            if (req.files == null){
+                return res.status(422).json({message: "Please send at least one image"})
+            }
+            let files = req.files.file;
+            if (files == null){
+                files = [];
+            }
+            if (!Array.isArray(files)){
+                files = [files];
+            }
+            if (files.length > 3){
+                return res.status(422).json({message: "Only three image files allowed"}); 
+            }
+
+            let {data: student, error: errorStudent} = await StudentService.checkStudentExistWithImages(studentID);
+            if (errorStudent){
+                return res.status(503).json({message: errorStudent});
+            }
+
+            let {data: required, error: err, message: message} = await FaceImageService.checkImagesValid(student.studentImage, student.timeToLiveImages);
+            if (err){
+                return res.status(503).json({message: err});
+            }
+            if (required){
+                return res.status(422).json({message: message});
+            }
+
+            let imageStudentList = await FaceImageService.imageStudentListFromImage(files);
+            if (imageStudentList.length == 0){
+                return res.status(503).json({message: "Failed to upload images. Please upload again"});
+            }
+
+            let {data: images, error: errorImages} = await FaceImageService.loadStudentImagesToDatabase(imageStudentList, student);
+            if (errorImages){
+                return res.status(503).json({message: errorImages});
+            }
+            return res.status(200).json(images);
+        } catch (e) {
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
     }
 }
 
