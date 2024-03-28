@@ -30,7 +30,7 @@ class EmailService {
 
             const mailOptions = {
                 to: email,
-                subject: "OTP Forgot Password",
+                subject: "Attendance System",
                 html: `<h3>${message}</h3>`
             }
             await transport.sendMail(mailOptions);
