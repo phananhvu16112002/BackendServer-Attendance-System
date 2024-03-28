@@ -2,6 +2,7 @@ import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
 import StudentClassDTO from "../dto/StudentClassDTO";
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
+import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 
 class StudentClassController {
     getStudentClass = (req,res) => {
@@ -38,7 +39,8 @@ class StudentClassController {
             }
             
             //Check if teacher is in charge of this class
-            if (teacherID != classData.teacher.teacherID){
+            
+            if (compareCaseInsentitive(teacherID, classData.teacher.teacherID) == false){
                 return res.status(422).json({message: "Teacher is not in charge of this class"});
             }
 

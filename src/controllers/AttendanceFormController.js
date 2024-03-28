@@ -2,6 +2,7 @@ import AttendanceFormDTO from "../dto/AttendanceFormDTO";
 import AttendanceDetailService from "../services/AttendanceDetailService";
 import AttendanceFormService from "../services/AttendanceFormService";
 import ClassService from "../services/ClassService";
+import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 
 class AttendanceFormController {
@@ -64,7 +65,8 @@ class AttendanceFormController {
             if (data == null){
                 return res.status(204).json({message: "There is no classes with this ID"});
             }
-            if (teacherID != data.teacher.teacherID){
+            
+            if (compareCaseInsentitive(teacherID, data.teacher.teacherID) == false){
                 return res.status(401).json({message: "Teacher is not in charge of this class"});
             }
             if (data.attendanceForm.length == 0){
