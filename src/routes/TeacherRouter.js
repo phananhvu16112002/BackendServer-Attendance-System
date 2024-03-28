@@ -35,9 +35,13 @@ TeacherRouter.get("/historyreports/detail/:historyid/:classid", VerifyAccessToke
 TeacherRouter.get("/attendancedetail/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getAttendanceDetailByStudentIDClassIDFormID);
 
 TeacherRouter.get("/attendance/detail/:id", VerifyAccessToken, Authorization("teacher"), AttendanceDetailController.getAttendanceDetailsByFormID)
+
+TeacherRouter.get("/classes/detail/:id/students", VerifyAccessToken, Authorization("teacher"), StudentClassController.getStudentsByClassID);
 //Proper post method
 TeacherRouter.post("/feedback/submit", VerifyAccessToken, Authorization('teacher'), FeedbackController.sendFeedback);
 TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teacher'), FeedbackController.editFeedback);
+
+TeacherRouter.put("/attendancedetail/edit/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.editAttendanceDetail);
 
 TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);

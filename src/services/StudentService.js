@@ -7,6 +7,7 @@ import { Student } from "../models/Student";
 const studentRepository = AppDataSource.getRepository(Student);
 
 class StudentService {
+
     checkStudentExist = async (studentID) => {
         try {
             let student = await studentRepository.findOneBy({studentID: studentID});

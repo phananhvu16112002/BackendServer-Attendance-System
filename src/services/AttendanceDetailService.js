@@ -4,6 +4,7 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import { AppDataSource } from "../config/db.config";
 import { Report } from "../models/Report";
 import { EditionHistory } from "../models/EditionHistory";
+import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -161,6 +162,43 @@ class AttendanceDetailService {
             console.log(e);
             return {data: null, error: "Failed fetching data"};
         }
+    }
+
+    //test must
+    editAttendanceDetail = async (attendanceDetail, note, confirmStatus, topic) => {
+        try {
+            let result = this.resultBasedOnConfirmStatus(confirmStatus);
+            let date = JSDatetimeToMySQLDatetime(new Date());
+            attendanceDetail.result = result;
+            attendanceDetail.note = note;
+            attendanceDetail.location = "Ton Duc Thang University";
+            attendanceDetail.dateAttendanced = date;
+            let editionHistory = new EditionHistory();
+            editionHistory.attendanceDetail = attendanceDetail;
+            editionHistory.confirmStatus = confirmStatus;
+            editionHistory.createdAt = date;
+            editionHistory.message = note;
+            editionHistory.topic = topic;
+
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.update(attendanceDetail);
+                await transactionalEntityManager.insert(editionHistory);
+            })
+
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    resultBasedOnConfirmStatus = (confirmStatus) => {
+        if (confirmStatus == "Present"){
+            return 1;
+        }
+        if (confirmStatus == "Late"){
+            return 0.5;
+        }
+        return 0;
     }
 }
 

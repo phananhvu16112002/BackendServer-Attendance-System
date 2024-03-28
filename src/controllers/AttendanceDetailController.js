@@ -275,6 +275,43 @@ class AttendanceDetailController {
         //getAttendanceDetails
         return res.status(200).json(await AttendanceFormService.getAttendanceFormByFormID(formID));
     }
+
+    //test must
+    editAttendanceDetail = async (req,res) => {
+        try {
+            const teacherID = req.payload.userID;
+            const studentID = req.params.studentid;
+            const classID = req.params.classid;
+            const formID = req.params.formid;
+            const topic = req.body.topic;
+            const confirmStatus = req.body.confirmStatus;
+            const message = req.body.message;
+
+            let checkAuth = await ClassService.getClassByID(classID);
+            if (checkAuth == null){
+                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
+            }         
+            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            }
+
+            let {data : attendanceDetail, error} = await AttendanceDetailService.checkAttendanceDetailExist(studentID, classID, formID);
+            if (error){
+                return res.status(503).json({message: error});
+            } 
+            if (attendanceDetail == null){
+                return res.status(422).json({message: "Attendance detail does not exist"});
+            }
+
+            if (await AttendanceDetailService.editAttendanceDetail(attendanceDetail, message, confirmStatus, topic)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Edit failed"});
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default new AttendanceDetailController();

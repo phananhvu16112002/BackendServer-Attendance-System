@@ -156,6 +156,31 @@ class StudentClassService {
             return false;
         }
     }
+
+    //must test
+    getStudentsByClassID = async (classID) => {
+        try {
+            let data = await studentClassRepository.find({
+                where: {
+                    classDetail: classID
+                }, 
+                select: {
+                    studentDetail: {
+                        studentID: true,
+                        studentEmail: true,
+                        studentName: true
+                    }
+                },
+                relations: {
+                    studentDetail: true,
+                    classDetail: false 
+                }
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Cannot fetch all the student inside this class"};
+        }
+    }
 }
 
 export default new StudentClassService();
