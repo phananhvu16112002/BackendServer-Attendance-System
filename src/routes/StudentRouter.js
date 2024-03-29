@@ -30,7 +30,7 @@ StudentRouter.get("/classes/:classid/reports", VerifyAccessToken, Authorization(
 StudentRouter.post("/report/submit", VerifyAccessToken, Authorization("student"), ReportController.submitReport);
 StudentRouter.put("/report/edit/:id", VerifyAccessToken, Authorization("student"), ReportController.editReport);
 
-
+StudentRouter.get("/images", VerifyAccessToken, Authorization("student"), StudentController.getStudentsImagesByStudentID);
 //Student Use Cases test
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
