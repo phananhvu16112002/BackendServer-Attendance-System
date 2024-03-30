@@ -197,6 +197,28 @@ class StudentService {
             return {data: null, error: "Failed adding student"};
         }
     }
+
+    //oke
+    getStudentsImageByStudentID = async (studentID) => {
+        try {   
+            let data = await studentRepository.findOne({
+                where: {
+                    studentID: studentID
+                },
+                select: {
+                    studentEmail: true,
+                    studentName: true,
+                    timeToLiveImages: true,
+                    studentImage: true
+                }, relations: {
+                    studentImage: true
+                }
+            });
+            return {data: data, error : null};
+        } catch (e) {
+            return {data: null, error: "Error getting images"};
+        }
+    }
 }
 
 export default new StudentService();
