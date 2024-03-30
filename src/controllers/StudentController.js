@@ -115,7 +115,7 @@ class StudentController{
             if (await StudentService.login(student, email, password) == false){
                 return res.status(422).json({message: "Email or password incorrect"});
             }
-
+            console.log('Face Image checking:')
             let {data: required, error: err, message: message} = await FaceImageService.checkImagesValid(student.studentImage, student.timeToLiveImages);
             if (err){
                 return res.status(503).json({message: err});
