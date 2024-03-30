@@ -201,7 +201,7 @@ class StudentService {
     //oke
     getStudentsImageByStudentID = async (studentID) => {
         try {   
-            let data = await studentRepository.findOne({
+            let data = await studentRepository.find({
                 where: {
                     studentID: studentID
                 },
