@@ -465,7 +465,7 @@ class StudentController{
             if (error){
                 return res.status(503).json({message: error});
             }
-            return res.status(200).json(data[0]);
+            return res.status(200).json(data);
         } catch (e) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }

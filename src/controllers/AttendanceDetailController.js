@@ -116,9 +116,9 @@ class AttendanceDetailController {
         attendanceDetail.location = location;
         attendanceDetail.latitude = latitude;
         attendanceDetail.longitude = longtitude;
-        attendanceDetail.result = 1;
+        attendanceDetail.result = result;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
-        attendanceDetailRepository.save(attendanceDetail);
+        await attendanceDetailRepository.save(attendanceDetail);
         return res.status(200).json(attendanceDetail);
     }
 
@@ -232,7 +232,7 @@ class AttendanceDetailController {
         attendanceDetail.longitude = longtitude;
         attendanceDetail.result = 1;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
-        attendanceDetailRepository.save(attendanceDetail);
+        await attendanceDetailRepository.save(attendanceDetail);
         res.status(200).json(attendanceDetail);
     }
 

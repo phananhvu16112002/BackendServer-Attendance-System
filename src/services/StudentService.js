@@ -212,7 +212,7 @@ class StudentService {
                     studentImage: true
                 }
             });
-            return {data: data, error : null};
+            return {data: data[0], error : null};
         } catch (e) {
             return {data: null, error: "Error getting images"};
         }
