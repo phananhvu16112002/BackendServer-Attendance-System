@@ -12,6 +12,7 @@ import cors from "cors";
 import TokenRouter from "./src/routes/TokenRouter";
 import TestAPIRouter from "./src/routes/TestAPIRouter";
 import AdminRouter from "./src/routes/AdminRouter";
+import firebaseAdmin from "./src/config/notification.config";
 
 const app = express();
 app.use(cors())
