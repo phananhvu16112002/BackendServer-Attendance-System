@@ -216,6 +216,7 @@ class StudentService {
             });
             return {data: data, error : null};
         } catch (e) {
+            console.log(e);
             return {data: null, error: "Error getting images"};
         }
     }

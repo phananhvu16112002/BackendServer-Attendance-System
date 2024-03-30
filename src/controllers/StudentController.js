@@ -463,14 +463,16 @@ class StudentController{
     getStudentsImagesByStudentID = async (req,res) => {
         try {
             let {data, error} = await StudentService.getStudentsImageByStudentID(req.payload.userID);
+            console.log('Data:',data);
             if (error){
                 return res.status(503).json({message: error});
             }
-            if (data.studentImage.length == 0){
-                return res.status(204).json({message: "No content"});
-            }
+            // if (data.studentImage.length == 0){
+            //     return res.status(204).json({message: "No content"});
+            // }
             return res.status(200).json(data);
         } catch (e) {
+            console.log('Err',e)
             return res.status(500).json({ message: 'Internal Server Error' });
         }
     }
