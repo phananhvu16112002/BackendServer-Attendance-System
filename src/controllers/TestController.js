@@ -440,7 +440,10 @@ class Test {
     }
 
     testImgur = async (req, res) => {
-        res.json(await UploadImageService.uploadAttendanceEvidenceFile(req.files.file)); 
+        console.log(req.files.file);
+        await FaceMatchingService.checkFacesTheSame(req.files.file);
+        res.json({message: "oke"});
+        //res.json(await UploadImageService.uploadAttendanceEvidenceFile(req.files.file)); 
     }
 
     uploadExcel = async (req, res) => {

@@ -34,7 +34,7 @@ StudentRouter.get("/images", VerifyAccessToken, Authorization("student"), Studen
 //Student Use Cases test
 //StudentRouter.get("/getStudentClasses", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentClasses);
 //StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
-StudentRouter.post("/sendImages", )
+StudentRouter.post("/sendImages", VerifyAccessToken, Authorization("student"), StudentController.sendImages);
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);

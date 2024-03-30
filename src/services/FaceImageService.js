@@ -69,6 +69,7 @@ class FaceImageService {
         }
     }
 
+    //oke
     loadStudentImagesToDatabase = async (imageStudentList, student) => {
         try {
             let currentDate = new Date();

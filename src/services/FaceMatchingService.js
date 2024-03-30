@@ -20,6 +20,34 @@ async function LoadModels() {
 LoadModels();
 
 class FaceMatchingService {
+    checkFacesTheSame = async (images) => {
+        try {
+            //Get the first image as a check point
+            let checkImageCanvas = await canvas.loadImage(images[0].data);
+            let faceDescriptionCheck = await faceapi.detectSingleFace(checkImageCanvas).withFaceLandmarks().withFaceDescriptor();
+            faceDescriptionCheck = faceapi.resizeResults(faceDescriptionCheck, checkImageCanvas);
+
+            //Check first image with the other two
+            let [,...restImages] = images;
+            const labeledFaceDescriptors = await Promise.all(
+                restImages.map(async image => {
+                    const canvasImg = await canvas.loadImage(image.data);
+                    const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+                    return new faceapi.LabeledFaceDescriptors(image.name, [faceDescription.descriptor]);
+                })
+            );
+            
+            const threshold = 0.52;
+            const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
+            console.log(faceMatcher);
+
+            const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
+            console.log(results);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     faceMatching = async (image, studentID) => {
         let canvasImg = await canvas.loadImage(image.data);
         console.log(canvasImg);
@@ -47,9 +75,12 @@ class FaceMatchingService {
         //Matching
         const threshold = 0.52;
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
+        
         const results = faceMatcher.findBestMatch(faceDescription.descriptor);
+        
         console.log(results);
         //check result
+        
         if (results.label == "unknown"){
             return false;
         }

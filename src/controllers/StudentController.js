@@ -412,6 +412,7 @@ class StudentController{
         return res.status(200).json({message: "Take attendance successfully"});
     }
 
+    //oke
     sendImages = async (req,res) => {
         try {
             const studentID = req.payload.userID;
@@ -425,7 +426,7 @@ class StudentController{
             if (!Array.isArray(files)){
                 files = [files];
             }
-            if (files.length > 3){
+            if (files.length != 3){
                 return res.status(422).json({message: "Only three image files allowed"}); 
             }
 
