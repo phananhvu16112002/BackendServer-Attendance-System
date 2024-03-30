@@ -444,6 +444,7 @@ class StudentController{
             }
 
             let imageStudentList = await FaceImageService.imageStudentListFromImage(files);
+            console.log('ImageList', imageStudentList);
             if (imageStudentList.length == 0){
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }

@@ -82,6 +82,7 @@ class FaceImageService {
             })
             return {data: imageStudentList, error: null};
         } catch(e){
+            console.log('Err',e);
             return {data: null, error: "Failed loading images to database"};
         }
     }
