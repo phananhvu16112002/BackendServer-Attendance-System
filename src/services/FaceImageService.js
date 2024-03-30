@@ -77,8 +77,8 @@ class FaceImageService {
             
             student.timeToLiveImages = JSDatetimeToMySQLDatetime(threMonthsFromNow);
             student.studentImage = imageStudentList;
-           
-            await studentImageRepository.save(student);
+
+            await studentRepository.save(student);
             
             return {data: imageStudentList, error: null};
         } catch(e){
