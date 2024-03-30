@@ -77,9 +77,9 @@ class FaceImageService {
             
             student.timeToLiveImages = JSDatetimeToMySQLDatetime(threMonthsFromNow);
             student.studentImage = imageStudentList;
-            await AppDataSource.transaction(async () => {
-                await studentImageRepository.save(student);
-            })
+           
+            await studentImageRepository.save(student);
+            
             return {data: imageStudentList, error: null};
         } catch(e){
             console.log('Err',e);
