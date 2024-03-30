@@ -74,8 +74,8 @@ class FaceImageService {
             let threMonthsFromNow = new Date(currentDate.getFullYear(), currentDate.getMonth() + 3, currentDate.getDate());
             
             student.timeToLiveImages = JSDatetimeToMySQLDatetime(threMonthsFromNow);
+            student.studentImage = imageStudentList;
             await AppDataSource.transaction(async () => {
-                await studentImageRepository.insert(imageStudentList);
                 await studentImageRepository.save(student);
             })
             return {data: imageStudentList, error: null};

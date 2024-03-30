@@ -38,11 +38,16 @@ class FaceMatchingService {
             );
             
             const threshold = 0.52;
-            const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
-            console.log(faceMatcher);
+            for (let index = 0; index < labeledFaceDescriptors.length; index++){
+                const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors[index], threshold);
+                const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
+                console.log(results);
+            }
+            // const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
+            // console.log(faceMatcher);
 
-            const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
-            console.log(results);
+            // const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
+            // console.log(results);
         } catch (e) {
             console.log(e);
         }
