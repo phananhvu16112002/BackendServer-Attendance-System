@@ -43,7 +43,12 @@ class AttendanceDetailController {
         //Check location first (has a service to check)
         let lat = attendanceForm.latitude;
         let long = attendanceForm.longitude;
+        console.log("-----------------------------------------------------")
+        console.log("Latitude in form: ", lat);
+        console.log("Longitude in form: ", long);
 
+        console.log("Latitude in student: ", latitude);
+        console.log("Longitude in student: ", longtitude);
         //will emit later
 
         if (distanceInMeter(latitude, longtitude, lat, long) > attendanceForm.radius){
@@ -81,7 +86,7 @@ class AttendanceDetailController {
             result = 0;
         }
 
-        if (attendanceForm.type == 0){
+        if (attendanceForm.type == 2){
             attendanceDetail.location = location;
             attendanceDetail.latitude = latitude;
             attendanceDetail.longitude = longtitude;
@@ -97,7 +102,7 @@ class AttendanceDetailController {
             return res.status(500).json({message: "Cannot upload image. Please take attendance again."});
         }
 
-        if (attendanceForm.type == 1){
+        if (attendanceForm.type == 0){
             let check = await FaceMatchingService.faceMatching(image, studentID);
             if (!check){
                 await UploadImageService.deleteImageByImageHash(data.id);
