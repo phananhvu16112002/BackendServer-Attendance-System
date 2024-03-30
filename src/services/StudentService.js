@@ -210,8 +210,6 @@ class StudentService {
                     studentName: true,
                     timeToLiveImages: true,
                     studentImage: true
-                }, relations: {
-                    studentImage: true
                 }
             });
             return {data: data, error : null};
