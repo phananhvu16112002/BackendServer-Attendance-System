@@ -20,6 +20,7 @@ async function LoadModels() {
 LoadModels();
 
 class FaceMatchingService {
+    //oke must test
     checkFacesTheSame = async (images) => {
         try {
             //Get the first image as a check point
@@ -41,15 +42,13 @@ class FaceMatchingService {
             for (let index = 0; index < labeledFaceDescriptors.length; index++){
                 const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors[index], threshold);
                 const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
-                console.log(results);
+                if (results.label == "unknown"){
+                    return false;
+                }
             }
-            // const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
-            // console.log(faceMatcher);
-
-            // const results = faceMatcher.findBestMatch(faceDescriptionCheck.descriptor);
-            // console.log(results);
+            return true;
         } catch (e) {
-            console.log(e);
+            return false;
         }
     }
 

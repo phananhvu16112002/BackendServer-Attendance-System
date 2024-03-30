@@ -467,9 +467,9 @@ class StudentController{
             if (error){
                 return res.status(503).json({message: error});
             }
-            // if (data.studentImage.length == 0){
-            //     return res.status(204).json({message: "No content"});
-            // }
+            if (data.studentImage.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
             return res.status(200).json(data);
         } catch (e) {
             console.log('Err',e)
