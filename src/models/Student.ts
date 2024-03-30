@@ -40,6 +40,6 @@ export class Student {
     @OneToMany(() => StudentClass, StudentClass => StudentClass.studentDetail)
     studentClass: StudentClass[]
 
-    @OneToMany(() => StudentImage, StudentImage => StudentImage.studentID)
+    @OneToMany(() => StudentImage, StudentImage => StudentImage.studentID, {cascade: true})
     studentImage: StudentImage[]
 }
