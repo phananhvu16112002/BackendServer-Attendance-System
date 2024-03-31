@@ -21,7 +21,7 @@ class AttendanceDetailService {
 
             attendanceDetail.studentClass = studentClass;
             attendanceDetail.attendanceForm = attendanceForm;
-            attendanceDetail.createdAt = attendanceForm.dateOpened;
+            attendanceDetail.createdAt = attendanceForm.dateOpen;
 
             listOfAttendanceDetail.push(attendanceDetail);
         }
