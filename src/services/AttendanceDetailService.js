@@ -68,7 +68,7 @@ class AttendanceDetailService {
             'report.reportID = feedback.reportID').
             where("attendancedetail.studentID = :studentid", {studentid: studentID}).
             andWhere("attendancedetail.classID = :classid", {classid: classID}).
-            orderBy('attendancedetail.createdAt', 'ASC').
+            orderBy('attendancedetail.createdAt', 'DESC').
             getMany();
 
             // let data = await attendanceDetailRepository.find({where: {
