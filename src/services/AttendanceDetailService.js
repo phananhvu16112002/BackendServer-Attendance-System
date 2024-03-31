@@ -5,6 +5,7 @@ import { AppDataSource } from "../config/db.config";
 import { Report } from "../models/Report";
 import { EditionHistory } from "../models/EditionHistory";
 import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
+import { Feedback } from "../models/Feedback";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -20,7 +21,7 @@ class AttendanceDetailService {
 
             attendanceDetail.studentClass = studentClass;
             attendanceDetail.attendanceForm = attendanceForm;
-            attendanceDetail.createdAt = attendanceForm.dateOpened;
+            attendanceDetail.createdAt = attendanceForm.dateOpen;
 
             listOfAttendanceDetail.push(attendanceDetail);
         }
@@ -63,6 +64,8 @@ class AttendanceDetailService {
             innerJoinAndMapOne("attendancedetail.attendanceForm", AttendanceForm, 'attendanceform', 'attendancedetail.formID = attendanceform.formID').
             leftJoinAndMapOne("attendancedetail.report", Report, 'report',
             'report.studentID = attendancedetail.studentID AND report.classID = attendancedetail.classID AND report.formID = attendancedetail.formID').
+            leftJoinAndMapOne("attendancedetail.feedback", Feedback, "feedback",
+            'report.reportID = feedback.reportID').
             where("attendancedetail.studentID = :studentid", {studentid: studentID}).
             andWhere("attendancedetail.classID = :classid", {classid: classID}).
             orderBy('attendancedetail.createdAt', 'DESC').
