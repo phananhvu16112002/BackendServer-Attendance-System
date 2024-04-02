@@ -70,7 +70,7 @@ class AttendanceDetailController {
         let end = MySQLDatetimeToJSDatetime(attendanceForm.endTime);
         let offset = new Date(start);
         offset.setMinutes(offset.getMinutes() + 10);
-
+        offset = JSDatetimeToMySQLDatetime(offset);
 
         if (dateTimeAttendance < start
             || dateTimeAttendance > end){
@@ -78,9 +78,15 @@ class AttendanceDetailController {
             return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
         }
 
+        console.log("Start time: ", start);
+        console.log("Offset time: ", offset);
+        console.log("Student take attendance at: ", dateTimeAttendance);
+
         if (dateTimeAttendance >= start && dateTimeAttendance <= offset){
+            console.log("present cho sinh vien");
             result = 1;
         }else if (dateTimeAttendance > offset && dateTimeAttendance <= end) {
+            console.log("late cho sinh vien");
             result = 0.5;
         } else if (dateTimeAttendance > end) {
             result = 0;
