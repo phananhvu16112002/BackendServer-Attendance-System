@@ -14,6 +14,7 @@ import ReportImageService from "../services/ReportImageService";
 import { Employee } from "../models/Employee";
 import StudentClassService from "../services/StudentClassService";
 import {In} from "typeorm";
+import firebaseAdmin from "../config/notification.config";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -643,6 +644,22 @@ TestAPIRouter.get("/takeAttendanceBefore", async (req,res) => {
 TestAPIRouter.get("/getstudentinclass", async (req,res) => {
     let {data, error} = await StudentClassService.getStudentsByClassID("1");
     return res.json(data);
+})
+const token = "fbjyIMqVSRy4p0wpnMd1gR:APA91bEQzVW9dhzqK9uWDZTRyJCFz852UkxL88lXiQrIzDxT13txzEQgry5xa4to2UZXkdudDBZw8UxSkyc38isGwgauzHUuyjXmtwe9DbkGMcSS78eDRES7O4cw2ezkjRqjwfhuZ18B";
+TestAPIRouter.get("/sendNotification", async (req,res) => {
+    const message = {
+        notification: {
+            title: "hello Anh Vu, today is testing day",
+            body: 'This contains message. bye bye !'
+        },
+        token: token
+      };
+    firebaseAdmin.messaging().send(message).then((response) => {
+        res.json(response);
+    }).catch((error) => {
+        console.log(error);
+        res.json(error);
+    })
 })
 
 export default TestAPIRouter
