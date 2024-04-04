@@ -184,12 +184,22 @@ class AttendanceDetailService {
             editionHistory.topic = topic;
 
             await AppDataSource.transaction(async (transactionalEntityManager) => {
-                await transactionalEntityManager.update(attendanceDetail);
-                await transactionalEntityManager.insert(editionHistory);
+                await transactionalEntityManager.update(AttendanceDetail, {
+                    studentDetail: attendanceDetail.studentDetail,
+                    classDetail: attendanceDetail.classDetail,
+                    attendanceForm: attendanceDetail.attendanceForm
+                }, {
+                    result: result,
+                    note: note,
+                    dateAttendanced: date,
+                    location: "Ton Duc Thang University"
+                });
+                await transactionalEntityManager.insert(EditionHistory, editionHistory);
             })
 
             return true;
         } catch (e) {
+            console.log(e);
             return false;
         }
     }
