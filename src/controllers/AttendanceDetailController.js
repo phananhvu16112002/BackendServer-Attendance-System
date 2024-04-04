@@ -297,7 +297,6 @@ class AttendanceDetailController {
             const topic = req.body.topic;
             const confirmStatus = req.body.confirmStatus;
             const message = req.body.message;
-
             let checkAuth = await ClassService.getClassByID(classID);
             if (checkAuth == null){
                 return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
