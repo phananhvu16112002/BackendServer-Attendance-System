@@ -417,6 +417,7 @@ class StudentController{
         try {
             const studentID = req.payload.userID;
             if (req.files == null){
+                console.log("Please send at least one image");
                 return res.status(422).json({message: "Please send at least one image"})
             }
             let files = req.files.file;
@@ -427,24 +428,29 @@ class StudentController{
                 files = [files];
             }
             if (files.length != 3){
+                console.log("Only three image files allowed");
                 return res.status(422).json({message: "Only three image files allowed"}); 
             }
 
             let {data: student, error: errorStudent} = await StudentService.checkStudentExistWithImages(studentID);
             if (errorStudent){
+                console.log(errorStudent);
                 return res.status(503).json({message: errorStudent});
             }
 
             let {data: required, error: err, message: message} = await FaceImageService.checkImagesValid(student.studentImage, student.timeToLiveImages);
             if (err){
+                console.log(err);
                 return res.status(503).json({message: err});
             }
             if (required){
+                console.log(required);
                 return res.status(422).json({message: message});
             }
 
             let imageStudentList = await FaceImageService.imageStudentListFromImage(files);
             if (imageStudentList.length == 0){
+                console.log("Failed to upload images. Please upload again");
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
             }
 
