@@ -14,7 +14,7 @@ import ReportImageService from "../services/ReportImageService";
 import { Employee } from "../models/Employee";
 import StudentClassService from "../services/StudentClassService";
 import {In} from "typeorm";
-import firebaseAdmin from "../config/notification.config";
+// import firebaseAdmin from "../config/notification.config";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
