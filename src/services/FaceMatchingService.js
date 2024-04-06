@@ -53,12 +53,13 @@ class FaceMatchingService {
     }
 
     faceMatching = async (image, studentID) => {
-        let canvasImg = await canvas.loadImage(image.data);
+        console.log(image);
+        const canvasImg = await canvas.loadImage(image.data);
         console.log(canvasImg);
 
         console.log("before detection");
-        let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
-        faceDescription = faceapi.resizeResults(faceDescription, canvasImg);
+        let faceDescription1 = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+        faceDescription1 = faceapi.resizeResults(faceDescription1, canvasImg);
         
         const labels = await this.getLabels(studentID);
         console.log(labels.length);
@@ -77,10 +78,10 @@ class FaceMatchingService {
         console.log("Matching");
 
         //Matching
-        const threshold = 0.52;
+        const threshold = 0.6;
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
-        
-        const results = faceMatcher.findBestMatch(faceDescription.descriptor);
+        console.log(faceMatcher);
+        const results = faceMatcher.findBestMatch(faceDescription1.descriptor);
         
         console.log(results);
         //check result
@@ -100,7 +101,7 @@ class FaceMatchingService {
             var file = images[image];
             labels.push(file.imageURL);
         }
-
+        console.log(labels);
         return labels;
     }
 }
