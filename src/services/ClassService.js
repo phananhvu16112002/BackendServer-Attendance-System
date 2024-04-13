@@ -23,7 +23,7 @@ class ClassService {
         try {
             let data = await classRepository.findOne({
                 where : {classID : classID},
-                relations : {studentClass : true}
+                relations : {studentClass : true, course: true, teacher: true}
             });
             return {data, error: null}
         } catch (e) {
