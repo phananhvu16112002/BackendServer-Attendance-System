@@ -18,7 +18,7 @@ export class Feedback {
     @Column({type: "datetime", nullable: true})
     createdAt: string
 
-    @OneToOne(() => Report, (report) => report.feedback)
+    @OneToOne(() => Report, (report) => report.feedback, {onDelete: 'CASCADE'})
     @JoinColumn({name:"reportID", referencedColumnName:"reportID"})
     report: Report
 }

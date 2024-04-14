@@ -703,6 +703,13 @@ TestAPIRouter.get("/news", async (req,res) => {
     return res.json({dataImportant2, dataNew2, stats2});
 })
 
+TestAPIRouter.get("/removeReport", async (req,res) => {
+    await reportRepository.delete({
+        reportID: "1"
+    });
+    return res.json({oke: "oke"});
+})
+
 export default TestAPIRouter
 
 

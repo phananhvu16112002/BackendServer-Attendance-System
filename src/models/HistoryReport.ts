@@ -29,7 +29,7 @@ export class HistoryReport {
     @OneToMany(() => HistoryReportImage, ReportImage => ReportImage.historyReport, {cascade: true})
     historyReportImages: HistoryReportImage[]
 
-    @ManyToOne(() => Report, (Report) => Report.historyReports)
+    @ManyToOne(() => Report, (Report) => Report.historyReports, {onDelete: 'CASCADE'})
     @JoinColumn({name:"reportID", referencedColumnName:"reportID"})
     report: Report
 }
