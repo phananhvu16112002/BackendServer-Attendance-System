@@ -21,16 +21,16 @@ import StudentService from '../services/StudentService';
 import EmailService from '../services/EmailService';
 import FaceImageService from '../services/FaceImageService';
 
-const { Canvas, Image, ImageData } = canvas;
-faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
+// const { Canvas, Image, ImageData } = canvas;
+// faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
-async function LoadModels() {
-    await faceapi.nets.faceRecognitionNet.loadFromDisk("./premodels");
-    await faceapi.nets.faceLandmark68Net.loadFromDisk("./premodels");
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk("./premodels");
-}
+// async function LoadModels() {
+//     await faceapi.nets.faceRecognitionNet.loadFromDisk("./premodels");
+//     await faceapi.nets.faceLandmark68Net.loadFromDisk("./premodels");
+//     await faceapi.nets.ssdMobilenetv1.loadFromDisk("./premodels");
+// }
 
-LoadModels();
+// LoadModels();
 
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
@@ -122,7 +122,7 @@ class StudentController{
             }
 
             const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' })
-            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '30m' })
+            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '2h' })
             
             return res.status(200).json({
                 message:"Login Successfully",

@@ -6,6 +6,7 @@ import canvas from "canvas";
 import { AppDataSource } from "../config/db.config";
 import { StudentImage } from "../models/StudentImage";
 import axios from "axios";
+// import sharp from 'sharp';
 
 const studentImageRepository = AppDataSource.getRepository(StudentImage);
 const { Canvas, Image, ImageData } = canvas;
@@ -53,13 +54,45 @@ class FaceMatchingService {
     }
 
     faceMatching = async (image, studentID) => {
+        // let canvasImg = await canvas.loadImage(image.data);
+
+        // //get face descriptions and resized
+        // let faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+        // faceDescription = faceapi.resizeResults(faceDescription, canvasImg);
+
+        // //pre train model
+        // const labels = this.getLabels(studentID);
+        // const labeledFaceDescriptors = await Promise.all(
+        //     labels.map(async label => {
+                
+        //         const response = await axios.get(label, {responseType: 'arraybuffer'});
+        //         const canvasImg = await canvas.loadImage(response.data);
+
+        //         const faceDescription = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
+        //         return new faceapi.LabeledFaceDescriptors(label, faceDescription);
+        //     })
+        // )
+
+        // //Matching
+        // const threshold = 0.6;
+        // const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
+        // const results = faceMatcher.findBestMatch(faceDescription);
+
+        // //check result
+        // if (results.label == "unknown"){
+        //     return false;
+        // }
+
+        // return true;
         console.log(image);
+        
         const canvasImg = await canvas.loadImage(image.data);
         console.log(canvasImg);
 
         console.log("before detection");
         let faceDescription1 = await faceapi.detectSingleFace(canvasImg).withFaceLandmarks().withFaceDescriptor();
         faceDescription1 = faceapi.resizeResults(faceDescription1, canvasImg);
+        console.log(faceDescription1);
         
         const labels = await this.getLabels(studentID);
         console.log(labels.length);
@@ -75,6 +108,7 @@ class FaceMatchingService {
             })
         )
 
+
         console.log("Matching");
 
         //Matching
@@ -82,6 +116,7 @@ class FaceMatchingService {
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, threshold);
         console.log(faceMatcher);
         const results = faceMatcher.findBestMatch(faceDescription1.descriptor);
+        console.log(results);
         
         console.log(results);
         //check result

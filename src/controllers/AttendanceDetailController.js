@@ -50,7 +50,7 @@ class AttendanceDetailController {
         console.log("Latitude in student: ", latitude);
         console.log("Longitude in student: ", longtitude);
         //will emit later
-
+        console.log(distanceInMeter(latitude, longtitude, lat, long));
         if (distanceInMeter(latitude, longtitude, lat, long) > attendanceForm.radius){
             return res.status(422).json({message: "Your location is not in range"});
         }
