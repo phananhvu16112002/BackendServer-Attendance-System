@@ -6,6 +6,7 @@ import { AttendanceDetail } from "../models/AttendanceDetail";
 import { Classes } from "../models/Classes";
 import { Student } from "../models/Student";
 import StudentClassDTO from "../dto/StudentClassDTO";
+import { StudentDeviceToken } from "../models/StudentDeviceToken";
 
 
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -141,6 +142,20 @@ class StudentClassService {
             return {data: data, error: null};
         } catch (e) {
             return {data: [], error: "Failed fecthing"};
+        }
+    }
+
+    //oke
+    getStudentsAttendanceDetailsWithDeviceTokenByClassID = async (classID) => {
+        try {
+            let data = await studentClassRepository.createQueryBuilder("student_class").
+            innerJoinAndMapOne("student_class.student", Student, "student", "student.studentID = student_class.studentID").
+            leftJoinAndMapMany("student_class.tokens", StudentDeviceToken, "tokens", "token.studentID = student_class.studentID").
+            leftJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+            where("student_class.classID = :id", {id : classID}).getMany();
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed fetching"};
         }
     }
 

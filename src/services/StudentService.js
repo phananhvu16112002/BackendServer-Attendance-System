@@ -3,8 +3,10 @@ import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 import { MySQLDatetimeToJSDatetime } from "../utils/TimeConvert";
 import { AppDataSource } from "../config/db.config";
 import { Student } from "../models/Student";
+import { StudentDeviceToken } from "../models/StudentDeviceToken";
 
 const studentRepository = AppDataSource.getRepository(Student);
+const studentDeviceTokenRepository = AppDataSource.getRepository(StudentDeviceToken);
 
 class StudentService {
     //oke
@@ -216,6 +218,35 @@ class StudentService {
         } catch (e) {
             console.log(e);
             return {data: null, error: "Error getting images"};
+        }
+    }
+
+    //oke
+    storeDeviceToken = async (studentID, deviceToken) => {
+        try {   
+            let studentDeviceToken = new StudentDeviceToken();
+            studentDeviceToken.studentID = studentID;
+            studentDeviceToken.token = deviceToken;
+            if (await studentDeviceTokenRepository.save(studentDeviceToken)){
+                return true;
+            }
+            return false;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //oke
+    getDeviceTokensByStudentID = async (studentID) => {
+        try {
+            let data = await studentDeviceTokenRepository.find({
+                where: {
+                    studentID: studentID
+                }
+            })
+            return {data: data, error: null};
+        } catch(e) {
+            return {data: [], error: "Fail getting device tokens"};
         }
     }
 }

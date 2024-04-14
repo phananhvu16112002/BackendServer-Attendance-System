@@ -9,6 +9,7 @@ class AttendanceFormController {
     //Oke
     createAttendanceForm = async (req, res) => {
         try {
+            const teacherID = req.payload.userID;
             const classID = req.body.classID;
             const startTime = req.body.startTime;
             const endTime = req.body.endTime;
@@ -26,6 +27,10 @@ class AttendanceFormController {
             }
             if (classes == null){
                 return res.status(204).json({message : `Class with the id: ${classID} does not exist`});
+            }
+
+            if (compareCaseInsentitive(teacherID, classes.teacher.teacherID) == false){
+                return res.status(422).json({message: "Teacher is not in charge of this class"});
             }
 
             //Create entities before inserting into database

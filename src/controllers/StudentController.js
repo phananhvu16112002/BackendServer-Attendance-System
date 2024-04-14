@@ -101,6 +101,7 @@ class StudentController{
             const email = req.body.email;
             const password = req.body.password;
             const studentID = StudentService.transformEmailToID(email);
+            const studentDeviceToken = req.body.deviceToken;
 
             let {data: student, error: errorStudent} = await StudentService.checkStudentExistWithImages(studentID);
             if (errorStudent){
@@ -123,6 +124,10 @@ class StudentController{
 
             const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' })
             const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '2h' })
+            
+            if (await StudentService.storeDeviceToken(studentDeviceToken) == false){
+                return res.status(503).json({message: "Cannot store device token"});
+            }
             
             return res.status(200).json({
                 message:"Login Successfully",

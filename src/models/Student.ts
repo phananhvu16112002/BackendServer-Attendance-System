@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
 import { StudentClass } from "./StudentClass"
 import { StudentImage } from "./StudentImage"
+import { StudentDeviceToken } from "./StudentDeviceToken"
 
 @Entity()
 export class Student {
@@ -42,4 +43,7 @@ export class Student {
 
     @OneToMany(() => StudentImage, StudentImage => StudentImage.studentID, {cascade: true})
     studentImage: StudentImage[]
+
+    @OneToMany(() => StudentDeviceToken, StudentDeviceToken => StudentDeviceToken.studentID)
+    studentDeviceTokens: StudentDeviceToken[]
 }
