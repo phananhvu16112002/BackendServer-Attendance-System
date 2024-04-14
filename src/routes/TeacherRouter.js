@@ -46,6 +46,7 @@ TeacherRouter.put("/attendancedetail/edit/:classid/:studentid/:formid", VerifyAc
 TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
+TeacherRouter.get("/notifications", VerifyAccessToken, Authorization('teacher'), ReportController.getNotificationReport);
 
 
 export default TeacherRouter;

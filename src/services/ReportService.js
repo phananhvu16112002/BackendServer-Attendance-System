@@ -246,6 +246,31 @@ class ReportService {
             return {data: null, error: "Failed fetching report detail"};
         }
     }
+
+    getNotificationReport = async (teacherID) => {
+        try {
+            let importantNews = await reportRepository.createQueryBuilder("report").
+            innerJoin(Classes, "classes", "report.classID = classes.classID").
+            orderBy('report.important', 'DESC').addOrderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
+            where("classes.teacherID = :id", {id : teacherID}).getRawMany();
+
+            let lastestNews = await reportRepository.createQueryBuilder("report").
+            innerJoin(Classes, "classes", "report.classID = classes.classID").
+            orderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
+            where("classes.teacherID = :id", {id : teacherID}).getRawMany();
+
+            let stats = await reportRepository.createQueryBuilder("report").
+            select('COUNT(*) as total').addSelect(`SUM(CASE WHEN new = 1 THEN 1 ELSE 0 END) AS totalNew`,).
+            addSelect(`SUM(CASE WHEN new = 0 THEN 1 ELSE 0 END) AS totalOld`,).
+            innerJoin(Classes, "classes", "report.classID = classes.classID").
+            where("classes.teacherID = :id", {id : teacherID}).getRawOne();
+
+            return {importantNews, lastestNews, stats, error: null};
+
+        } catch (e) {
+            return {importantNews: [], lastestNews: [], stats: null, error: "Failed getting stats"};
+        }
+    }
 }
 
 export default new ReportService();
