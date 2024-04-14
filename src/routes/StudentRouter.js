@@ -39,4 +39,5 @@ StudentRouter.post("/sendImages", VerifyAccessToken, Authorization("student"), S
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);
+
 export default StudentRouter;

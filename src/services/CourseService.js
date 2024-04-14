@@ -40,6 +40,16 @@ class CourseService {
             return {data: null, error: "Failed adding course"};
         }
     }
+
+    //must test
+    editCourse = async (courseID, courseName, totalWeeks, requiredWeeks, credit) => {
+        try {
+            await courseRepository.update({courseID: courseID}, {courseName: courseName, totalWeeks: totalWeeks, requiredWeeks: requiredWeeks, credit: credit});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new CourseService();

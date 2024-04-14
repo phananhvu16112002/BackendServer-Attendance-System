@@ -180,6 +180,18 @@ class ClassService {
             return {data: null, error: "Failed getting classes"};
         }
     }
+
+    //must test
+    editClass = async (classID, roomNumber, shiftNumber, startTime, endTime, classType ,group, subGroup, courseID, teacherID) => {
+        try {
+            await classRepository.update({classID: classID}, 
+            {roomNumber: roomNumber, shiftNumber: shiftNumber, startTime: startTime, endTime: endTime, 
+            classType: classType, group: group, subGroup: subGroup, course: courseID, teacher: teacherID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new ClassService();

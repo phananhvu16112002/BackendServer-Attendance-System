@@ -249,6 +249,15 @@ class StudentService {
             return {data: [], error: "Fail getting device tokens"};
         }
     }
+
+    editStudent = async (studentID, studentName) => {
+        try {
+            let data = await studentRepository.update({studentID: studentID}, {studentName: studentName});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new StudentService();

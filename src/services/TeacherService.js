@@ -184,6 +184,16 @@ class TeacherService {
             return {data: null, error: e.message};
         }
     }
+
+    //must test
+    editTeacher = async (teacherID, teacherName) => {
+        try {
+            let data = await teacherRepository.update({teacherID: teacherID}, {teacherName: teacherName});
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
 }
 
 export default new TeacherService();

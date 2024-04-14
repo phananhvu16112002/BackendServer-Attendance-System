@@ -312,6 +312,74 @@ class AdminController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    editStudent = async (req,res) => {
+        try {
+            let studentName = req.body.studentName;
+            let studentID = req.params.id;
+            if (await StudentService.editStudent(studentID, studentName)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editTeacher = async (req,res) => {
+        try {
+            let teacherName = req.body.teacherName;
+            let teacherID = req.params.id;
+            if (await TeacherService.editTeacher(teacherID, teacherName)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editCourse = async (req,res) => {
+        try {
+            let courseID = req.params.id;
+            let courseName = req.body.courseName;
+            let totalWeeks = req.body.totalWeeks;
+            let requiredWeeks = req.body.requiredWeeks;
+            let credit = req.body.credit;
+            if (await CourseService.editCourse(courseID, courseName, totalWeeks, requiredWeeks, credit)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editClass = async (req,res) => {
+        try {
+            let classID = req.params.id;
+            let roomNumber = req.body.roomNumber;
+            let shiftNumber = req.body.shiftNumber;
+            let startTime = req.body.startTime;
+            let endTime = req.body.endTime;
+            let classType = req.body.classType;
+            let group = req.body.group;
+            let subGroup = req.body.subGroup;
+            let courseID = req.body.courseID;
+            let teacherID = req.body.teacherID;
+            if (await ClassService.editClass(classID, roomNumber, shiftNumber, startTime, endTime, classType, 
+            group, subGroup, courseID, teacherID)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new AdminController();
