@@ -25,5 +25,10 @@ AdminRouter.post("/submit/course", VerifyAccessToken, Authorization('admin'), Ad
 AdminRouter.put("/edit/student/:id", VerifyAccessToken, Authorization('admin'), AdminController.editStudent);
 AdminRouter.put("/edit/teacher/:id", VerifyAccessToken, Authorization('admin'), AdminController.editTeacher);
 AdminRouter.put("/edit/course/:id", VerifyAccessToken, Authorization('admin'), AdminController.editCourse);
-AdminRouter.put("/edit/class/:id", VerifyAccessToken, Authorization('admin'), AdminController.editClass)
+AdminRouter.put("/edit/class/:id", VerifyAccessToken, Authorization('admin'), AdminController.editClass);
+
+//pagination
+AdminRouter.get("/courses/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getCoursesWithPagination);
+AdminRouter.get("/courses/:id/classes/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getClassesByCourseIDWithPagination);
+AdminRouter.get("/classes/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getClassesWithPagination);
 export default AdminRouter;

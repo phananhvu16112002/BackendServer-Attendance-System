@@ -50,6 +50,23 @@ class CourseService {
             return false;
         }
     }
+
+    //must test
+    getCoursesWithPagination = async (page) => {
+        try {
+            if (page <= 0) {
+                page = 1;
+            }
+            let skip = (page - 1) * 6;
+            let data = await courseRepository.find({
+                skip: skip,
+                take: 6,
+            });
+            return {data: data, error : null};
+        } catch (e) {
+            return {data: [], error: "Failed getting courses"};
+        }
+    }
 }
 
 export default new CourseService();

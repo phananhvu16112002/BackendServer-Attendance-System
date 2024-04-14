@@ -380,6 +380,62 @@ class AdminController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    getCoursesWithPagination = async (req,res) => {
+        try {  
+            let page = req.params.page; 
+            let {data, error} = await CourseService.getCoursesWithPagination(page);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testable
+    getClassesByCourseIDWithPagination = async (req,res) => {
+        try {
+            const courseID = req.params.id;
+            let page = req.params.page;
+            let {data, error} = await ClassService.getClassesWithCourseAndTeacherByCourseIDWithPagination(courseID, page);
+
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    getClassesWithPagination = async (req,res) => {
+        try {
+            let page = req.params.page; 
+            let {data, error} = await ClassService.getClassesWithPagination(page);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new AdminController();
