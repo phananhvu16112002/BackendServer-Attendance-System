@@ -50,7 +50,7 @@ class AttendanceDetailController {
         console.log("Latitude in student: ", latitude);
         console.log("Longitude in student: ", longtitude);
         //will emit later
-
+        console.log(distanceInMeter(latitude, longtitude, lat, long));
         if (distanceInMeter(latitude, longtitude, lat, long) > attendanceForm.radius){
             return res.status(422).json({message: "Your location is not in range"});
         }
@@ -297,7 +297,6 @@ class AttendanceDetailController {
             const topic = req.body.topic;
             const confirmStatus = req.body.confirmStatus;
             const message = req.body.message;
-
             let checkAuth = await ClassService.getClassByID(classID);
             if (checkAuth == null){
                 return res.status(503).json({message: "Cannot authorize teacher to perform this action"});

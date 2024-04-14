@@ -159,7 +159,7 @@ class ReportService {
             let data = await reportRepository.createQueryBuilder("report"). 
                 innerJoinAndMapOne("report.classes", Classes, "classes", 'report.classID = classes.classID').
                 innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
-                innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = classes.courseID").
+                innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = course.courseID").
                 leftJoinAndMapOne("report.feedback", Feedback, "feedback", "report.reportID = feedback.reportID").
                 select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').addSelect("feedback").
                 orderBy("report.createdAt", "DESC").

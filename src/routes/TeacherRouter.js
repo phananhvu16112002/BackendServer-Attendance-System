@@ -2,6 +2,7 @@ import express from "express";
 import Authorization from "../middlewares/Authorization";
 import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
+// import VerifyResetToken from "../middlewares/VerifyResetToken";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
 import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";

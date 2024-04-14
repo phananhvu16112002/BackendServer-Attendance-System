@@ -21,16 +21,16 @@ import StudentService from '../services/StudentService';
 import EmailService from '../services/EmailService';
 import FaceImageService from '../services/FaceImageService';
 
-const { Canvas, Image, ImageData } = canvas;
-faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
+// const { Canvas, Image, ImageData } = canvas;
+// faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
-async function LoadModels() {
-    await faceapi.nets.faceRecognitionNet.loadFromDisk("./premodels");
-    await faceapi.nets.faceLandmark68Net.loadFromDisk("./premodels");
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk("./premodels");
-}
+// async function LoadModels() {
+//     await faceapi.nets.faceRecognitionNet.loadFromDisk("./premodels");
+//     await faceapi.nets.faceLandmark68Net.loadFromDisk("./premodels");
+//     await faceapi.nets.ssdMobilenetv1.loadFromDisk("./premodels");
+// }
 
-LoadModels();
+// LoadModels();
 
 const myOAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
@@ -116,14 +116,14 @@ class StudentController{
             if (await StudentService.login(student, email, password) == false){
                 return res.status(422).json({message: "Email or password incorrect"});
             }
-
+            console.log('Face Image checking:')
             let {data: required, error: err, message: message} = await FaceImageService.checkImagesValid(student.studentImage, student.timeToLiveImages);
             if (err){
                 return res.status(503).json({message: err});
             }
 
             const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' })
-            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '30m' })
+            const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '2h' })
             
             if (await StudentService.storeDeviceToken(studentDeviceToken) == false){
                 return res.status(503).json({message: "Cannot store device token"});
@@ -454,6 +454,7 @@ class StudentController{
             }
 
             let imageStudentList = await FaceImageService.imageStudentListFromImage(files);
+            console.log('ImageList', imageStudentList);
             if (imageStudentList.length == 0){
                 console.log("Failed to upload images. Please upload again");
                 return res.status(503).json({message: "Failed to upload images. Please upload again"});
@@ -473,11 +474,13 @@ class StudentController{
     getStudentsImagesByStudentID = async (req,res) => {
         try {
             let {data, error} = await StudentService.getStudentsImageByStudentID(req.payload.userID);
+            console.log('Data:',data);
             if (error){
                 return res.status(503).json({message: error});
             }
             return res.status(200).json(data);
         } catch (e) {
+            console.log('Err',e)
             return res.status(500).json({ message: 'Internal Server Error' });
         }
     }

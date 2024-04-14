@@ -11,10 +11,12 @@ class FaceImageService {
     checkImagesValid = async (studentImage, timeToLiveImages) => {
         try {
             if (studentImage.length == 0){
+                console.log('K co hinh anh')
                 return {data: false, error: null, message: "No images have been uploaded yet. Please upload 3 images"};
             }
             if (MySQLDatetimeToJSDatetime(timeToLiveImages) < JSDatetimeToMySQLDatetime(new Date())){
                 //remove images from imgur and from database
+                console.log('Hinh het han');
                 if (await this.removeStudentImagesFromImgurAndDatabase(studentImage) == false){
                     return {data: null, error: "Failed removing images", message: ""};
                 }
@@ -80,6 +82,7 @@ class FaceImageService {
             
             return {data: imageStudentList, error: null};
         } catch(e){
+            console.log('Err',e);
             return {data: null, error: "Failed loading images to database"};
         }
     }
