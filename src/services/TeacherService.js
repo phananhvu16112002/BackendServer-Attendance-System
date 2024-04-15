@@ -194,6 +194,16 @@ class TeacherService {
             return false;
         }
     }
+
+    //must test
+    deleteTeacher = async (teacherID) => {
+        try {
+            await teacherRepository.delete({teacherID: teacherID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new TeacherService();

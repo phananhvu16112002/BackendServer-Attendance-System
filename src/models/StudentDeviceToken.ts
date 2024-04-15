@@ -6,7 +6,7 @@ export class StudentDeviceToken {
     @PrimaryColumn()
     token: string;
 
-    @ManyToOne(() => Student, Student => Student.studentDeviceTokens)
+    @ManyToOne(() => Student, Student => Student.studentDeviceTokens, {onDelete: "CASCADE"})
     @JoinColumn({name:"studentID", referencedColumnName:"studentID"})
     studentID: Student
 }

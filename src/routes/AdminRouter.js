@@ -31,4 +31,11 @@ AdminRouter.put("/edit/class/:id", VerifyAccessToken, Authorization('admin'), Ad
 AdminRouter.get("/courses/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getCoursesWithPagination);
 AdminRouter.get("/courses/:id/classes/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getClassesByCourseIDWithPagination);
 AdminRouter.get("/classes/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getClassesWithPagination);
+
+//delete
+AdminRouter.delete("/course/:id", VerifyAccessToken, Authorization("admin"), AdminController.deleteCourse);
+AdminRouter.delete("/class/:id", VerifyAccessToken, Authorization("admin"), AdminController.deleteClass);
+AdminRouter.delete("/teacher/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
+AdminRouter.delete("/student/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
+
 export default AdminRouter;

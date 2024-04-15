@@ -14,7 +14,7 @@ export class AttendanceDetail {
     @PrimaryColumn({name: "classID", type: "string"})
     classDetail: string
 
-    @ManyToOne(() => StudentClass, StudentClass => StudentClass)
+    @ManyToOne(() => StudentClass, StudentClass => StudentClass, {onDelete: "CASCADE"})
     @JoinColumn([
         {name: "studentID", referencedColumnName: "studentDetail"},
         {name: "classID", referencedColumnName: "classDetail"},
@@ -22,7 +22,7 @@ export class AttendanceDetail {
     studentClass : StudentClass
 
     @PrimaryColumn({type: "string", name: "formID"})
-    @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm)
+    @ManyToOne(() => AttendanceForm, (AttendanceForm) => AttendanceForm, {onDelete: "CASCADE"})
     @JoinColumn({name:"formID", referencedColumnName:"formID"})
     attendanceForm: AttendanceForm
 

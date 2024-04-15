@@ -18,7 +18,7 @@ export class EditionHistory {
     @Column({type: "datetime", nullable: true})
     createdAt: string
 
-    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail)
+    @ManyToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail, {onDelete: "CASCADE"})
     @JoinColumn([
         {name: "studentID", referencedColumnName: "studentDetail"},
         {name: "classID", referencedColumnName: "classDetail"},

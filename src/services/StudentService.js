@@ -258,6 +258,16 @@ class StudentService {
             return false;
         }
     }
+
+    //must test
+    deleteStudent = async (studentID) => {
+        try {
+            await studentRepository.delete({studentID: studentID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new StudentService();

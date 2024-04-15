@@ -7,7 +7,7 @@ export class AttendanceForm {
     @PrimaryColumn()
     formID: string
 
-    @ManyToOne(() => Classes, (Classes) => Classes.attendanceForm)
+    @ManyToOne(() => Classes, (Classes) => Classes.attendanceForm, {onDelete: "CASCADE"})
     @JoinColumn({name:"classID",referencedColumnName:"classID"})
     classes: Classes
 

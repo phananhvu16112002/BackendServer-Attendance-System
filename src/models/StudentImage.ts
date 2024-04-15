@@ -12,7 +12,7 @@ export class StudentImage {
     @Column()
     imageURL: string
 
-    @ManyToOne(() => Student, Student => Student.studentImage)
+    @ManyToOne(() => Student, Student => Student.studentImage, {onDelete: "CASCADE"})
     @JoinColumn({name:"studentID", referencedColumnName:"studentID"})
     studentID: Student
 }

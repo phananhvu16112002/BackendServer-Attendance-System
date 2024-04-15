@@ -436,6 +436,62 @@ class AdminController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    deleteCourse = async (req,res) => {
+        try {
+            let courseID = req.params.id;
+            let valid = await CourseService.deleteCourse(courseID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting course with ${courseID}`});
+            }
+            return res.status(200).json({id: courseID, message: "Successfully deleted course"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteClass = async (req,res) => {
+        try {
+            let classID = req.params.id;
+            let valid = await ClassService.deleteClass(classID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting class with ${courseID}`});
+            }
+            return res.status(200).json({id: classID, message: "Successfully deleted class"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteStudent = async (req,res) => {
+        try {
+            let studentID = req.params.id;
+            let valid = await StudentService.deleteStudent(studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting student with ${studentID}`});
+            }
+            return res.status(200).json({id: studentID, message: "Successfully deleted student"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteTeacher = async (req,res) => {
+        try {
+            let teacherID = req.params.id;
+            let valid = await TeacherService.deleteTeacher(teacherID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting teacher with ${teacherID}`});
+            }
+            return res.status(200).json({id: teacherID, message: "Successfully deleted teacher"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new AdminController();

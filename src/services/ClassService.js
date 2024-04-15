@@ -255,6 +255,18 @@ class ClassService {
             return {data: [], error: "Failed getting classes"};
         }
     }
+
+    //must test
+    deleteClass = async (classID) => {
+        try {
+            await classRepository.delete({
+                classID: classID,
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new ClassService();

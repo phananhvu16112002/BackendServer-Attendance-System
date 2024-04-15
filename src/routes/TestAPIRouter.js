@@ -22,6 +22,9 @@ const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const classRepository = AppDataSource.getRepository(Classes);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const reportRepository = AppDataSource.getRepository(Report);
+const studentRepository = AppDataSource.getRepository(Student);
+const courseRepository = AppDataSource.getRepository(Course);
+const teacherRepository = AppDataSource.getRepository(Teacher);
 
 const TestAPIRouter = express.Router();
 
@@ -708,6 +711,42 @@ TestAPIRouter.get("/removeReport", async (req,res) => {
         reportID: "1"
     });
     return res.json({oke: "oke"});
+})
+
+TestAPIRouter.get("/removeStudent", async (req,res) => {
+    let data = await studentRepository.delete({
+        studentID: "520H0380",
+    })
+    console.log(data);
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeClass", async (req,res) => {
+    await classRepository.delete({
+        classID: "1"
+    });
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeAttendanceForm", async (req,res) => {
+    await attendanceFormRepository.delete({
+        formID: "1"
+    })
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeCourse", async (req,res) => {
+    let data = await courseRepository.delete({
+        courseID: "1"
+    })
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeTeacher", async (req,res) => {
+    await teacherRepository.delete({
+        teacherID: "1"
+    })
+    return res.json({message: "oke"});
 })
 
 export default TestAPIRouter

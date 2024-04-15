@@ -67,6 +67,18 @@ class CourseService {
             return {data: [], error: "Failed getting courses"};
         }
     }
+
+    //must test
+    deleteCourse = async (courseID) => {
+        try {
+            await courseRepository.delete({
+                courseID: courseID,
+            })
+            return true;
+        } catch (e) {
+            return {data: null, error: `Failed deleting course with id: ${courseID}`}
+        }
+    }
 }
 
 export default new CourseService();
