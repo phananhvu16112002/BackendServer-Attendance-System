@@ -1,5 +1,6 @@
 import ClassService from "../services/ClassService";
 import FeedbackService from "../services/FeedbackService";
+import NotificationService from "../services/NotificationService";
 import ReportService from "../services/ReportService";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import {JSDatetimeToMySQLDatetime} from '../utils/TimeConvert';
@@ -44,6 +45,7 @@ class FeedbackController {
             if (err){
                 return res.status(503).json({message: err});
             }
+            await NotificationService.sendFeedbackNotificationToStudentID(data.attendanceDetail.studentID, feedback);
             return res.status(200).json(result);
         } catch (e) {
             return res.status(500).json({ message: "Internal Server Error" });

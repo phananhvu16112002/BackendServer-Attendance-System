@@ -2,6 +2,7 @@ import AttendanceFormDTO from "../dto/AttendanceFormDTO";
 import AttendanceDetailService from "../services/AttendanceDetailService";
 import AttendanceFormService from "../services/AttendanceFormService";
 import ClassService from "../services/ClassService";
+import NotificationService from "../services/NotificationService";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 
@@ -45,6 +46,8 @@ class AttendanceFormController {
             }
             //Get danh sach student trong danh sach cam thi, trong danh sach warning
             //Send notification
+            let offset = classes.course.totalWeeks - classes.course.requiredWeeks;
+            await NotificationService.sendAttendanceFormToStudents(classID, offset);
             
             if (form == null){
                 return res.status(503).json({message : "Attendance Form cannot be created. Please try again!"});
