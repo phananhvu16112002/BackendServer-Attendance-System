@@ -286,6 +286,23 @@ class ReportController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    getNotificationReport = async (req,res) => {
+        try{
+            const teacherID = req.payload.userID;
+            let {importantNews, lastestNews, stats, error} = await ReportService.getNotificationReport(teacherID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (importantNews.length == 0 || lastestNews.length == 0 || stats == null){
+                return res.status(204).json({message: "empty"});
+            }
+            return res.status(200).json({importantNews, lastestNews, stats});
+        } catch(e){
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new ReportController();

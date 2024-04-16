@@ -312,6 +312,244 @@ class AdminController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    editStudent = async (req,res) => {
+        try {
+            let studentName = req.body.studentName;
+            let studentID = req.params.id;
+            if (await StudentService.editStudent(studentID, studentName)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editTeacher = async (req,res) => {
+        try {
+            let teacherName = req.body.teacherName;
+            let teacherID = req.params.id;
+            if (await TeacherService.editTeacher(teacherID, teacherName)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editCourse = async (req,res) => {
+        try {
+            let courseID = req.params.id;
+            let courseName = req.body.courseName;
+            let totalWeeks = req.body.totalWeeks;
+            let requiredWeeks = req.body.requiredWeeks;
+            let credit = req.body.credit;
+            if (await CourseService.editCourse(courseID, courseName, totalWeeks, requiredWeeks, credit)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    editClass = async (req,res) => {
+        try {
+            let classID = req.params.id;
+            let roomNumber = req.body.roomNumber;
+            let shiftNumber = req.body.shiftNumber;
+            let startTime = req.body.startTime;
+            let endTime = req.body.endTime;
+            let classType = req.body.classType;
+            let group = req.body.group;
+            let subGroup = req.body.subGroup;
+            let courseID = req.body.courseID;
+            let teacherID = req.body.teacherID;
+            if (await ClassService.editClass(classID, roomNumber, shiftNumber, startTime, endTime, classType, 
+            group, subGroup, courseID, teacherID)){
+                return res.status(200).json({message: "Edit successfully"});
+            }
+            return res.status(503).json({message: "Failed editing"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    getCoursesWithPagination = async (req,res) => {
+        try {  
+            let page = req.params.page; 
+            let {data, error} = await CourseService.getCoursesWithPagination(page);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //testable
+    getClassesByCourseIDWithPagination = async (req,res) => {
+        try {
+            const courseID = req.params.id;
+            let page = req.params.page;
+            let {data, error} = await ClassService.getClassesWithCourseAndTeacherByCourseIDWithPagination(courseID, page);
+
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    getClassesWithPagination = async (req,res) => {
+        try {
+            let page = req.params.page; 
+            let {data, error} = await ClassService.getClassesWithPagination(page);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteCourse = async (req,res) => {
+        try {
+            let courseID = req.params.id;
+            let valid = await CourseService.deleteCourse(courseID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting course with ${courseID}`});
+            }
+            return res.status(200).json({id: courseID, message: "Successfully deleted course"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteClass = async (req,res) => {
+        try {
+            let classID = req.params.id;
+            let valid = await ClassService.deleteClass(classID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting class with ${courseID}`});
+            }
+            return res.status(200).json({id: classID, message: "Successfully deleted class"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteStudent = async (req,res) => {
+        try {
+            let studentID = req.params.id;
+            let valid = await StudentService.deleteStudent(studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting student with ${studentID}`});
+            }
+            return res.status(200).json({id: studentID, message: "Successfully deleted student"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    deleteTeacher = async (req,res) => {
+        try {
+            let teacherID = req.params.id;
+            let valid = await TeacherService.deleteTeacher(teacherID);
+            if (!valid){
+                return res.status(503).json({message: `Failed deleting teacher with ${teacherID}`});
+            }
+            return res.status(200).json({id: teacherID, message: "Successfully deleted teacher"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    addStudentInClass = async (req,res) => {
+        try {
+            let studentID = req.body.studentID;
+            let classID = req.body.classID;
+            let valid = await StudentClassService.addStudentInClass(classID, studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed adding student with id ${studentID} in class id ${classID}`});
+            }
+            return res.status(200).json({id: studentID, message: `Successfully adding student with id ${studentID} in class id ${classID}`});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    removeStudentInClass = async (req,res) => {
+        try {
+            let studentID = req.params.studentid;
+            let classID = req.params.classid;
+            let valid = await StudentClassService.removeStudentFromClass(classID, studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed removing student with id ${studentID} in class id ${classID}`});
+            }
+            return res.status(200).json({id: studentID, message: `Successfully removing student with id ${studentID} in class id ${classID}`});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //search for student
+    searchStudentByID = async (req,res) => {
+        try {
+            let studentID = req.params.id;
+            let {data, error} = await StudentService.searchStudent(studentID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //search for teacher
+    searchTeacherByID = async (req,res) => {
+        try {
+            let teacherID = req.params.id;
+            let {data, error} = await TeacherService.searchTeacher(teacherID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new AdminController();

@@ -30,7 +30,7 @@ export class Report {
     @Column()
     important: boolean
 
-    @OneToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail, {cascade: ["update"]})
+    @OneToOne(() => AttendanceDetail, AttendanceDetail => AttendanceDetail, {cascade: ["update"], onDelete: "CASCADE"})
     @JoinColumn([
         {name: "studentID", referencedColumnName: "studentDetail"},
         {name: "classID", referencedColumnName: "classDetail"},

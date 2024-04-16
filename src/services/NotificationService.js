@@ -19,7 +19,7 @@ class NotificationService {
             const messageToWarningTokens = {
                 notification: {
                     title: "Attendance Form",
-                    body: "Please take attendance now! You cannot be absent today"
+                    body: "Please take attendance now! You cannot be absent today!"
                 },
                 tokens: warningTokens
             }

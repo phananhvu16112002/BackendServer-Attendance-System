@@ -9,7 +9,7 @@ export class ReportImage {
     @Column()
     imageURL: string
 
-    @ManyToOne(() => Report, Report => Report.reportImage)
+    @ManyToOne(() => Report, Report => Report.reportImage, {onDelete: 'CASCADE'})
     @JoinColumn({name:"reportID", referencedColumnName:"reportID"})
     report: Report
 }

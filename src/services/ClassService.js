@@ -180,6 +180,93 @@ class ClassService {
             return {data: null, error: "Failed getting classes"};
         }
     }
+
+    //must test
+    editClass = async (classID, roomNumber, shiftNumber, startTime, endTime, classType ,group, subGroup, courseID, teacherID) => {
+        try {
+            await classRepository.update({classID: classID}, 
+            {roomNumber: roomNumber, shiftNumber: shiftNumber, startTime: startTime, endTime: endTime, 
+            classType: classType, group: group, subGroup: subGroup, course: courseID, teacher: teacherID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    getClassesWithPagination = async (page) => {
+        try {
+            if (page <= 0) {
+                page = 1;
+            }
+            let skip = (page - 1) * 6;
+
+            let data = await classRepository.find({
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true
+                },
+                skip: skip,
+                take: 6
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
+
+    //must test
+    getClassesWithCourseAndTeacherByCourseIDWithPagination = async (courseID, page) => {
+        try {
+            if (page <= 0) {
+                page = 1;
+            }
+            let skip = (page - 1) * 6;
+
+            let data = classRepository.find({
+                where: {
+                    course: {
+                        courseID : courseID
+                    }
+                },
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    },
+                },
+                relations: {
+                    teacher: true,
+                    course: true
+                },
+                skip: skip,
+                take: 6
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
+
+    //must test
+    deleteClass = async (classID) => {
+        try {
+            await classRepository.delete({
+                classID: classID,
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new ClassService();

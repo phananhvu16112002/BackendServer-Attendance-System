@@ -29,11 +29,11 @@ export class Classes {
     @Column({default: ""})
     subGroup: string
 
-    @ManyToOne(() => Course, Course => Course.classes)
+    @ManyToOne(() => Course, Course => Course.classes, {onDelete: "CASCADE"})
     @JoinColumn({name:"courseID", referencedColumnName:"courseID"})
     course: Course
 
-    @ManyToOne(() => Teacher, Teacher => Teacher.classes)
+    @ManyToOne(() => Teacher, Teacher => Teacher.classes, {onDelete: "CASCADE"})
     @JoinColumn({name:"teacherID", referencedColumnName:"teacherID"})
     teacher: Teacher
 

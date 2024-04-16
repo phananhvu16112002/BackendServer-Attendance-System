@@ -18,7 +18,7 @@ export class HistoryFeedback {
     @Column({type: "datetime", nullable: true})
     createdAt: string
 
-    @OneToOne(() => HistoryReport, (historyReport) => historyReport.historyFeedbacks)
+    @OneToOne(() => HistoryReport, (historyReport) => historyReport.historyFeedbacks, {onDelete: 'CASCADE'})
     @JoinColumn({name:"historyReportID", referencedColumnName:"historyReportID"})
     historyReport: HistoryReport
 }

@@ -15,11 +15,16 @@ import { Employee } from "../models/Employee";
 import StudentClassService from "../services/StudentClassService";
 import {In} from "typeorm";
 // import firebaseAdmin from "../config/notification.config";
+import { Report } from "../models/Report";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const classRepository = AppDataSource.getRepository(Classes);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
+const reportRepository = AppDataSource.getRepository(Report);
+const studentRepository = AppDataSource.getRepository(Student);
+const courseRepository = AppDataSource.getRepository(Course);
+const teacherRepository = AppDataSource.getRepository(Teacher);
 
 const TestAPIRouter = express.Router();
 
@@ -660,6 +665,88 @@ TestAPIRouter.get("/sendNotification", async (req,res) => {
         console.log(error);
         res.json(error);
     })
+})
+
+TestAPIRouter.get("/news", async (req,res) => {
+    let dataImportant = await reportRepository.find({
+        order: {
+            important: "DESC",
+            new: "DESC",
+            createdAt: "DESC"
+        }
+    })
+
+    let dataNew = await reportRepository.find({
+        order: {
+            new: "DESC",
+            createdAt: "DESC"
+        }
+    })
+
+    let stats = await reportRepository.createQueryBuilder("report").
+    select('COUNT(*) as total').addSelect(`SUM(CASE WHEN new = 1 THEN 1 ELSE 0 END) AS totalNew`,).
+    addSelect(`SUM(CASE WHEN new = 0 THEN 1 ELSE 0 END) AS totalOld`,).getRawOne();
+
+    let dataImportant2 = await reportRepository.createQueryBuilder("report").
+    innerJoin(Classes, "classes", "report.classID = classes.classID").
+    orderBy('report.important', 'DESC').addOrderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
+    where("classes.teacherID = :id", {id : "520H0381"}).getRawMany();
+
+    let dataNew2 = await reportRepository.createQueryBuilder("report").
+    innerJoin(Classes, "classes", "report.classID = classes.classID").
+    orderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
+    where("classes.teacherID = :id", {id : "520H0381"}).getRawMany();
+
+    let stats2 = await reportRepository.createQueryBuilder("report").
+    select('COUNT(*) as total').addSelect(`SUM(CASE WHEN new = 1 THEN 1 ELSE 0 END) AS totalNew`,).
+    addSelect(`SUM(CASE WHEN new = 0 THEN 1 ELSE 0 END) AS totalOld`,).
+    innerJoin(Classes, "classes", "report.classID = classes.classID").
+    where("classes.teacherID = :id", {id : "520H0381"}).getRawOne();
+
+    return res.json({dataImportant2, dataNew2, stats2});
+})
+
+TestAPIRouter.get("/removeReport", async (req,res) => {
+    await reportRepository.delete({
+        reportID: "1"
+    });
+    return res.json({oke: "oke"});
+})
+
+TestAPIRouter.get("/removeStudent", async (req,res) => {
+    let data = await studentRepository.delete({
+        studentID: "520H0380",
+    })
+    console.log(data);
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeClass", async (req,res) => {
+    await classRepository.delete({
+        classID: "1"
+    });
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeAttendanceForm", async (req,res) => {
+    await attendanceFormRepository.delete({
+        formID: "1"
+    })
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeCourse", async (req,res) => {
+    let data = await courseRepository.delete({
+        courseID: "1"
+    })
+    return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/removeTeacher", async (req,res) => {
+    await teacherRepository.delete({
+        teacherID: "1"
+    })
+    return res.json({message: "oke"});
 })
 
 export default TestAPIRouter

@@ -249,6 +249,39 @@ class StudentService {
             return {data: [], error: "Fail getting device tokens"};
         }
     }
+
+    editStudent = async (studentID, studentName) => {
+        try {
+            let data = await studentRepository.update({studentID: studentID}, {studentName: studentName});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    deleteStudent = async (studentID) => {
+        try {
+            await studentRepository.delete({studentID: studentID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    searchStudent = async (studentID) => {
+        try {
+            let data = await studentRepository.findOne({
+                where: {
+                    studentID: studentID
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting student"}
+        }
+    }
 }
 
 export default new StudentService();

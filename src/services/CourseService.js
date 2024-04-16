@@ -40,6 +40,45 @@ class CourseService {
             return {data: null, error: "Failed adding course"};
         }
     }
+
+    //must test
+    editCourse = async (courseID, courseName, totalWeeks, requiredWeeks, credit) => {
+        try {
+            await courseRepository.update({courseID: courseID}, {courseName: courseName, totalWeeks: totalWeeks, requiredWeeks: requiredWeeks, credit: credit});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    getCoursesWithPagination = async (page) => {
+        try {
+            if (page <= 0) {
+                page = 1;
+            }
+            let skip = (page - 1) * 6;
+            let data = await courseRepository.find({
+                skip: skip,
+                take: 6,
+            });
+            return {data: data, error : null};
+        } catch (e) {
+            return {data: [], error: "Failed getting courses"};
+        }
+    }
+
+    //must test
+    deleteCourse = async (courseID) => {
+        try {
+            await courseRepository.delete({
+                courseID: courseID,
+            })
+            return true;
+        } catch (e) {
+            return {data: null, error: `Failed deleting course with id: ${courseID}`}
+        }
+    }
 }
 
 export default new CourseService();

@@ -184,6 +184,36 @@ class TeacherService {
             return {data: null, error: e.message};
         }
     }
+
+    //must test
+    editTeacher = async (teacherID, teacherName) => {
+        try {
+            let data = await teacherRepository.update({teacherID: teacherID}, {teacherName: teacherName});
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    //must test
+    deleteTeacher = async (teacherID) => {
+        try {
+            await teacherRepository.delete({teacherID: teacherID});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    searchTeacher = async (teacherID) => {
+        try {
+            let data = await teacherRepository.findOne({where: {teacherID: teacherID}});
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting teacher"};
+        }
+    }
 }
 
 export default new TeacherService();
