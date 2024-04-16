@@ -36,7 +36,7 @@ AdminRouter.get("/classes/page/:page", VerifyAccessToken, Authorization('admin')
 //delete
 AdminRouter.delete("/course/:id", VerifyAccessToken, Authorization("admin"), AdminController.deleteCourse);
 AdminRouter.delete("/class/:id", VerifyAccessToken, Authorization("admin"), AdminController.deleteClass);
-AdminRouter.delete("/teacher/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
+AdminRouter.delete("/teacher/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteTeacher);
 AdminRouter.delete("/student/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
 AdminRouter.delete("/class/:classid/student/:studentid", VerifyAccessToken, Authorization('admin'), AdminController.removeStudentInClass);
 
