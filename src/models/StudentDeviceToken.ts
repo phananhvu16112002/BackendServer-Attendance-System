@@ -1,6 +1,7 @@
-import { JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Student } from "./Student";
 
+@Entity()
 export class StudentDeviceToken {
     @PrimaryColumn()
     token: string;
