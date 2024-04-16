@@ -492,6 +492,64 @@ class AdminController {
             return res.status(500).json({message: "Internal Server"});
         }
     }
+
+    //must test
+    addStudentInClass = async (req,res) => {
+        try {
+            let studentID = req.body.studentID;
+            let classID = req.body.classID;
+            let valid = await StudentClassService.addStudentInClass(classID, studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed adding student with id ${studentID} in class id ${classID}`});
+            }
+            return res.status(200).json({id: studentID, message: `Successfully adding student with id ${studentID} in class id ${classID}`});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //must test
+    removeStudentInClass = async (req,res) => {
+        try {
+            let studentID = req.params.studentid;
+            let classID = req.params.classid;
+            let valid = await StudentClassService.removeStudentFromClass(classID, studentID);
+            if (!valid){
+                return res.status(503).json({message: `Failed removing student with id ${studentID} in class id ${classID}`});
+            }
+            return res.status(200).json({id: studentID, message: `Successfully removing student with id ${studentID} in class id ${classID}`});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //search for student
+    searchStudentByID = async (req,res) => {
+        try {
+            let studentID = req.params.id;
+            let {data, error} = await StudentService.searchStudent(studentID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    //search for teacher
+    searchTeacherByID = async (req,res) => {
+        try {
+            let teacherID = req.params.id;
+            let {data, error} = await TeacherService.searchTeacher(teacherID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
 }
 
 export default new AdminController();

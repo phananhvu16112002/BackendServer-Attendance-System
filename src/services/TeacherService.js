@@ -204,6 +204,16 @@ class TeacherService {
             return false;
         }
     }
+
+    //must test
+    searchTeacher = async (teacherID) => {
+        try {
+            let data = await teacherRepository.findOne({where: {teacherID: teacherID}});
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting teacher"};
+        }
+    }
 }
 
 export default new TeacherService();

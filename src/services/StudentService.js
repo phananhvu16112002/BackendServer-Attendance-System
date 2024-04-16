@@ -268,6 +268,20 @@ class StudentService {
             return false;
         }
     }
+
+    //must test
+    searchStudent = async (studentID) => {
+        try {
+            let data = await studentRepository.findOne({
+                where: {
+                    studentID: studentID
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: null, error: "Failed getting student"}
+        }
+    }
 }
 
 export default new StudentService();

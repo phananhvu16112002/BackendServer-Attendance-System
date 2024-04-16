@@ -21,6 +21,7 @@ AdminRouter.get("/classes", VerifyAccessToken, Authorization('admin'), AdminCont
 AdminRouter.post("/submit/teacher", VerifyAccessToken, Authorization('admin'), AdminController.postTeacher);
 AdminRouter.post("/submit/student", VerifyAccessToken, Authorization('admin'), AdminController.postStudent);
 AdminRouter.post("/submit/course", VerifyAccessToken, Authorization('admin'), AdminController.postCourse);
+AdminRouter.post("/submit/studentclass", VerifyAccessToken, Authorization('admin'), AdminController.addStudentInClass);
 
 AdminRouter.put("/edit/student/:id", VerifyAccessToken, Authorization('admin'), AdminController.editStudent);
 AdminRouter.put("/edit/teacher/:id", VerifyAccessToken, Authorization('admin'), AdminController.editTeacher);
@@ -37,5 +38,9 @@ AdminRouter.delete("/course/:id", VerifyAccessToken, Authorization("admin"), Adm
 AdminRouter.delete("/class/:id", VerifyAccessToken, Authorization("admin"), AdminController.deleteClass);
 AdminRouter.delete("/teacher/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
 AdminRouter.delete("/student/:id", VerifyAccessToken, Authorization("admin"),AdminController.deleteStudent);
+AdminRouter.delete("/class/:classid/student/:studentid", VerifyAccessToken, Authorization('admin'), AdminController.removeStudentInClass);
 
+//search
+AdminRouter.get("/search/student/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchStudentByID);
+AdminRouter.get("/search/teacher/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchTeacherByID);
 export default AdminRouter;

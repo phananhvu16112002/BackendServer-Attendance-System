@@ -196,6 +196,32 @@ class StudentClassService {
             return {data: [], error: "Cannot fetch all the student inside this class"};
         }
     }
+
+    //must test
+    addStudentInClass = async (classID, studentID) => {
+        try {
+            let studentClass = new StudentClass();
+            studentClass.classDetail = classID;
+            studentClass.studentID = studentID;
+            await studentClassRepository.insert(studentClass);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    removeStudentFromClass = async (classID, studentID) => {
+        try {
+            await studentClassRepository.delete({
+                studentDetail: studentID,
+                classDetail: classID
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new StudentClassService();
