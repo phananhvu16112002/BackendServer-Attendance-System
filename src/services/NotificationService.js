@@ -9,22 +9,44 @@ class NotificationService {
             let {data, error} = await StudentClassService.getStudentsAttendanceDetailsWithDeviceTokenByClassID(classID);
             if (error) {return false};
             let {passTokens, warningTokens} = this.getPassTokensAndWarningTokens(data, offset);
-            const messageToPassTokens = {
-                notification: {
-                    title: "Attendance Form",
-                    body: "Your teacher has created attendance detail. Please take attendance!"
-                },
-                tokens: passTokens
+            // const messageToPassTokens = {
+            //     notification: {
+            //         title: "Attendance Form",
+            //         body: "Your teacher has created attendance detail. Please take attendance!"
+            //     },
+            //     tokens: passTokens
+            // }
+            // const messageToWarningTokens = {
+            //     notification: {
+            //         title: "Attendance Form",
+            //         body: "Please take attendance now! You cannot be absent today!"
+            //     },
+            //     tokens: warningTokens
+            // }
+            for (let i = 0; i < passTokens.length; i++){
+                message.push(
+                    {
+                        notification: {
+                            title: "Attendance Form",
+                            body: "Your teacher has created attendance detail. Please take attendance!"
+                        },
+                        token: passTokens[i]
+                    }
+                )
             }
-            const messageToWarningTokens = {
-                notification: {
-                    title: "Attendance Form",
-                    body: "Please take attendance now! You cannot be absent today!"
-                },
-                tokens: warningTokens
+            for (let i = 0; i <warningTokens.length; i++){
+                message.push(
+                    {
+                        notification: {
+                            title: "Attendance Form",
+                            body: "Please take attendance now! You cannot be absent today!"
+                        },
+                        token: warningTokens[i]
+                    }
+                )
             }
             const message = [];
-            message.push(...messageToPassTokens, ...messageToWarningTokens);
+            //message.push(...messageToPassTokens, ...messageToWarningTokens);
             firebaseAdmin.messaging().send(message);
             return true;
         } catch (e) {
