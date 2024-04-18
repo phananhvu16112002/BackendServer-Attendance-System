@@ -38,7 +38,7 @@ class NotificationService {
             if (error){
                 return false;
             }
-            let tokens = this.getTokens(studentDeviceTokens);
+            let tokens = this.getTokensFromStudentDeviceTokens(studentDeviceTokens);
             const message = {
                 notification: {
                     title: "Feedback",
