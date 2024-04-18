@@ -20,7 +20,10 @@ class AttendanceDetailController {
         const location = req.body.location;
         const latitude = req.body.latitude;
         const longtitude = req.body.longitude;
-        const image = req.files.file;
+        const image = null;
+        if (req.files != null){
+             image = req.files.file;
+        }
 
         //Check
         console.log("StudentID: ", studentID);

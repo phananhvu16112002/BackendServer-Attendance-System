@@ -3,7 +3,7 @@ import Authorization from "../middlewares/Authorization";
 import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
 // import VerifyResetToken from "../middlewares/VerifyResetToken";
-import VerifyResetToken from "../middlewares/VerifyResetToken";
+import VerifyResetToken from "../middlewares/verifyResetToken";
 import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
@@ -44,7 +44,7 @@ TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teache
 
 TeacherRouter.put("/attendancedetail/edit/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.editAttendanceDetail);
 
-TeacherRouter.post("/form/submit", AttendanceFormController.createAttendanceForm)
+TeacherRouter.post("/form/submit", VerifyAccessToken,Authorization('teacher'),AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 TeacherRouter.get("/notifications", VerifyAccessToken, Authorization('teacher'), ReportController.getNotificationReport);

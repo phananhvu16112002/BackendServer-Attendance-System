@@ -8,7 +8,11 @@ class NotificationService {
         try{
             let {data, error} = await StudentClassService.getStudentsAttendanceDetailsWithDeviceTokenByClassID(classID);
             if (error) {return false};
-            let {passTokens, warningTokens} = getPassTokensAndWarningTokens(data, offset);
+            let {passTokens, warningTokens} = this.getPassTokensAndWarningTokens(data, offset);
+            console.log('passToken',passTokens);
+            console.log('warningTokens',warningTokens);
+
+            
             const messageToPassTokens = {
                 notification: {
                     title: "Attendance Form",
@@ -26,8 +30,10 @@ class NotificationService {
             const message = [];
             message.push(...messageToPassTokens, ...messageToWarningTokens);
             firebaseAdmin.messaging().send(message);
+            console.log('message:',message);
             return true;
         } catch (e) {
+            console.log(e)
             return false;
         }
     }

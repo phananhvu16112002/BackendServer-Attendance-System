@@ -150,7 +150,7 @@ class StudentClassService {
         try {
             let data = await studentClassRepository.createQueryBuilder("student_class").
             innerJoinAndMapOne("student_class.student", Student, "student", "student.studentID = student_class.studentID").
-            leftJoinAndMapMany("student_class.tokens", StudentDeviceToken, "tokens", "token.studentID = student_class.studentID").
+            leftJoinAndMapMany("student_class.tokens", StudentDeviceToken, "tokens", "tokens.studentID = student_class.studentID").
             leftJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
             where("student_class.classID = :id", {id : classID}).getMany();
             return {data: data, error: null};
