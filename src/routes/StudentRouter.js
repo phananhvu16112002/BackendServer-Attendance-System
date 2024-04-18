@@ -7,6 +7,7 @@ import StudentClassController from "../controllers/StudentClassController";
 import Authorization from "../middlewares/Authorization";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import ReportController from "../controllers/ReportController";
+import NotificationController from "../controllers/NotificationController";
 
 const StudentRouter = express.Router();
 
@@ -39,5 +40,7 @@ StudentRouter.post("/sendImages", VerifyAccessToken, Authorization("student"), S
 
 StudentRouter.post("/takeAttendance", AttendanceDetailController.takeAttendance);
 StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAttendanceOffline);
+
+StudentRouter.get("/notifications", VerifyAccessToken, Authorization('student'), NotificationController.getNotificationsByStudentID);
 
 export default StudentRouter;

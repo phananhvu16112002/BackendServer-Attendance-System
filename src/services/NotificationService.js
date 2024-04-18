@@ -79,6 +79,55 @@ class NotificationService {
 
         return {passTokens, warningTokens};
     }
+
+    // must test
+    getNotificationsBasedOnFeedbackAndAttendanceDetail = (feedbacks, attendancedetails) => {
+        let notifications = [];
+        for (let i = 0; i < feedbacks.length; i++){
+            let feedback = feedbacks[i];
+            let notification = {
+                type: "report",
+                reportID: feedback.report.reportID,
+                formID: null,
+                course: feedback.course.courseName,
+                lecturer: feedback.teacher.teacherName,
+                createdAt: feedback.createdAt
+            }
+            notifications.push(notification);
+        }
+        for (let i = 0; i < attendancedetails.length; i++){
+            let attendance = attendancedetails[i];
+            let notification = {
+                type: "attendance",
+                reportID: null,
+                formID: attendance.attendanceForm,
+                course: attendance.course.courseName,
+                lecturer: attendance.teacher.teacherName,
+                createdAt: attendance.createdAt
+            }
+            notifications.push(notification);
+        }
+        return this.sortNotificationsByDate(notifications);
+    }
+
+    //must test
+    sortNotificationsByDate = (notifications) => {
+        notifications.sort((b, a) => {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+          
+            // Handle invalid dates by placing them at the end
+            if (isNaN(dateA.getTime())) {
+              return 1;
+            }
+            if (isNaN(dateB.getTime())) {
+              return -1;
+            }
+          
+            return dateA.getTime() - dateB.getTime();
+        });
+        return notifications;
+    }
 }
 
 export default new NotificationService();
