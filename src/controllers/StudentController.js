@@ -125,7 +125,7 @@ class StudentController{
             const accessToken = jwt.sign({userID: studentID, role: "student"}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '1m' })
             const refreshToken = jwt.sign({userID: studentID, role: "student"}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '2h' })
             
-            if (await StudentService.storeDeviceToken(studentDeviceToken) == false){
+            if (await StudentService.storeDeviceToken(studentID, studentDeviceToken) == false){
                 return res.status(503).json({message: "Cannot store device token"});
             }
             
