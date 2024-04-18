@@ -44,7 +44,7 @@ TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teache
 
 TeacherRouter.put("/attendancedetail/edit/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.editAttendanceDetail);
 
-TeacherRouter.post("/form/submit", VerifyAccessToken,Authorization('teacher'),AttendanceFormController.createAttendanceForm)
+TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 TeacherRouter.get("/notifications", VerifyAccessToken, Authorization('teacher'), ReportController.getNotificationReport);

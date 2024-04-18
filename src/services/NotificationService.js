@@ -9,31 +9,53 @@ class NotificationService {
             let {data, error} = await StudentClassService.getStudentsAttendanceDetailsWithDeviceTokenByClassID(classID);
             if (error) {return false};
             let {passTokens, warningTokens} = this.getPassTokensAndWarningTokens(data, offset);
-            console.log('passToken',passTokens);
-            console.log('warningTokens',warningTokens);
+            console.log('passToken',passTokens)
+            console.log('warningToken',warningTokens)
 
-            
-            const messageToPassTokens = {
-                notification: {
-                    title: "Attendance Form",
-                    body: "Your teacher has created attendance detail. Please take attendance!"
-                },
-                tokens: passTokens
-            }
-            const messageToWarningTokens = {
-                notification: {
-                    title: "Attendance Form",
-                    body: "Please take attendance now! You cannot be absent today!"
-                },
-                tokens: warningTokens
-            }
+            // const messageToPassTokens = {
+            //     notification: {
+            //         title: "Attendance Form",
+            //         body: "Your teacher has created attendance detail. Please take attendance!"
+            //     },
+            //     tokens: passTokens
+            // }
+            // const messageToWarningTokens = {
+            //     notification: {
+            //         title: "Attendance Form",
+            //         body: "Please take attendance now! You cannot be absent today!"
+            //     },
+            //     tokens: warningTokens
+            // }
             const message = [];
-            message.push(...messageToPassTokens, ...messageToWarningTokens);
-            firebaseAdmin.messaging().send(message);
-            console.log('message:',message);
+            // message.push(messageToPassTokens)
+            // message.push(messageToWarningTokens)
+            for (let i = 0; i < passTokens.length; i++){
+                message.push(
+                    {
+                        notification: {
+                            title: "Attendance Form",
+                            body: "Your teacher has created attendance detail. Please take attendance!"
+                        },
+                        token: passTokens[i]
+                    }
+                )
+            }
+            for (let i = 0; i <warningTokens.length; i++){
+                message.push(
+                    {
+                        notification: {
+                            title: "Attendance Form",
+                            body: "Please take attendance now! You cannot be absent today!"
+                        },
+                        token: warningTokens[i]
+                    }
+                )
+            }
+
+            console.log(message)
+            firebaseAdmin.messaging().sendAll(message)
             return true;
         } catch (e) {
-            console.log(e)
             return false;
         }
     }
@@ -44,7 +66,7 @@ class NotificationService {
             if (error){
                 return false;
             }
-            let tokens = this.getTokens(studentDeviceTokens);
+            let tokens = this.getTokensFromStudentDeviceTokens(studentDeviceTokens);
             const message = {
                 notification: {
                     title: "Feedback",
@@ -62,7 +84,7 @@ class NotificationService {
     getTokensFromStudentDeviceTokens = (studentDeviceTokens) => {
         let tokens = [];
         for (let i=0; i < studentDeviceTokens.length; i++){
-            tokens.push(studentDeviceTokens.token);
+            tokens.push(studentDeviceTokens[i].token);
         }
         return tokens;
     }
@@ -70,20 +92,22 @@ class NotificationService {
     getPassTokensAndWarningTokens = (studentDetails, offset) => {
         let passTokens = []
         let warningTokens = []
-
         for (let i = 0; i < studentDetails.length; i++){
             let studentDetail = studentDetails[i];
             let status = AttendanceDetailDTO.getStatusBasedOnAttendanceDetails(studentDetail.attendancedetails, offset);
             studentDetail.status = status;
-
+            let tokens = this.getTokensFromStudentDeviceTokens(studentDetail.tokens);
             if (studentDetail.tokens != null && status == "Warning"){
-                warningTokens.push(...studentDetail.tokens);
+                warningTokens.push(...tokens);
             }else if (studentDetail.tokens != null && status == "Pass"){
-                passTokens.push(...studentDetail.tokens);
+                passTokens.push(...tokens);
             }
         }
+        console.log('asd',passTokens)
+        console.log('asasdad',warningTokens)
 
         return {passTokens, warningTokens};
+        
     }
 
     // must test
