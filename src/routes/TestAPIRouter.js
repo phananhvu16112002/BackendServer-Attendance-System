@@ -16,6 +16,7 @@ import StudentClassService from "../services/StudentClassService";
 import {In} from "typeorm";
 // import firebaseAdmin from "../config/notification.config";
 import { Report } from "../models/Report";
+import { Feedback } from "../models/Feedback";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -25,6 +26,7 @@ const reportRepository = AppDataSource.getRepository(Report);
 const studentRepository = AppDataSource.getRepository(Student);
 const courseRepository = AppDataSource.getRepository(Course);
 const teacherRepository = AppDataSource.getRepository(Teacher);
+const feedbackRepository = AppDataSource.getRepository(Feedback);
 
 const TestAPIRouter = express.Router();
 
@@ -747,6 +749,52 @@ TestAPIRouter.get("/removeTeacher", async (req,res) => {
         teacherID: "1"
     })
     return res.json({message: "oke"});
+})
+
+TestAPIRouter.get("/notifications", async (req,res) => {
+    let notifications = [];
+
+    let data = await feedbackRepository.createQueryBuilder('feedback').
+    innerJoinAndMapOne("feedback.report",Report, "report", "feedback.reportID = report.reportID").andWhere("report.studentID = :id", {id: "520H0380"}).
+    innerJoin(Classes, "classes", "report.classID = classes.classID").
+    innerJoinAndMapOne("feedback.course", Course, "course", "course.courseID = classes.courseID"). 
+    innerJoinAndMapOne("feedback.teacher", Teacher, "teacher", "teacher.teacherID = classes.teacherID").
+    getMany();
+
+    for (let i = 0; i < data.length; i++){
+        let feedback = data[i];
+        let notification = {
+            type: "report",
+            reportID: feedback.report.reportID,
+            formID: null,
+            course: feedback.course.courseName,
+            lecturer: feedback.teacher.teacherName,
+            createdAt: feedback.createdAt
+        }
+        notifications.push(notification);
+    }
+
+    let data2 = await attendanceDetailRepository.createQueryBuilder("attendancedetail").
+    innerJoin(Classes, "classes", "attendancedetail.classID = classes.classID").
+    innerJoinAndMapOne("attendancedetail.course", Course, "course", "course.courseID = classes.courseID"). 
+    innerJoinAndMapOne("attendancedetail.teacher", Teacher, "teacher", "teacher.teacherID = classes.teacherID").
+    where("attendancedetail.studentID = :id", {id: "520H0380"}).
+    getMany();
+
+    for (let i = 0; i < data2.length; i++){
+        let attendance = data2[i];
+        let notification = {
+            type: "attendance",
+            reportID: null,
+            formID: attendance.attendanceForm,
+            course: attendance.course.courseName,
+            lecturer: attendance.teacher.teacherName,
+            createdAt: attendance.createdAt
+        }
+        notifications.push(notification);
+    }
+
+    return res.json(notifications);
 })
 
 export default TestAPIRouter

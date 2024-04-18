@@ -6,6 +6,9 @@ import { Report } from "../models/Report";
 import { EditionHistory } from "../models/EditionHistory";
 import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 import { Feedback } from "../models/Feedback";
+import { Classes } from "../models/Classes";
+import { Course } from "../models/Course";
+import { Teacher } from "../models/Teacher";
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
 const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
@@ -212,6 +215,21 @@ class AttendanceDetailService {
             return 0.5;
         }
         return 0;
+    }
+
+    //must test
+    getAttendanceDetailsByStudentID = async (studentID) => {
+        try {
+            let data = await attendanceDetailRepository.createQueryBuilder("attendancedetail").
+            innerJoin(Classes, "classes", "attendancedetail.classID = classes.classID").
+            innerJoinAndMapOne("attendancedetail.course", Course, "course", "course.courseID = classes.courseID"). 
+            innerJoinAndMapOne("attendancedetail.teacher", Teacher, "teacher", "teacher.teacherID = classes.teacherID").
+            where("attendancedetail.studentID = :id", {id: studentID}).
+            getMany();
+            return {data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting attendance details"}
+        }
     }
 }
 

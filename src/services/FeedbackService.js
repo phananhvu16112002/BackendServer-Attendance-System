@@ -2,8 +2,11 @@ import { Feedback } from "../models/Feedback";
 import { AppDataSource } from "../config/db.config";
 import { Report } from "../models/Report";
 import { AttendanceDetail } from "../models/AttendanceDetail";
-
+import { Classes } from "../models/Classes";
+import { Course } from "../models/Course";
+import { Teacher } from "../models/Teacher";
 const reportRepository = AppDataSource.getRepository(Report);
+const feedbackRepository = AppDataSource.getRepository(Feedback);
 
 class FeedbackService {
     updateReportAttendanceDetail = async (feedback, report) => {
@@ -53,6 +56,21 @@ class FeedbackService {
         feedback.confirmStatus = confirmStatus;
         feedback.createdAt = createdAt;
         return feedback;
+    }
+
+    //must test
+    getFeedBackByStudentID = async (studentID) => {
+        try {   
+            let data = await feedbackRepository.createQueryBuilder('feedback').
+            innerJoinAndMapOne("feedback.report",Report, "report", "feedback.reportID = report.reportID").andWhere("report.studentID = :id", {id: studentID}).
+            innerJoin(Classes, "classes", "report.classID = classes.classID").
+            innerJoinAndMapOne("feedback.course", Course, "course", "course.courseID = classes.courseID"). 
+            innerJoinAndMapOne("feedback.teacher", Teacher, "teacher", "teacher.teacherID = classes.teacherID").
+            getMany();
+            return {data, error: null}
+        } catch (e) {
+            return {data: [], error: "Failed getting student feedback"};
+        }
     }
 }
 
