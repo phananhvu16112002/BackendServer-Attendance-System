@@ -9,6 +9,9 @@ class NotificationService {
             let {data, error} = await StudentClassService.getStudentsAttendanceDetailsWithDeviceTokenByClassID(classID);
             if (error) {return false};
             let {passTokens, warningTokens} = this.getPassTokensAndWarningTokens(data, offset);
+            console.log('passToken',passTokens)
+            console.log('warningToken',warningTokens)
+
             // const messageToPassTokens = {
             //     notification: {
             //         title: "Attendance Form",
@@ -23,6 +26,9 @@ class NotificationService {
             //     },
             //     tokens: warningTokens
             // }
+            const message = [];
+            // message.push(messageToPassTokens)
+            // message.push(messageToWarningTokens)
             for (let i = 0; i < passTokens.length; i++){
                 message.push(
                     {
@@ -45,9 +51,9 @@ class NotificationService {
                     }
                 )
             }
-            const message = [];
-            //message.push(...messageToPassTokens, ...messageToWarningTokens);
-            firebaseAdmin.messaging().send(message);
+
+            console.log(message)
+            firebaseAdmin.messaging().sendAll(message)
             return true;
         } catch (e) {
             return false;
@@ -97,7 +103,11 @@ class NotificationService {
                 passTokens.push(...tokens);
             }
         }
+        console.log('asd',passTokens)
+        console.log('asasdad',warningTokens)
+
         return {passTokens, warningTokens};
+        
     }
 
     // must test

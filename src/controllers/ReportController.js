@@ -179,6 +179,9 @@ class ReportController {
         try{
             const studentID = req.payload.userID;
             const classID = req.params.classid;
+            console.log(studentID)
+            console.log(classID)
+
 
             let {data, error} = await ReportService.getAllReportsByStudentID_ClassID(studentID, classID);
             if (error){

@@ -1,7 +1,7 @@
 import express from "express";
 import StudentController from "../controllers/StudentController";
 // import VerifyResetToken from "../middlewares/VerifyResetToken";
-import VerifyResetToken from "../middlewares/VerifyResetToken";
+import VerifyResetToken from "../middlewares/verifyResetToken";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import StudentClassController from "../controllers/StudentClassController";
 import Authorization from "../middlewares/Authorization";
