@@ -652,7 +652,7 @@ TestAPIRouter.get("/getstudentinclass", async (req,res) => {
     let {data, error} = await StudentClassService.getStudentsByClassID("1");
     return res.json(data);
 })
-const token = "fbjyIMqVSRy4p0wpnMd1gR:APA91bEQzVW9dhzqK9uWDZTRyJCFz852UkxL88lXiQrIzDxT13txzEQgry5xa4to2UZXkdudDBZw8UxSkyc38isGwgauzHUuyjXmtwe9DbkGMcSS78eDRES7O4cw2ezkjRqjwfhuZ18B";
+const token = "66616B652D61706E732D746F6B656E2D666F722D73696D756C61746F72";
 TestAPIRouter.get("/sendNotification", async (req,res) => {
     const message = {
         notification: {
