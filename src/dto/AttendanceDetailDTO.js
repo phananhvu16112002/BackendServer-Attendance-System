@@ -1,24 +1,28 @@
 class AttendanceDetailDTO {
-    getStatusBasedOnAttendanceDetails = (attendanceDetails, offset) => {
+    getStatusAndTotalStatsBasedOnAttendanceDetails = (attendanceDetails, offset) => {
         let count = 0;
+        let total = 0;
         for (let i = 0; i < attendanceDetails.length; i++){
             let attendanceDetail = attendanceDetails[i];
             if (attendanceDetail.result == 0){
                 count += 1
             }else if (attendanceDetail.result == 0.5) {
                 count += 0.5
+                total += 0.5
+            }else {
+                total +=1;
             }
         }
 
         if (count >= offset){
-            return "Ban";
+            return {totalstats: total, status: "Ban"};
         }
 
         if (count < offset && (offset - count) == 0.5) {
-            return "Warning";
+            return {totalstats: total, status: "Warning"};
         }
 
-        return "Pass";
+        return {totalstats: total, status: "Pass"};
     }
 
     transformStudentsAttendanceDetails = (studentDetails, offset) => {
@@ -29,8 +33,9 @@ class AttendanceDetailDTO {
 
         for (let i = 0; i < studentDetails.length; i++){
             let studentDetail = studentDetails[i];
-            let status = this.getStatusBasedOnAttendanceDetails(studentDetail.attendancedetails, offset);
+            let {totalstats,status} = this.getStatusAndTotalStatsBasedOnAttendanceDetails(studentDetail.attendancedetails, offset);
             studentDetail.status = status;
+            studentDetail.total = totalstats;
             this.extractSensitiveInformation(studentDetail);
             if (status == "Ban"){
                 ban+=1;

@@ -255,6 +255,10 @@ class AdminController {
             const studentName = req.body.studentName;
             const studentEmail = req.body.studentEmail;
 
+            if (ExcelService.checkInfo(studentID, studentEmail) == false){
+                return res.status(422).json({message: "Student ID and email must match the domain format"});
+            }
+
             let {data, error} = await StudentService.postStudent(studentID, studentName, studentEmail);
             if (error){
                 return res.status(503).json({message: error});

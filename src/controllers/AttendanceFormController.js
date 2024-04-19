@@ -47,6 +47,7 @@ class AttendanceFormController {
             //Get danh sach student trong danh sach cam thi, trong danh sach warning
             //Send notification
             let offset = classes.course.totalWeeks - classes.course.requiredWeeks;
+            offset = offset + 1;
             await NotificationService.sendAttendanceFormToStudents(classID, offset);
             
             if (form == null){
