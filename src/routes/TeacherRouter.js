@@ -8,7 +8,7 @@ import StudentClassController from "../controllers/StudentClassController";
 import FeedbackController from "../controllers/FeedbackController";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import ReportController from "../controllers/ReportController";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
 
 const TeacherRouter = express.Router();
 

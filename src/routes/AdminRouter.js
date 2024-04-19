@@ -1,7 +1,7 @@
 import express from "express";
 import AdminController from "../controllers/AdminController";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
 import Authorization from "../middlewares/Authorization";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
 
 const AdminRouter = express.Router();
 
