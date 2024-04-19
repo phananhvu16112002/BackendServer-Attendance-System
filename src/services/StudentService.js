@@ -43,8 +43,11 @@ class StudentService {
 
     updateStudentPasswordAndOTP = async (student, hashedPassword, OTP) => {
         try {
+            let currentDate = new Date();
+            currentDate.setMinutes(currentDate.getMinutes() + 1);
             student.studentHashedPassword = hashedPassword;
             student.hashedOTP = OTP;
+            student.timeToLiveOTP = JSDatetimeToMySQLDatetime(currentDate);
             await studentRepository.save(student);
         } catch (e) {
             //logging error message

@@ -18,8 +18,11 @@ class TeacherService {
 
     updateTeacherPasswordAndOTP = async (teacher, hashedPassword, OTP) => {
         try {
+            let currentDate = new Date();
+            currentDate.setMinutes(currentDate.getMinutes() + 1);
             teacher.teacherHashedPassword = hashedPassword;
             teacher.hashedOTP = OTP;
+            teacher.timeToLiveOTP = JSDatetimeToMySQLDatetime(currentDate);
             await teacherRepository.save(teacher);
         } catch (e) {
             return null;
