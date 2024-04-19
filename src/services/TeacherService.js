@@ -39,6 +39,9 @@ class TeacherService {
             if (result == false){
                 return false;
             }
+            if (this.checkTeacherOTPExpired(teacher) == false){
+                return false;
+            }
             teacher.active = true;
             await teacherRepository.save(teacher);
             return true;
@@ -84,7 +87,7 @@ class TeacherService {
 
     checkTeacherOTPExpired = (teacher) => {
         try{
-            return MySQLDatetimeToJSDatetime(teacher.timeToLiveOTP) < JSDatetimeToMySQLDatetime(new Date());
+            return MySQLDatetimeToJSDatetime(teacher.timeToLiveOTP) > JSDatetimeToMySQLDatetime(new Date());
         } catch(e){
             return false;
         }

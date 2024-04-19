@@ -35,7 +35,7 @@ class AttendanceDetailDTO {
             let studentDetail = studentDetails[i];
             let {totalstats,status} = this.getStatusAndTotalStatsBasedOnAttendanceDetails(studentDetail.attendancedetails, offset);
             studentDetail.status = status;
-            studentDetail.total = totalstats;
+            studentDetail.total = totalstats.toString();
             this.extractSensitiveInformation(studentDetail);
             if (status == "Ban"){
                 ban+=1;

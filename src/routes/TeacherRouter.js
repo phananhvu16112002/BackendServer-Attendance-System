@@ -3,13 +3,12 @@ import Authorization from "../middlewares/Authorization";
 import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
-//import VerifyResetToken from "../middlewares/verifyResetToken";
 import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";
-import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import FeedbackController from "../controllers/FeedbackController";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import ReportController from "../controllers/ReportController";
+import VerifyAccessToken from "../middlewares/VerifyAccessToken";
 
 const TeacherRouter = express.Router();
 

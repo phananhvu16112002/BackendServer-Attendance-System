@@ -67,6 +67,10 @@ class StudentService {
                 return false;
             }
 
+            if (this.checkStudentOTPExpired(student) == false){
+                return false;
+            }
+
             student.active = true;
             await studentRepository.save(student);
             return true;
@@ -126,7 +130,7 @@ class StudentService {
             // let timeToLiveOTPConvert = new Date(student.timeToLiveOTP);
             // let timeToLiveOTPUse = JSDatetimeToMySQLDatetime(timeToLiveOTPConvert);
 
-            return MySQLDatetimeToJSDatetime(student.timeToLiveOTP) < JSDatetimeToMySQLDatetime(new Date());
+            return MySQLDatetimeToJSDatetime(student.timeToLiveOTP) > JSDatetimeToMySQLDatetime(new Date());
         } catch (e) {
             return false;
         }

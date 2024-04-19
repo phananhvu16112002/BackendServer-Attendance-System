@@ -121,6 +121,17 @@ class AttendanceFormService {
             return {data: null, error: "Failed fetching data"};
         }
     }
+
+    deleteAttendanceFormByID = async (formID) => {
+        try {
+            await attendanceFormRepository.delete({
+                formID: formID
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }  
 
 export default new AttendanceFormService();

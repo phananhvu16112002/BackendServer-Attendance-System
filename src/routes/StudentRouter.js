@@ -1,11 +1,10 @@
 import express from "express";
 import StudentController from "../controllers/StudentController";
 import VerifyResetToken from "../middlewares/VerifyResetToken";
-//import VerifyResetToken from "../middlewares/verifyResetToken";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import StudentClassController from "../controllers/StudentClassController";
 import Authorization from "../middlewares/Authorization";
-import VerifyAccessToken from "../middlewares/verifyAccessToken";
+import VerifyAccessToken from "../middlewares/VerifyAccessToken";
 import ReportController from "../controllers/ReportController";
 import NotificationController from "../controllers/NotificationController";
 
