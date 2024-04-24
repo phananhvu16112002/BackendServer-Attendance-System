@@ -88,7 +88,94 @@ class AttendanceFormController {
     }
 
     //must test
-    
+    deleteAttendanceFormByFormID = async (req,res) => {
+        try {
+            let formID = req.params.formid;
+            let classID = req.params.classid;
+            let teacherID = req.payload.userID;
+
+            let {data,error} = await AttendanceFormService.getAttendanceFormsByClassID(classID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "There is no classes with this ID"});
+            }
+            
+            if (compareCaseInsentitive(teacherID, data.teacher.teacherID) == false){
+                return res.status(401).json({message: "Teacher is not in charge of this class"});
+            }
+
+            if (await AttendanceFormService.deleteAttendanceFormByID(formID) == false){
+                return res.status(503).json({message: "Failed deleting form"});
+            }
+            return res.status(200).json({message: "Delete form successfully"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    //must test
+    editAttendanceFormByFormID = async (req,res) => {
+        try {
+            let formID = req.params.formid;
+            let classID = req.params.classid;
+            let teacherID = req.payload.userID;
+
+            let offsetTime = req.body.offsetTime;
+            let startTime = req.body.startTime;
+            let endTime = req.body.endTime;
+            let type = req.body.type;
+            let distance = req.body.distance;
+
+            let {data,error} = await AttendanceFormService.getAttendanceFormsByClassID(classID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "There is no classes with this ID"});
+            }
+            
+            if (compareCaseInsentitive(teacherID, data.teacher.teacherID) == false){
+                return res.status(401).json({message: "Teacher is not in charge of this class"});
+            }
+
+            if (await AttendanceFormService.editAttendanceFormByID(formID, startTime, endTime, offsetTime, type, distance) == false){
+                return res.status(503).json({message: "Failed deleting form"});
+            }
+            return res.status(200).json({message: "Delete form successfully"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    //must test
+    closeOrOpenFormByFormID = async (req,res) => {
+        try {
+            let formID = req.params.formid;
+            let classID = req.params.classid;
+            let teacherID = req.payload.userID;
+            let status = req.body.status;
+            let {data,error} = await AttendanceFormService.getAttendanceFormsByClassID(classID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(204).json({message: "There is no classes with this ID"});
+            }
+            
+            if (compareCaseInsentitive(teacherID, data.teacher.teacherID) == false){
+                return res.status(401).json({message: "Teacher is not in charge of this class"});
+            }
+
+            if (await AttendanceFormService.closeOrOpenFormByFormID(formID, status) == false){
+                return res.status(503).json({message: "Failed updating form"});
+            }
+            return res.status(200).json({message: "Update form successfully"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default new AttendanceFormController();

@@ -126,6 +126,32 @@ class AttendanceDetailService {
         }
     }
 
+    //oke
+    getOfflineAttendanceDetailByClassID = async (studentID, classID) => {
+        try{
+            //
+            let result = await attendanceDetailRepository.createQueryBuilder("attendancedetail"). 
+            innerJoinAndMapOne("attendancedetail.attendanceForm", AttendanceForm, 'attendanceform', 'attendancedetail.formID = attendanceform.formID').
+            leftJoinAndMapOne("attendancedetail.report", Report, 'report',
+            'report.studentID = attendancedetail.studentID AND report.classID = attendancedetail.classID AND report.formID = attendancedetail.formID').
+            leftJoinAndMapOne("attendancedetail.feedback", Feedback, "feedback",
+            'report.reportID = feedback.reportID').
+            where("attendancedetail.studentID = :studentid", {studentid: studentID}).
+            andWhere("attendancedetail.classID = :classid", {classid: classID}).
+            andWhere("attendancedetail.offline = :offline", {offline: true}).
+            orderBy('attendancedetail.createdAt', 'DESC').
+            getMany();
+
+        return {data: result, error: null};
+        
+        } catch (e) {
+            console.log(e);
+            return {data: [], error: "Failed fetching data"};
+        }
+    }
+
+
+
     // takeAttendance = async () => {
 
     // }
@@ -222,6 +248,7 @@ class AttendanceDetailService {
         try {
             let data = await attendanceDetailRepository.createQueryBuilder("attendancedetail").
             innerJoin(Classes, "classes", "attendancedetail.classID = classes.classID").
+            innerJoinAndMapOne("attendancedetail.form", AttendanceForm, "form", "attendancedetail.formID = form.formID").
             innerJoinAndMapOne("attendancedetail.course", Course, "course", "course.courseID = classes.courseID"). 
             innerJoinAndMapOne("attendancedetail.teacher", Teacher, "teacher", "teacher.teacherID = classes.teacherID").
             where("attendancedetail.studentID = :id", {id: studentID}).
@@ -229,6 +256,22 @@ class AttendanceDetailService {
             return {data, error: null};
         } catch (e) {
             return {data: [], error: "Failed getting attendance details"}
+        }
+    }
+
+    //must test
+    seenAttendanceDetail = async (studentID, classID, formID) => {
+        try {
+            await attendanceDetailRepository.update({
+                studentDetail: studentID,
+                classDetail: classID,
+                attendanceForm: formID
+            }, {
+                seen: true
+            })
+            return true;
+        } catch (e) {
+            return false;
         }
     }
 }

@@ -72,6 +72,20 @@ class FeedbackService {
             return {data: [], error: "Failed getting student feedback"};
         }
     }
+
+    //
+    seenFeedback = async (feedbackID) => {
+        try {
+            await feedbackRepository.update({
+                feedbackID: feedbackID
+            }, {
+                seen: true
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export default new FeedbackService();

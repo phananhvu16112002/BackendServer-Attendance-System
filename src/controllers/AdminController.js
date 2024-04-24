@@ -161,6 +161,31 @@ class AdminController {
         }
     }
 
+    //oke
+    uploadMoreStudentsToClass = async (req,res) => {
+        try {
+            const classID = req.params.id;
+            const fileExcel = req.files.file;
+            let {data, error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content found in this excel"});
+            }
+            if (await StudentClassService.uploadStudentsInClass(data)){
+                let {data: result, error: err} = await ClassService.getClassesByID(classID);
+                if (err){
+                    return res.status(503).json({message: err});
+                }
+                return res.status(200).json({data: result, message: "Successfully uploading stundents"});
+            }
+            return res.status(503).json({message: "Failed uploading students in class"});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
     //testable
     getCourses = async (req,res) => {
         try {   
@@ -527,6 +552,20 @@ class AdminController {
         }
     }
 
+    //must test
+    removeAllStudentsInClass = async (req,res) => {
+        try {
+            let classID = req.params.id;
+            let valid = await StudentClassService.removeAllStudentsFromClass(classID);
+            if (!valid){
+                return res.status(503).json({message: `Failed removing students in class id ${classID}`});
+            }
+            return res.status(200).json({message: `Successfully removing students in class id ${classID}`});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
     //search for student
     searchStudentByID = async (req,res) => {
         try {
@@ -552,6 +591,23 @@ class AdminController {
             return res.status(200).json(data);
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    getStudentsByClassID = async (req,res) => {
+        try {
+            const classID = req.params.id;
+
+            let {data, error} = await StudentClassService.getStudentsByClassID(classID);
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
         }
     }
 }

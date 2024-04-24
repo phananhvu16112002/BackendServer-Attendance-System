@@ -164,6 +164,34 @@ class AttendanceDetailController {
         }
     }
 
+    //oke
+    getOfflineAttendanceRecordsOfStudentByClassID = async (req,res) => {
+        try {
+            const studentID = req.payload.userID;
+            const classID = req.params.id;
+            let {data,error} = await StudentClassService.checkStudentEnrolledInClass(studentID, classID);
+
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data == null){
+                return res.status(422).json({message: "Student is not enrolled in this class"});
+            }
+
+            let {data: result, error: err} = await AttendanceDetailService.getOfflineAttendanceDetailByClassID(studentID, classID);
+            if (err){
+                return res.status(503).json({message: err});
+            }
+            if (result.length == 0){
+                return res.status(204).json({message: "You haven't taken any attendance yet!"});
+            }
+            return res.status(200).json(result);
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
     takeAttendanceOffline = async (req, res) => {
         const studentID = req.body.studentID;
         const classID = req.body.classID;
@@ -246,6 +274,7 @@ class AttendanceDetailController {
         attendanceDetail.longitude = longtitude;
         attendanceDetail.result = 1;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
+        attendanceDetail.offline = true;
         await attendanceDetailRepository.save(attendanceDetail);
         res.status(200).json(attendanceDetail);
     }

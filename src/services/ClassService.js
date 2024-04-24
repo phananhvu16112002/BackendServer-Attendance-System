@@ -82,6 +82,20 @@ class ClassService {
         }
     }
 
+    getClassesWithCoursesByTeacherIDWithPagination = async (teacherID, skip, take) => {
+        try {
+            let data = await classRepository.find({where : {
+                teacher : {
+                    teacherID : teacherID
+                },
+            }, relations: {course : true}, skip: skip, take: take})
+
+            return {data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed fetching data"};
+        }
+    }
+
     ////Oke used in StudentClassController
     getClassesWithStudentsCourseTeacher = async (classID) => {
         try {

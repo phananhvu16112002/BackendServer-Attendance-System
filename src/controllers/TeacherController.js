@@ -173,6 +173,28 @@ class TeacherController {
         }
     }
 
+    newPassword = async (req,res) => {
+        try{
+            const teacherID = req.payload.userID;
+            const oldPassword = req.body.oldPassword;
+            const newPassword = req.body.newPassword;
+            let teacher = await teacherService.checkTeacherExist(teacherID);
+            if (teacher == null){
+                return res.status(422).json({message: "Email address does not exist"})
+            }
+            if (teacher.active == false){
+                return res.status(422).json({message: "Account with this eamil address is not active"});
+            }
+            if (await teacherService.login(teacher, teacher.teacherEmail, oldPassword) == false){
+                return res.status(422).json({message: "Email or password incorrect"});
+            }
+            await teacherService.updateTeacherPassword(teacher, newPassword);
+            return res.status(200).json({ message: "Reset Password successfully" });
+        } catch (e) {
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
     // resendOTPRegister = async (req,res) => {
     //     try{
     //         const email = req.body.email;

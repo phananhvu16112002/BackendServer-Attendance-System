@@ -281,6 +281,28 @@ class StudentController{
         }
     };
 
+    newPassword = async (req,res) => {
+        try {
+            const studentID = req.payload.userID;
+            const oldPassword = req.body.oldPassword;
+            const newPassword = req.body.newPassword;
+            let student = await StudentService.checkStudentExist(studentID);
+            if (student == null){
+                return res.status(422).json({message: "Email address does not exist"});
+            }
+            if (StudentService.checkStudentStatus(student) == false){
+                return res.status(422).json({message: "Account with this email address is not active"});
+            }
+            if (await StudentService.login(student, student.studentEmail, oldPassword) == false){
+                return res.status(422).json({message: "Old password does not match"});
+            }
+            await StudentService.updateStudentPassword(student, newPassword);
+            return res.status(200).json({ message: "Reset Password successfully" });
+        } catch (e) {
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+
     resendOTP = async (req,res) => {
         try {
             const email = req.body.email;

@@ -74,7 +74,7 @@ class NotificationService {
                 },
                 tokens: tokens
             }
-            firebaseAdmin.messaging().send(message);
+            firebaseAdmin.messaging().sendMulticast(message);
             return true;
         } catch(e){
             return false;
@@ -117,11 +117,13 @@ class NotificationService {
             let feedback = feedbacks[i];
             let notification = {
                 type: "report",
-                reportID: feedback.report.reportID,
+                feedbackID: feedback.feedbackID,
+                report: feedback.report,
                 formID: null,
                 course: feedback.course.courseName,
                 lecturer: feedback.teacher.teacherName,
-                createdAt: feedback.createdAt
+                createdAt: feedback.createdAt,
+                seen: feedback.seen
             }
             notifications.push(notification);
         }
@@ -130,10 +132,12 @@ class NotificationService {
             let notification = {
                 type: "attendance",
                 reportID: null,
-                formID: attendance.attendanceForm,
+                form: attendance.form,
+                classID: attendance.classDetail,
                 course: attendance.course.courseName,
                 lecturer: attendance.teacher.teacherName,
-                createdAt: attendance.createdAt
+                createdAt: attendance.createdAt,
+                seen: attendance.seen
             }
             notifications.push(notification);
         }

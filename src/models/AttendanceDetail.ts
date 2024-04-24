@@ -62,4 +62,10 @@ export class AttendanceDetail {
 
     @Column({type: "datetime", nullable: true})
     createdAt: string
+
+    @Column({default: false})
+    seen: boolean
+
+    @Column({default: false})
+    offline: boolean
 }

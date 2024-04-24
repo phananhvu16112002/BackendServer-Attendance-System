@@ -20,9 +20,13 @@ StudentRouter.post("/resetPassword",VerifyResetToken,StudentController.resetPass
 StudentRouter.post("/resendOTPRegister", StudentController.resendOTPRegister);
 StudentRouter.post("/resendOTP",StudentController.resendOTP);
 
+StudentRouter.post("/newPassword", VerifyAccessToken, Authorization('student'), StudentController.newPassword);
+
 //Proper student use case (classes)
 StudentRouter.get("/classes", VerifyAccessToken, Authorization("student"), StudentClassController.getClassesByStudentID);
 StudentRouter.get("/classes/detail/:id", VerifyAccessToken, Authorization("student"), AttendanceDetailController.getAttendanceRecordsOfStudentByClassID);
+StudentRouter.get("/classes/detail/offline/:id", VerifyAccessToken, Authorization('student'), AttendanceDetailController.getOfflineAttendanceRecordsOfStudentByClassID);
+StudentRouter.get("/classes/detail/:id/students", VerifyAccessToken, Authorization("student"), StudentClassController.getStudentsByClassIDForStudent);
 
 //Proper student use case (report)
 StudentRouter.get("/reports", VerifyAccessToken, Authorization("student"), ReportController.getReportsByStudentID);

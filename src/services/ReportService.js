@@ -252,12 +252,12 @@ class ReportService {
             let importantNews = await reportRepository.createQueryBuilder("report").
             innerJoin(Classes, "classes", "report.classID = classes.classID").
             orderBy('report.important', 'DESC').addOrderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
-            where("classes.teacherID = :id", {id : teacherID}).getRawMany();
+            where("classes.teacherID = :id", {id : teacherID}).skip(0).take(6).getRawMany();
 
             let lastestNews = await reportRepository.createQueryBuilder("report").
             innerJoin(Classes, "classes", "report.classID = classes.classID").
             orderBy('report.new', 'DESC').addOrderBy('report.createdAt', 'DESC').
-            where("classes.teacherID = :id", {id : teacherID}).getRawMany();
+            where("classes.teacherID = :id", {id : teacherID}).skip(0).take(5).getRawMany();
 
             let stats = await reportRepository.createQueryBuilder("report").
             select('COUNT(*) as total').addSelect(`SUM(CASE WHEN new = 1 THEN 1 ELSE 0 END) AS totalNew`,).
@@ -269,6 +269,37 @@ class ReportService {
 
         } catch (e) {
             return {importantNews: [], lastestNews: [], stats: null, error: "Failed getting stats"};
+        }
+    }
+
+    //must test
+    getNotificationReportWithPagination = async (teacherID, skip, take) => {
+        try {
+            let importantNews = await reportRepository.createQueryBuilder("report").
+            innerJoin(Classes, "classes", "report.classID = classes.classID").
+            orderBy('report.createdAt', 'DESC').where("classes.teacherID = :id", {id : teacherID}).skip(skip).take(take).getRawMany();
+            return {importantNews: importantNews, eror: null};
+        } catch (e) {
+            return {importantNews: [], error: "Failed getting stats"};
+        }
+    }
+
+    //
+    getAllReportsByTeacherIDWithPagination = async (teacherID, skip, take) => {
+        try {
+            let data = await classesRepository.createQueryBuilder("classes"). 
+            innerJoinAndMapMany("classes.report", Report, 'report', "report.classID = classes.classID").
+            innerJoinAndMapOne("classes.course", Course, 'course', "course.courseID = classes.courseID").
+            innerJoinAndMapOne("classes.student", Student, 'student', "report.studentID = student.studentID").
+            select('classes.*').addSelect("course.*").addSelect("report.*").addSelect('student.studentID, student.studentEmail ,student.studentName').
+            orderBy('report.new', "DESC").addOrderBy("report.createdAt", "DESC").
+            where("classes.teacherID = :id", {id: teacherID}).skip(skip).take(take).
+            getRawMany();
+
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
+            return {data: [], error: "Failed fetching reports"};
         }
     }
 }

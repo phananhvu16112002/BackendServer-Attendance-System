@@ -173,6 +173,16 @@ class StudentClassService {
     }
 
     //must test
+    uploadStudentsInClass = async (studentClass) => {
+        try {
+            await studentClassRepository.save(studentClass);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
     getStudentsByClassID = async (classID) => {
         try {
             let data = await studentClassRepository.find({
@@ -215,6 +225,18 @@ class StudentClassService {
         try {
             await studentClassRepository.delete({
                 studentDetail: studentID,
+                classDetail: classID
+            })
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    //must test
+    removeAllStudentsFromClass = async (classID) => {
+        try {
+            await studentClassRepository.delete({
                 classDetail: classID
             })
             return true;

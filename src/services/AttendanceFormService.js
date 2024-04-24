@@ -132,6 +132,31 @@ class AttendanceFormService {
             return false;
         }
     }
+
+    editAttendanceFormByID = async (formID, startTime, endTime, offsetTime, type, distance) => {
+        try {
+            await attendanceFormRepository.update({
+                formID: formID
+            }, {
+                startTime: startTime,
+                endTime: endTime,
+                radius: distance,
+                type: type
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    closeOrOpenFormByFormID = async (formID, status) => {
+        try {
+            await attendanceFormRepository.update(formID, {status : status});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }  
 
 export default new AttendanceFormService();

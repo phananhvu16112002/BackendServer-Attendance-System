@@ -88,7 +88,7 @@ class StudentClassController {
     }
 
     //must test 
-    getStudentsByClassID = async (req,res) => {
+    getStudentsByClassIDForTeacher = async (req,res) => {
         try {
             const classID = req.params.id;
             const teacherID = req.payload.userID; 
@@ -100,6 +100,35 @@ class StudentClassController {
             if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
                 return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
             }
+
+            let {data, error} = await StudentClassService.getStudentsByClassID(classID);
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    //must test 
+    getStudentsByClassIDForStudent = async (req,res) => {
+        try {
+            const classID = req.params.id;
+            const studentID = req.payload.userID; 
+
+            let {data: data1,error: error1} = await StudentClassService.checkStudentEnrolledInClass(studentID, classID);
+
+            if (error1){
+                return res.status(503).json({message: error1});
+            }
+            if (data1 == null){
+                return res.status(422).json({message: "Student is not enrolled in this class"});
+            }
+
 
             let {data, error} = await StudentClassService.getStudentsByClassID(classID);
             if (error){

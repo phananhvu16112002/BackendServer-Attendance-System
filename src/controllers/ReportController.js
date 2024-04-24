@@ -235,6 +235,26 @@ class ReportController {
         }
     }
 
+    getAllReportsByTeacherIDWithPagination = async (req,res) => {
+        try{
+            const teacherID = req.payload.userID;
+            let page = req.params.page;
+            if (page <= 0) {page = 1;}
+            let skip = (page - 1) * 8;
+            let {data,error} = await ReportService.getAllReportsByTeacherIDWithPagination(teacherID, skip, 8);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "There is no reports yet"});
+            }
+            return res.status(200).json(data);
+        } catch (e) {
+            console.log(e); 
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
     //testable
     getReportDetailByReportID = async (req,res) => {
         const reportID = req.params.reportid;
@@ -303,6 +323,22 @@ class ReportController {
             }
             return res.status(200).json({importantNews, lastestNews, stats});
         } catch(e){
+            return res.status(500).json({message: "Internal Server"});
+        }
+    }
+
+    getNotificationReportWithPagination = async (req,res) => {
+        try {
+            const teacherID = req.payload.userID;
+            let page = req.params.page;
+            if (page <= 0) {page = 1;}
+            let skip = (page - 1) * 10;
+            let {importantNews, error} = await ReportService.getNotificationReportWithPagination(teacherID, skip, 10);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json(importantNews);
+        } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
     }
