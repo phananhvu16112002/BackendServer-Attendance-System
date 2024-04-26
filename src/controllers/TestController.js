@@ -354,6 +354,18 @@ class Test {
         }
     }
 
+    testCreateAccessTokenAndRefreshTokenForAdmin = async (req,res) => {
+        let teacherID = req.body.teacherID;
+        let role = "admin";
+        try{
+            const accessToken = jwt.sign({userID: teacherID, role: role}, process.env.ACCESS_TOKEN_SECRET,{ expiresIn: '2m' });
+            const refreshToken = jwt.sign({userID: teacherID, role: role}, process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1y' });
+            res.status(200).json({message: "Teacher Login Successfully", accessToken, refreshToken});
+        } catch {
+            res.staus(500).json({message: "Login Failed"});
+        }
+    }
+
     //localhost:8080/test/testVerifyAccessToken
     //send Post method, header access token
     testVerifyAccessToken = async (req,res) => {

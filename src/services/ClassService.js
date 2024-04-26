@@ -244,12 +244,7 @@ class ClassService {
             }
             let skip = (page - 1) * 6;
 
-            let data = classRepository.find({
-                where: {
-                    course: {
-                        courseID : courseID
-                    }
-                },
+            let data = await classRepository.find({
                 select: {
                     teacher: {
                         teacherID: true,
@@ -260,6 +255,11 @@ class ClassService {
                 relations: {
                     teacher: true,
                     course: true
+                },
+                where: {
+                    course: {
+                        courseID : courseID
+                    }
                 },
                 skip: skip,
                 take: 6

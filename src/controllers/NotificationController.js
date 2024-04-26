@@ -17,6 +17,7 @@ class NotificationController {
             }
             return res.status(200).json(NotificationService.getNotificationsBasedOnFeedbackAndAttendanceDetail(feedbacks, attendanceDetails));
         } catch (e) {
+            console.log(e);
             return res.status(500).json({message: "Internal Server"});
         }
     }

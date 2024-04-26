@@ -35,7 +35,6 @@ class AttendanceDetailController {
         console.log("Image ", image);
         console.log("Attendanced at", dateTimeAttendance);
 
-        let result = 1;
         //Call database to get attendance detail
         let attendanceDetail = await AttendanceDetailService.getAttendanceDetail(studentID, classID, formID);
         if (attendanceDetail == null){
@@ -84,7 +83,7 @@ class AttendanceDetailController {
         console.log("Start time: ", start);
         console.log("Offset time: ", offset);
         console.log("Student take attendance at: ", dateTimeAttendance);
-
+        let result = 1;
         if (dateTimeAttendance >= start && dateTimeAttendance <= offset){
             console.log("present cho sinh vien");
             result = 1;
@@ -240,24 +239,44 @@ class AttendanceDetailController {
         }
 
         //Check form time will emit later
-
-        // if (dateTimeAttendance < MySQLDatetimeToJSDatetime(attendanceForm.startTime) 
-        //     || dateTimeAttendance > MySQLDatetimeToJSDatetime(attendanceForm.endTime)){
+        let start = MySQLDatetimeToJSDatetime(attendanceForm.startTime); 
+        let end = MySQLDatetimeToJSDatetime(attendanceForm.endTime);
+        let offset = new Date(start);
+        offset.setMinutes(offset.getMinutes() + 10);
+        offset = JSDatetimeToMySQLDatetime(offset);
+        let result = 1;
+        
+        if (dateTimeAttendance < start
+            || dateTimeAttendance > end){
             
-        //     return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
-        // }
+            return res.status(422).json({message : "Your attendance time is not in range. Please contact your lecturer"});
+        }
+
+        console.log("Start time: ", start);
+        console.log("Offset time: ", offset);
+        console.log("Student take attendance at: ", dateTimeAttendance);
+
+        if (dateTimeAttendance >= start && dateTimeAttendance <= offset){
+            console.log("present cho sinh vien");
+            result = 1;
+        }else if (dateTimeAttendance > offset && dateTimeAttendance <= end) {
+            console.log("late cho sinh vien");
+            result = 0.5;
+        } else if (dateTimeAttendance > end) {
+            result = 0;
+        }
+
+        //face checking
+        let check = await FaceMatchingService.faceMatching(image, studentID);
+        if (!check){
+            return res.status(422).json({message: "Your face does not match"});
+        }
 
         //Send image to Imgur
         const data = await UploadImageService.uploadAttendanceEvidenceFile(image);
         if (data == null){
-            return res.status(500).json({message: "Cannot upload image. Please take attendance again."});
-        }
-
-        
-        let check = await FaceMatchingService.faceMatching(image, studentID);
-        if (!check){
             await UploadImageService.deleteImageByImageHash(data.id);
-            return res.status(422).json({message: "Your face does not match"});
+            return res.status(500).json({message: "Cannot upload image. Please take attendance again."});
         }
         
         //If only type == 1
@@ -272,7 +291,7 @@ class AttendanceDetailController {
         attendanceDetail.location = location;
         attendanceDetail.latitude = latitude;
         attendanceDetail.longitude = longtitude;
-        attendanceDetail.result = 1;
+        attendanceDetail.result = result;
         attendanceDetail.dateAttendanced = dateTimeAttendance;
         attendanceDetail.offline = true;
         await attendanceDetailRepository.save(attendanceDetail);

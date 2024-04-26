@@ -141,9 +141,9 @@ class AttendanceFormController {
             }
 
             if (await AttendanceFormService.editAttendanceFormByID(formID, startTime, endTime, offsetTime, type, distance) == false){
-                return res.status(503).json({message: "Failed deleting form"});
+                return res.status(503).json({message: "Failed editing form"});
             }
-            return res.status(200).json({message: "Delete form successfully"});
+            return res.status(200).json({message: "Edit form successfully"});
         } catch (e) {
             return res.status(500).json({message: "Internal Server Error"});
         }

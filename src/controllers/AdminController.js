@@ -441,6 +441,7 @@ class AdminController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
+            console.log(data);
             return res.status(200).json(data);
         } catch (e) {
             console.log(e);

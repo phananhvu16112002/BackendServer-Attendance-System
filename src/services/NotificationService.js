@@ -114,16 +114,21 @@ class NotificationService {
     getNotificationsBasedOnFeedbackAndAttendanceDetail = (feedbacks, attendancedetails) => {
         let notifications = [];
         for (let i = 0; i < feedbacks.length; i++){
-            let feedback = feedbacks[i];
+            let feedbackNoti = feedbacks[i];
             let notification = {
                 type: "report",
-                feedbackID: feedback.feedbackID,
-                report: feedback.report,
+                feedback: {
+                    feedbackID: feedbackNoti.feedbackID,
+                    topic: feedbackNoti.topic,
+                    message: feedbackNoti.message,
+                    confirmStatus: feedbackNoti.confirmStatus
+                },
+                report: feedbackNoti.report,
                 formID: null,
-                course: feedback.course.courseName,
-                lecturer: feedback.teacher.teacherName,
-                createdAt: feedback.createdAt,
-                seen: feedback.seen
+                course: feedbackNoti.course.courseName,
+                lecturer: feedbackNoti.teacher.teacherName,
+                createdAt: feedbackNoti.createdAt,
+                seen: feedbackNoti.seen
             }
             notifications.push(notification);
         }
@@ -133,6 +138,12 @@ class NotificationService {
                 type: "attendance",
                 reportID: null,
                 form: attendance.form,
+                attendancedetail: {
+                    studentDetail: attendance.studentDetail,
+                    classDetail: attendance.classDetail,
+                    attendanceForm: attendance.attendanceForm,
+                    result: (attendance.result) ? attendance.result.toString() : attendance.result,
+                },
                 classID: attendance.classDetail,
                 course: attendance.course.courseName,
                 lecturer: attendance.teacher.teacherName,

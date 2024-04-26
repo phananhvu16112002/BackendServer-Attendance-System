@@ -25,7 +25,7 @@ TestRouter.get("/endpoint", TestController.testEndpoint)
 //Test Token
 TestRouter.post("/testCreateAccessTokenAndRefreshTokenForStudent", TestController.testCreateAccessTokenAndRefreshTokenForStudent)
 TestRouter.post("/testCreateAccessTokenAndRefreshTokenForTeacher", TestController.testCreateAccessTokenAndRefreshTokenForTeacher)
-
+TestRouter.post("/testCreateAccessTokenAndRefreshTokenForAdmin", TestController.testCreateAccessTokenAndRefreshTokenForAdmin)
 TestRouter.post("/testVerifyAccessToken", TestController.testVerifyAccessToken)
 TestRouter.post("/testRefreshAccessToken", TestController.testRefreshAccessToken)
 
