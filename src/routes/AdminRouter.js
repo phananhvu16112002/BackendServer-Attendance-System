@@ -30,7 +30,7 @@ AdminRouter.put("/edit/course/:id", VerifyAccessToken, Authorization('admin'), A
 AdminRouter.put("/edit/class/:id", VerifyAccessToken, Authorization('admin'), AdminController.editClass);
 
 AdminRouter.get("/classes/:id", VerifyAccessToken, Authorization('admin'), AdminController.getStudentsByClassID);
-AdminRouter.put("classes/:id/uploadstudents", VerifyAccessToken, Authorization('admin'), AdminController.uploadMoreStudentsToClass);
+AdminRouter.put("/classes/:id/uploadstudents", VerifyAccessToken, Authorization('admin'), AdminController.uploadMoreStudentsToClass);
 //pagination
 AdminRouter.get("/courses/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getCoursesWithPagination);
 AdminRouter.get("/courses/:id/classes/page/:page", VerifyAccessToken, Authorization('admin'), AdminController.getClassesByCourseIDWithPagination);

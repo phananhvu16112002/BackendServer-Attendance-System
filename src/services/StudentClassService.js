@@ -212,7 +212,7 @@ class StudentClassService {
         try {
             let studentClass = new StudentClass();
             studentClass.classDetail = classID;
-            studentClass.studentID = studentID;
+            studentClass.studentDetail = studentID;
             await studentClassRepository.insert(studentClass);
             return true;
         } catch (e) {
