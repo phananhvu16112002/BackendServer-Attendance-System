@@ -2,13 +2,13 @@ import express from "express";
 import Authorization from "../middlewares/Authorization";
 import AttendanceFormController from "../controllers/AttendanceFormController";
 import TeacherController from "../controllers/TeacherController";
-import VerifyResetToken from "../middlewares/VerifyResetToken";
 import ClassesController from "../controllers/ClassesController";
 import StudentClassController from "../controllers/StudentClassController";
 import FeedbackController from "../controllers/FeedbackController";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
 import ReportController from "../controllers/ReportController";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
+import VerifyResetToken from "../middlewares/verifyResetToken";
 
 const TeacherRouter = express.Router();
 
@@ -22,7 +22,7 @@ TeacherRouter.post("/resetPassword", VerifyResetToken, TeacherController.resetPa
 TeacherRouter.post("/resendOTPRegister", TeacherController.resendOTPRegister);
 TeacherRouter.post("/resendOTP", TeacherController.resendOTP);
 
-TeacherRouter.post("/newPassword", VerifyAccessToken, Authorization('teacher'), TeacherController.newPassword);
+TeacherRouter.post("/newPassword",VerifyAccessToken, Authorization('teacher'), TeacherController.newPassword);
 //Proper get method
 TeacherRouter.get("/classes", VerifyAccessToken, Authorization("teacher"), ClassesController.getClassesWithCourse);
 TeacherRouter.get("/classes/page/:page", VerifyAccessToken, Authorization('teacher'), ClassesController.getClassesWithCourseWithPagination);

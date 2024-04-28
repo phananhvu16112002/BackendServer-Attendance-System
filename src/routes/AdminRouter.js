@@ -1,8 +1,8 @@
 import express from "express";
 import AdminController from "../controllers/AdminController";
 import Authorization from "../middlewares/Authorization";
-import VerifyAccessToken from "../middlewares/VerifyAccessToken";
 import StudentClassController from "../controllers/StudentClassController";
+import VerifyAccessToken from "../middlewares/verifyAccessToken";
 
 const AdminRouter = express.Router();
 
