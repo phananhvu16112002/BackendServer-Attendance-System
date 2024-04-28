@@ -1,3 +1,5 @@
 node_modules
 .env
 attendance-system-405712-firebase-adminsdk-yw3s1-46695085d4.json
+build/.env
+build/attendance-system-405712-firebase-adminsdk-yw3s1-46695085d4.json
