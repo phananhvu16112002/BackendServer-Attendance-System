@@ -416,8 +416,10 @@ class AdminController {
             let page = req.params.page; 
             let {data, error} = await CourseService.getCoursesWithPagination(page);
             let {data: total, error: nopage} = await CourseService.getCourses();
-            if (nopage){
+            if (nopage || total.length == 0){
                 total = 0;
+            } else {
+                total = Math.ceil(total.length / 6);
             }
             if (error){
                 return res.status(503).json({message: error});
@@ -425,7 +427,7 @@ class AdminController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            return res.status(200).json({totalPage: Math.ceil(total.length / 6), courses: data});
+            return res.status(200).json({totalPage: total, courses: data});
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
@@ -438,7 +440,12 @@ class AdminController {
             const courseID = req.params.id;
             let page = req.params.page;
             let {data, error} = await ClassService.getClassesWithCourseAndTeacherByCourseIDWithPagination(courseID, page);
-
+            let {data: total, error: nopage} = await ClassService.getClassesWithCourseAndTeacherByCourseID(courseID);
+            if (nopage || total.length == 0){
+                total = 0;
+            } else {
+                total = Math.ceil(total.length / 6);
+            }
             if (error){
                 return res.status(503).json({message: error});
             }
@@ -446,7 +453,7 @@ class AdminController {
                 return res.status(204).json({message: "No content found in this excel"});
             }
             console.log(data);
-            return res.status(200).json(data);
+            return res.status(200).json({totalPage: total,classes: data});
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
@@ -459,8 +466,10 @@ class AdminController {
             let page = req.params.page; 
             let {data, error} = await ClassService.getClassesWithPagination(page);
             let {data: total, error: nopage} = await ClassService.getClasses();
-            if (nopage){
+            if (nopage || total.length == 0){
                 total = 0;
+            } else {
+                total = Math.ceil(total.length / 6);
             }
             if (error){
                 return res.status(503).json({message: error});
@@ -468,7 +477,7 @@ class AdminController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            return res.status(200).json({totalPage: Math.ceil(total.length / 6), classes: data});
+            return res.status(200).json({totalPage: total, classes: data});
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
