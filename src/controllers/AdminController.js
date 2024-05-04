@@ -458,13 +458,17 @@ class AdminController {
         try {
             let page = req.params.page; 
             let {data, error} = await ClassService.getClassesWithPagination(page);
+            let {data: total, error: nopage} = await ClassService.getClasses();
+            if (nopage){
+                total = 0;
+            }
             if (error){
                 return res.status(503).json({message: error});
             }
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            return res.status(200).json(data);
+            return res.status(200).json({totalPage: Math.ceil(total.length / 6), classes: data});
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
