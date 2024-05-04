@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 const secretKey = process.env.RESET_TOKEN_SECRET;
 
 const VerifyResetToken = (req, res, next) => {
@@ -12,7 +13,7 @@ const VerifyResetToken = (req, res, next) => {
                 return res.status(498).json({ message: 'Reset Token is invalid' })
             }
             req.payload = decoded;
-            if (req.body.email != req.payload.email){
+            if (!compareCaseInsentitive(req.body.email, req.payload.email)){
                 return res.status(403).json({message: "Access denied"});
             }
             next();

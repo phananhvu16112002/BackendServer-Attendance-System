@@ -236,7 +236,7 @@ class StudentController{
             }
 
             //Check OTP in database expired
-            if (StudentService.checkStudentOTPExpired(student)){
+            if (!StudentService.checkStudentOTPExpired(student)){
                 return res.status(422).json({message: "OTP expired"});
             }
 
