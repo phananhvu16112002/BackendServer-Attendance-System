@@ -242,13 +242,17 @@ class ReportController {
             if (page <= 0) {page = 1;}
             let skip = (page - 1) * 8;
             let {data,error} = await ReportService.getAllReportsByTeacherIDWithPagination(teacherID, skip, 8);
+            let {data: total, error: nopage} = await ReportService.getAllReportsByTeacherID(teacherID);
+            if (nopage){
+                total = 0;
+            }
             if (error){
                 return res.status(503).json({message: error});
             }
             if (data.length == 0){
                 return res.status(204).json({message: "There is no reports yet"});
             }
-            return res.status(200).json(data);
+            return res.status(200).json({totalPage: total.length, reports: data});
         } catch (e) {
             console.log(e); 
             return res.status(500).json({message: "Internal Server Error"});
