@@ -281,6 +281,30 @@ class ClassService {
             return false;
         }
     }
+
+    getTotalPagesForClasses = async (offset) => {
+        try {
+            let total = await classRepository.count();
+            if (total == 0 || offset <= 0) return 0;
+            return Math.ceil(total / offset);
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    getTotalPagesForClassesByTeacherID = async (teacherID, offset) => {
+        try {
+            let total = await classRepository.findAndCount({where : {
+                teacher : {
+                    teacherID : teacherID
+                },
+            }})
+            if (total == 0 || offset <= 0) return 0;
+            return Math.ceil(total / offset);
+        } catch (e) {
+            return 0;
+        }
+    }
 }
 
 export default new ClassService();
