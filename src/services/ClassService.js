@@ -299,8 +299,8 @@ class ClassService {
                     teacherID : teacherID
                 },
             }})
-            if (total == 0 || offset <= 0) return 0;
-            return Math.ceil(total / offset);
+            if (total[1] == 0 || offset <= 0) return 0;
+            return Math.ceil(total[1] / offset);
         } catch (e) {
             return 0;
         }
