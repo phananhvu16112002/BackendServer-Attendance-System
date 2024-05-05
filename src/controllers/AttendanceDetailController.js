@@ -378,15 +378,39 @@ class AttendanceDetailController {
     getTotalStatsByClassIDForAdmin = async (req,res) => {
         try {
             const classID = req.params.id;
+            let {data: classData, error: errorClass} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
+            if (errorClass){
+                return res.status(500).json({message: errorClass});
+            }
+            if (classData == null){
+                return res.status(204).json({message: "Class with this ID does not exist"});
+            }
+            let {data: studentDetails, error: err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
+            if (err){
+                return res.status(500).json({message: error});
+            } 
+            if (studentDetails.length == 0){
+                return res.status(204).json({message: "There are no records for students' attendance details"});
+            }
+            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(studentDetails, offset);
             let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
-            console.log(data);
             if (error){
                 return res.status(500).json({message: error});
             }
             if (data.length == 0){
                 return res.status(204).json({message: "No content"});
             }
-            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
+            let {progressPresent, progressLate, progressAbsent, groupBarCharts} = AttendanceDetailDTO.getAttendanceDetailsStats(data);
+            let progressPass = (total > 0) ? Math.floor(pass / total)*100 : 0;
+            let progressWarning = (total > 0) ? Math.floor(warning / total)*100 : 0;
+            let progressBan = (total > 0) ? Math.floor(ban /total)*100 : 0;
+            let resultStats = {
+                progressPass, progressWarning, progressBan,
+                progressPresent, progressLate, progressAbsent,
+                groupBarCharts
+            }
+            return res.status(200).json(resultStats);
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server Error"});
@@ -397,14 +421,25 @@ class AttendanceDetailController {
         try {
             const classID = req.params.id;
             const teacherID = req.payload.userID;
-            let checkAuth = await ClassService.getClassByID(classID);
-            if (checkAuth == null){
-                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
-            }     
-            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
-                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            let {data: classData, error: errorClass} = await ClassService.getClassesWithStudentsCourseTeacher(classID);
+            if (errorClass){
+                return res.status(500).json({message: errorClass});
             }
-            
+            if (classData == null){
+                return res.status(204).json({message: "Class with this ID does not exist"});
+            }
+            if (compareCaseInsentitive(teacherID, classData.teacher.teacherID) == false){
+                return res.status(422).json({message: "Teacher is not in charge of this class"});
+            }
+            let {data: studentDetails, error: err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
+            if (err){
+                return res.status(500).json({message: error});
+            } 
+            if (studentDetails.length == 0){
+                return res.status(204).json({message: "There are no records for students' attendance details"});
+            }
+            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(studentDetails, offset);
             let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
             if (error){
                 return res.status(500).json({message: error});
@@ -412,7 +447,16 @@ class AttendanceDetailController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content"});
             }
-            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
+            let {progressPresent, progressLate, progressAbsent, groupBarCharts} = AttendanceDetailDTO.getAttendanceDetailsStats(data);
+            let progressPass = (total > 0) ? Math.floor(pass / total)*100 : 0;
+            let progressWarning = (total > 0) ? Math.floor(warning / total)*100 : 0;
+            let progressBan = (total > 0) ? Math.floor(ban /total)*100 : 0;
+            let resultStats = {
+                progressPass, progressWarning, progressBan,
+                progressPresent, progressLate, progressAbsent,
+                groupBarCharts
+            }
+            return res.status(200).json(resultStats);
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server Error"});

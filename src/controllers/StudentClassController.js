@@ -47,7 +47,7 @@ class StudentClassController {
             //get all students along with their attendance Detail
             let {data, error: err} = await StudentClassService.getStudentsAttendanceDetailsByClassID(classID);
             if (err){
-                return res.status(500).json({message: error});
+                return res.status(500).json({message: err});
             } 
             if (data.length == 0){
                 return res.status(204).json({message: "There are no records for students' attendance details"});
