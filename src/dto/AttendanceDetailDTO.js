@@ -1,4 +1,45 @@
 class AttendanceDetailDTO {
+    getAttendanceDetailsStats = (attendanceForms) => {
+        let classTotalPresent = 0;
+        let classTotalLate = 0;
+        let classTotalAbsent = 0;
+        let groupBarCharts = [];
+        for (let i = 0; i < attendanceForms.length; i++){
+            let attendanceForm = attendanceForms[i];
+            let {totalPresent, totalLate, totalAbsent} = this.getTotalStatsBasedOnAttendanceForm(attendanceForm.attendanceDetails);
+            groupBarCharts.push(this.groupBarChart(attendanceForm.dateOpen, totalPresent, totalLate, totalAbsent, `Day ${i+1}`));
+            classTotalPresent+=totalPresent;
+            classTotalLate+=totalLate;
+            classTotalAbsent+=totalAbsent;
+        }
+        let sum = classTotalPresent + classTotalLate + classTotalAbsent;
+        let progressPresent = Math.floor(classTotalPresent / sum);
+        let progressLate = Math.floor(classTotalLate / sum);
+        let progressAbsent = Math.floor(classTotalAbsent / sum); 
+        return {progressPresent, progressLate, progressAbsent, groupBarCharts};
+    }
+
+    groupBarChart = (date, totalPresent, totalLate, totalAbsent, label) => {
+        return {label, date, totalPresent, totalLate, totalAbsent}
+    }
+
+    getTotalStatsBasedOnAttendanceForm = (attendanceDetails) => {
+        let totalPresent = 0;
+        let totalLate = 0;
+        let totalAbsent = 0;
+        for (let i = 0; i < attendanceDetails.length; i++){
+            let attendanceDetail = attendanceDetails[i];
+            if (attendanceDetail.result == 0){
+                totalAbsent+=1;
+            }else if (attendanceDetail.result == 0.5){
+                totalLate+=1;
+            }else {
+                totalPresent+=1;
+            }
+        }
+        return {totalPresent, totalLate, totalAbsent};
+    }
+
     getStatusAndTotalStatsBasedOnAttendanceDetails = (attendanceDetails, offset) => {
         let count = 0;
         let total = 0;

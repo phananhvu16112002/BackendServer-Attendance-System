@@ -12,6 +12,8 @@ import ClassService from '../services/ClassService';
 import StudentClassService from '../services/StudentClassService';
 import TeacherService from '../services/TeacherService';
 import AdminService from '../services/AdminService';
+import AttendanceDetailDTO from '../dto/AttendanceDetailDTO';
+import AttendanceDetailService from '../services/AttendanceDetailService';
 //$2b$10$Jy/x6brNkjrtIpPRRbHrQu8jh8k8o.l9qXPxAORF6G9fFAvmHr4JO //520h0380password!
 //$2b$10$jf1lWevTaxoTjvYTr34l9.qDb0ZQoDNGFUK2uj2DPdrA7pXrgOc2G //520h0696password!
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -640,6 +642,23 @@ class AdminController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     } 
+
+    getTotalStatsByClassIDForAdmin = async (req,res) => {
+        try {
+            const classID = req.params.id;
+            let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
 }
 
 export default new AdminController();

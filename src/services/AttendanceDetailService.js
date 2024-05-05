@@ -274,6 +274,19 @@ class AttendanceDetailService {
             return false;
         }
     }
+
+    getStatsBasedOnClassID = async (classID) => {
+        try {
+            let data = await attendanceFormRepository.createQueryBuilder('attendanceform'). 
+            innerJoinAndMapMany("attendanceform.attendancedetails", AttendanceDetail, "attendancedetail", "attendancedetail.formID = attendanceform.formID"). 
+            where("attendanceform.classID = :id", {id: classID}).
+            orderBy('attendanceform.dateOpen', 'ASC').
+            getMany();
+            return {data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting attendance details"}
+        }
+    }
 }
 
 export default new AttendanceDetailService();

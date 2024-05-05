@@ -49,4 +49,7 @@ AdminRouter.delete("/class/:id/removeall", VerifyAccessToken, Authorization('adm
 //search
 AdminRouter.get("/search/student/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchStudentByID);
 AdminRouter.get("/search/teacher/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchTeacherByID);
+
+AdminRouter.get("/classes/:id/stats", AdminController.getTotalStatsByClassIDForAdmin);
+
 export default AdminRouter;
