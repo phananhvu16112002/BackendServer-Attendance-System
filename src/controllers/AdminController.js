@@ -642,23 +642,6 @@ class AdminController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     } 
-
-    getTotalStatsByClassIDForAdmin = async (req,res) => {
-        try {
-            const classID = req.params.id;
-            let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
-            if (error){
-                return res.status(500).json({message: error});
-            }
-            if (data.length == 0){
-                return res.status(204).json({message: "No content"});
-            }
-            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
-        } catch (e) {
-            console.log(e);
-            return res.status(500).json({message: "Internal Server Error"});
-        }
-    }
 }
 
 export default new AdminController();

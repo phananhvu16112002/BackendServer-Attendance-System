@@ -9,6 +9,7 @@ import StudentClassService from "../services/StudentClassService";
 import ClassService from "../services/ClassService";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import AttendanceFormService from "../services/AttendanceFormService";
+import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail); 
 class AttendanceDetailController {
     takeAttendance = async (req, res) => {
@@ -368,6 +369,49 @@ class AttendanceDetailController {
                 return res.status(200).json({message: "Edit successfully"});
             }
             return res.status(503).json({message: "Edit failed"});
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    getTotalStatsByClassIDForAdmin = async (req,res) => {
+        try {
+            const classID = req.params.id;
+            let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    getTotalStatsByClassIDForTeacher = async (req,res) => {
+        try {
+            const classID = req.params.id;
+            const teacherID = req.payload.userID;
+            let checkAuth = await ClassService.getClassByID(classID);
+            if (checkAuth == null){
+                return res.status(503).json({message: "Cannot authorize teacher to perform this action"});
+            }     
+            if (compareCaseInsentitive(teacherID, checkAuth.teacher.teacherID) == false){
+                return res.status(403).json({message: "Action Denied. Teacher is not authorized"});
+            }
+            
+            let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
+            if (error){
+                return res.status(500).json({message: error});
+            }
+            if (data.length == 0){
+                return res.status(204).json({message: "No content"});
+            }
+            return res.status(200).json(AttendanceDetailDTO.getAttendanceDetailsStats(data));
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server Error"});

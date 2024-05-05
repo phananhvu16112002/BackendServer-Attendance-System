@@ -3,6 +3,7 @@ import AdminController from "../controllers/AdminController";
 import Authorization from "../middlewares/Authorization";
 import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
+import AttendanceDetailController from "../controllers/AttendanceDetailController";
 
 const AdminRouter = express.Router();
 
@@ -50,6 +51,6 @@ AdminRouter.delete("/class/:id/removeall", VerifyAccessToken, Authorization('adm
 AdminRouter.get("/search/student/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchStudentByID);
 AdminRouter.get("/search/teacher/:id", VerifyAccessToken, Authorization("admin"), AdminController.searchTeacherByID);
 
-AdminRouter.get("/classes/:id/stats", AdminController.getTotalStatsByClassIDForAdmin);
+AdminRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('admin'), AttendanceDetailController.getTotalStatsByClassIDForAdmin);
 
 export default AdminRouter;

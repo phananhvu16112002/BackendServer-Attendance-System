@@ -58,4 +58,7 @@ TeacherRouter.put("/edit/attendanceform/:classid/:formid", VerifyAccessToken, Au
 TeacherRouter.put("/editstatus/attendanceform/:classid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.closeOrOpenFormByFormID);
 
 TeacherRouter.delete("/classes/:classid/edit/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.deleteAttendanceFormByFormID);
+
+TeacherRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getTotalStatsByClassIDForTeacher);
+
 export default TeacherRouter;

@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 import bcrypt from "bcrypt";
 import EmailService from '../services/EmailService';
+import AttendanceDetailService from "../services/AttendanceDetailService";
+import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
 
 const teacherService = TeacherService;
 const classService = ClassService;
