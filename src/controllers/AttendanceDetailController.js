@@ -379,6 +379,7 @@ class AttendanceDetailController {
         try {
             const classID = req.params.id;
             let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
+            console.log(data);
             if (error){
                 return res.status(500).json({message: error});
             }

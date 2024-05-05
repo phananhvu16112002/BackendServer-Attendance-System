@@ -1,12 +1,14 @@
 class AttendanceDetailDTO {
     getAttendanceDetailsStats = (attendanceForms) => {
+        console.log(attendanceForms);
+        console.log(attendanceForms.length);
         let classTotalPresent = 0;
         let classTotalLate = 0;
         let classTotalAbsent = 0;
         let groupBarCharts = [];
         for (let i = 0; i < attendanceForms.length; i++){
             let attendanceForm = attendanceForms[i];
-            let {totalPresent, totalLate, totalAbsent} = this.getTotalStatsBasedOnAttendanceForm(attendanceForm.attendanceDetails);
+            let {totalPresent, totalLate, totalAbsent} = this.getTotalStatsBasedOnAttendanceForm(attendanceForm.attendancedetails);
             groupBarCharts.push(this.groupBarChart(attendanceForm.dateOpen, totalPresent, totalLate, totalAbsent, `Day ${i+1}`));
             classTotalPresent+=totalPresent;
             classTotalLate+=totalLate;
