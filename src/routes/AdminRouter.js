@@ -13,6 +13,8 @@ AdminRouter.post("/submit/students", VerifyAccessToken, Authorization('admin'), 
 AdminRouter.post("/submit/courses", VerifyAccessToken, Authorization('admin'), AdminController.uploadCourses);
 AdminRouter.post("/submit/classes", VerifyAccessToken, Authorization('admin'), AdminController.uploadClasses);
 
+AdminRouter.get("/home", VerifyAccessToken, Authorization('admin'), AdminController.getTotalStatsHomePage);
+
 AdminRouter.get("/teachers", VerifyAccessToken, Authorization('admin'), AdminController.getTeachers);
 AdminRouter.get("/students", VerifyAccessToken, Authorization('admin'), AdminController.getStudents);
 AdminRouter.get("/courses", VerifyAccessToken, Authorization('admin'), AdminController.getCourses);

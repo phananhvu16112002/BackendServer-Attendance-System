@@ -220,6 +220,14 @@ class TeacherService {
             return {data: null, error: "Failed getting teacher"};
         }
     }
+
+    getTotalTeachers = async () => {
+        try {
+            return await teacherRepository.count();
+        } catch (e) {
+            return 0;
+        }
+    }
 }
 
 export default new TeacherService();

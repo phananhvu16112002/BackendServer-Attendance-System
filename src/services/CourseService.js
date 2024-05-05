@@ -79,6 +79,14 @@ class CourseService {
             return {data: null, error: `Failed deleting course with id: ${courseID}`}
         }
     }
+
+    getTotalCourses = async () => {
+        try {
+            return await courseRepository.count();
+        } catch (e) {
+            return 0;
+        }
+    }
 }
 
 export default new CourseService();

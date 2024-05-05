@@ -628,6 +628,18 @@ class AdminController {
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
+
+    getTotalStatsHomePage = async (req,res) => {
+        try {
+            let totalStudents = await StudentService.getTotalStudents();
+            let totalTeachers = await TeacherService.getTotalTeachers();
+            let totalClasses = await ClassService.getTotalClasses();
+            let totalCourses = await CourseService.getTotalCourses();
+            return res.status(200).json({totalStudents, totalTeachers, totalCourses, totalClasses});
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    } 
 }
 
 export default new AdminController();

@@ -305,6 +305,14 @@ class ClassService {
             return 0;
         }
     }
+
+    getTotalClasses = async () => {
+        try {
+            return await classRepository.count();
+        } catch (e) {
+            return 0;
+        }
+    }
 }
 
 export default new ClassService();

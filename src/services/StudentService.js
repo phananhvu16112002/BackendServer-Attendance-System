@@ -293,6 +293,14 @@ class StudentService {
             return {data: null, error: "Failed getting student"}
         }
     }
+
+    getTotalStudents = async () => {
+        try {
+            return studentRepository.count();
+        } catch (e) {
+            return 0;
+        }
+    }
 }
 
 export default new StudentService();
