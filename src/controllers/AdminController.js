@@ -439,6 +439,7 @@ class AdminController {
             let page = req.params.page;
             let {data, error} = await ClassService.getClassesWithCourseAndTeacherByCourseIDWithPagination(courseID, page);
             let {data: total, error: nopage} = await ClassService.getClassesWithCourseAndTeacherByCourseID(courseID);
+            console.log(total);
             if (nopage || total.length == 0){
                 total = 0;
             } else {
@@ -450,6 +451,7 @@ class AdminController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
+            console.log(total);
             console.log(data);
             return res.status(200).json({totalPage: total,classes: data});
         } catch (e) {

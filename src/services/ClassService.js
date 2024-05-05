@@ -124,7 +124,7 @@ class ClassService {
     //testable
     getClassesWithCourseAndTeacherByCourseID = async (courseID) => {
         try {
-            let data = classRepository.find({
+            let data = await classRepository.find({
                 where: {
                     course: {
                         courseID : courseID
