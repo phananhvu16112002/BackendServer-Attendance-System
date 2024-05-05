@@ -4,6 +4,7 @@ import { Course } from "../models/Course";
 import { Teacher } from "../models/Teacher";
 import { Student } from "../models/Student";
 import { StudentClass } from "../models/StudentClass";
+import StudentDetailDTO from "../dto/StudentDetailDTO";
 
 class ExcelService {
     uploadExcel = async () => {
@@ -133,6 +134,7 @@ class ExcelService {
             
             const worksheet = content.worksheets[0];
             let studentClasses = [];
+            let studentDetails = [];
 
             for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++){
                 let row = worksheet.getRow(rowIndex);
@@ -141,13 +143,18 @@ class ExcelService {
                 studentClass.classDetail = classID;
                 if (studentClass.studentDetail != ""){
                     studentClasses.push(studentClass);
+                    let student = new Student();
+                    student.studentID = row.getCell(1).text;
+                    student.studentName = row.getCell(2).text;
+                    student.studentEmail = row.getCell(3).text;
+                    studentDetails.push(StudentDetailDTO.studentDetail(student));
                 }
             }
-            return {data: studentClasses, error: null};
+            return {studentClasses: studentClasses, studentDetails: studentDetails, error: null};
 
         } catch (e) {
             console.log(e);
-            return {data: [], error: "Error teacher to class"};
+            return {studentClasses: [], studentDetails: [],error: "Error teacher to class"};
         }
     }
 }

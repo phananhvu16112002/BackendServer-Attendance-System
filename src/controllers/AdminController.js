@@ -127,11 +127,11 @@ class AdminController {
 
             const fileExcel = req.files.file;
 
-            let {data, error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
+            let {studentClasses, studentDetails, error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
             if (error){
                 return res.status(503).json({message: error});
             }
-            if (data.length == 0){
+            if (studentClasses.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
 
@@ -147,7 +147,7 @@ class AdminController {
             classes.course = courseID;
             classes.teacher = teacherID;
 
-            if (await StudentClassService.uploadClass(classes, data)){
+            if (await StudentClassService.uploadClass(classes, studentClasses)){
                 let {data: result, error: err} = await ClassService.getClassesByID(classID);
                 if (err){
                     return res.status(503).json({message: err});
@@ -166,7 +166,7 @@ class AdminController {
         try {
             const classID = req.params.id;
             const fileExcel = req.files.file;
-            let {data, error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
+            let {studentClasses: data, studentDetails ,error} = await ExcelService.readStudentsInClassFromExcel(fileExcel, classID);
             if (error){
                 return res.status(503).json({message: error});
             }
@@ -174,11 +174,7 @@ class AdminController {
                 return res.status(204).json({message: "No content found in this excel"});
             }
             if (await StudentClassService.uploadStudentsInClass(data)){
-                let {data: result, error: err} = await ClassService.getClassesByID(classID);
-                if (err){
-                    return res.status(503).json({message: err});
-                }
-                return res.status(200).json({data: result, message: "Successfully uploading stundents"});
+                return res.status(200).json({data: studentDetails, message: "Successfully uploading stundents"});
             }
             return res.status(503).json({message: "Failed uploading students in class"});
         } catch (e) {
