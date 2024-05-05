@@ -4,6 +4,7 @@ import { MySQLDatetimeToJSDatetime } from "../utils/TimeConvert";
 import { AppDataSource } from "../config/db.config";
 import { Student } from "../models/Student";
 import { StudentDeviceToken } from "../models/StudentDeviceToken";
+import StudentDetailDTO from "../dto/StudentDetailDTO";
 
 const studentRepository = AppDataSource.getRepository(Student);
 const studentDeviceTokenRepository = AppDataSource.getRepository(StudentDeviceToken);
@@ -284,6 +285,9 @@ class StudentService {
                     studentID: studentID
                 }
             });
+            if (data){
+                data = StudentDetailDTO.studentDetail(data);
+            }
             return {data: data, error: null};
         } catch (e) {
             return {data: null, error: "Failed getting student"}

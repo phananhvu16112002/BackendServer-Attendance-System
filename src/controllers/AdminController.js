@@ -549,7 +549,11 @@ class AdminController {
             if (!valid){
                 return res.status(503).json({message: `Failed adding student with id ${studentID} in class id ${classID}`});
             }
-            return res.status(200).json({id: studentID, message: `Successfully adding student with id ${studentID} in class id ${classID}`});
+            let {data, error} = await StudentService.searchStudent(studentID);
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            return res.status(200).json({data: data, message: `Successfully adding student with id ${studentID} in class id ${classID}`});
         } catch (e) {
             return res.status(500).json({message: "Internal Server"});
         }
