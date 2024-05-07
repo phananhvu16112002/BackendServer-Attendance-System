@@ -406,6 +406,7 @@ class AttendanceDetailController {
             let progressWarning = (total > 0) ? Math.floor((warning / total)*100) : 0;
             let progressBan = (total > 0) ? Math.floor((ban /total)*100) : 0;
             let resultStats = {
+                total,pass,ban,warning,
                 progressPass, progressWarning, progressBan,
                 progressPresent, progressLate, progressAbsent,
                 groupBarCharts
@@ -452,6 +453,7 @@ class AttendanceDetailController {
             let progressWarning = (total > 0) ? Math.floor((warning / total)*100) : 0;
             let progressBan = (total > 0) ? Math.floor((ban /total)*100) : 0;
             let resultStats = {
+                total, pass, ban, warning,
                 progressPass, progressWarning, progressBan,
                 progressPresent, progressLate, progressAbsent,
                 groupBarCharts
