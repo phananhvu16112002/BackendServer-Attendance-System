@@ -15,9 +15,9 @@ class AttendanceDetailDTO {
             classTotalAbsent+=totalAbsent;
         }
         let sum = classTotalPresent + classTotalLate + classTotalAbsent;
-        let progressPresent = Math.floor(classTotalPresent / sum) * 100;
-        let progressLate = Math.floor(classTotalLate / sum) * 100;
-        let progressAbsent = Math.floor(classTotalAbsent / sum) * 100; 
+        let progressPresent = Math.floor((classTotalPresent / sum)*100);
+        let progressLate = Math.floor((classTotalLate / sum)*100);
+        let progressAbsent = Math.floor((classTotalAbsent / sum)*100); 
         return {progressPresent, progressLate, progressAbsent, groupBarCharts};
     }
 

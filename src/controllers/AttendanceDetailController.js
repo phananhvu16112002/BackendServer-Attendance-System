@@ -402,9 +402,9 @@ class AttendanceDetailController {
                 return res.status(204).json({message: "No content"});
             }
             let {progressPresent, progressLate, progressAbsent, groupBarCharts} = AttendanceDetailDTO.getAttendanceDetailsStats(data);
-            let progressPass = (total > 0) ? Math.floor(pass / total)*100 : 0;
-            let progressWarning = (total > 0) ? Math.floor(warning / total)*100 : 0;
-            let progressBan = (total > 0) ? Math.floor(ban /total)*100 : 0;
+            let progressPass = (total > 0) ? Math.floor((pass / total)*100) : 0;
+            let progressWarning = (total > 0) ? Math.floor((warning / total)*100) : 0;
+            let progressBan = (total > 0) ? Math.floor((ban /total)*100) : 0;
             let resultStats = {
                 progressPass, progressWarning, progressBan,
                 progressPresent, progressLate, progressAbsent,
@@ -448,9 +448,9 @@ class AttendanceDetailController {
                 return res.status(204).json({message: "No content"});
             }
             let {progressPresent, progressLate, progressAbsent, groupBarCharts} = AttendanceDetailDTO.getAttendanceDetailsStats(data);
-            let progressPass = (total > 0) ? Math.floor(pass / total)*100 : 0;
-            let progressWarning = (total > 0) ? Math.floor(warning / total)*100 : 0;
-            let progressBan = (total > 0) ? Math.floor(ban /total)*100 : 0;
+            let progressPass = (total > 0) ? Math.floor((pass / total)*100) : 0;
+            let progressWarning = (total > 0) ? Math.floor((warning / total)*100) : 0;
+            let progressBan = (total > 0) ? Math.floor((ban /total)*100) : 0;
             let resultStats = {
                 progressPass, progressWarning, progressBan,
                 progressPresent, progressLate, progressAbsent,
