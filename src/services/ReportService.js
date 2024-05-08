@@ -277,7 +277,7 @@ class ReportService {
         try {
             let importantNews = await reportRepository.createQueryBuilder("report").
             innerJoin(Classes, "classes", "report.classID = classes.classID").
-            orderBy('report.createdAt', 'DESC').where("classes.teacherID = :id", {id : teacherID}).skip(skip).take(take).getRawMany();
+            orderBy('report.createdAt', 'DESC').where("classes.teacherID = :id", {id : teacherID}).offset(skip).limit(take).getRawMany();
             return {importantNews: importantNews, eror: null};
         } catch (e) {
             return {importantNews: [], error: "Failed getting stats"};
@@ -293,7 +293,7 @@ class ReportService {
             innerJoinAndMapOne("classes.student", Student, 'student', "report.studentID = student.studentID").
             select('classes.*').addSelect("course.*").addSelect("report.*").addSelect('student.studentID, student.studentEmail ,student.studentName').
             orderBy('report.new', "DESC").addOrderBy("report.createdAt", "DESC").
-            where("classes.teacherID = :id", {id: teacherID}).skip(skip).take(take).
+            where("classes.teacherID = :id", {id: teacherID}).offset(skip).limit(take).
             getRawMany();
 
             return {data: data, error: null};
