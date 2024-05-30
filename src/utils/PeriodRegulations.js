@@ -1,0 +1,17 @@
+let PeriodRegulations = new Map();
+PeriodRegulations.set("1", {start: "06:50:00", end: "07:40:00", shift: "1"});
+PeriodRegulations.set("2", {start: "07:40:00", end: "08:30:00", shift: "1"});
+PeriodRegulations.set("3", {start: "08:30:00", end: "09:20:00", shift: "1"});
+PeriodRegulations.set("4", {start: "09:30:00", end: "10:20:00", shift: "2"});
+PeriodRegulations.set("5", {start: "10:20:00", end: "11:10:00", shift: "2"});
+PeriodRegulations.set("6", {start: "11:10:00", end: "12:00:00", shift: "2"});
+PeriodRegulations.set("7", {start: "12:45:00", end: "13:35:00", shift: "3"});
+PeriodRegulations.set("8", {start: "13:35:00", end: "14:25:00", shift: "3"});
+PeriodRegulations.set("9", {start: "14:25:00", end: "15:15:00", shift: "3"});
+PeriodRegulations.set("10", {start: "15:25:00", end: "16:15:00", shift: "4"});
+PeriodRegulations.set("11", {start: "16:15:00", end: "17:05:00", shift: "4"});
+PeriodRegulations.set("12", {start: "17:05:00", end: "17:55:00", shift: "4"});
+PeriodRegulations.set("13", {start: "18:05:00", end: "18:55:00", shift: "5"});
+PeriodRegulations.set("14", {start: "18:55:00", end: "19:45:00", shift: "5"});
+PeriodRegulations.set("15", {start: "19:45:00", end: "20:35:00", shift: "5"});
+export default PeriodRegulations;

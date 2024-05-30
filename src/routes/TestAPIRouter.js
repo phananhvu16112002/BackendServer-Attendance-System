@@ -17,6 +17,9 @@ import {In} from "typeorm";
 import firebaseAdmin from "../config/notification.config";
 import { Report } from "../models/Report";
 import { Feedback } from "../models/Feedback";
+import Excel from "exceljs";
+import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
+import BusinessUtils from "../utils/BusinessUtils";
 
 const attendanceDetailRepository = AppDataSource.getRepository(AttendanceDetail);
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -749,6 +752,71 @@ TestAPIRouter.get("/removeTeacher", async (req,res) => {
         teacherID: "1"
     })
     return res.json({message: "oke"});
+})
+
+TestAPIRouter.post("/import", async (req,res) => {
+    try {
+            console.log(req.files);
+            let fileExcel = req.files.file;
+            const buffer = fileExcel.data;
+    
+            const workbook = new Excel.Workbook();
+            const content = await workbook.xlsx.load(buffer, { type: "buffer" });
+            
+            const worksheet = content.worksheets[0];
+            let classes = BusinessUtils.generateClassesFromExcel(worksheet, "1");
+            //await classRepository.insert(classes);
+            let attendanceForms = classes.flatMap(c => c.attendanceForm);
+            console.log(classes);
+            await classRepository.insert(classes);
+            await attendanceFormRepository.insert(attendanceForms);
+            // console.log(classes);
+            // for (let i = 0; i < classes.length; i++){
+            //     let classObject = classes[i];
+            //     console.log("------------------");
+            //     console.log(classObject);
+            //     console.log("Attendance Forms: ");
+            //     let count = 0;
+            //     for (let j = 0; j < classObject.attendanceForm; j++){
+            //         console.log(`Day ${count}`);
+            //         console.log(classObject.attendanceForm[i]);
+            //     }
+            //     console.log("------------------");
+            // }
+            let courses = [];
+            let count = 0;
+            // for (let rowIndex = 2; rowIndex <= worksheet.actualRowCount; rowIndex++){
+            //     count = count + 1;
+            //     console.log(count);
+            //     let row = worksheet.getRow(rowIndex);
+            //     let courseID = row.getCell(2).text;
+            //     let group = row.getCell(3).text;
+            //     let subGroup = (row.getCell(4).text) ? row.getCell(4).text : "0";
+            //     let type = (row.getCell(4).text) ? "Laboratory" : "Theory";
+            //     let quarter = row.getCell(9).text;
+            //     let weekdays = row.getCell(8).text;
+            //     console.log("Row---------------------------")
+            //     console.log("Quater: " + quarter);
+            //     console.log("Week days: " + weekdays);
+            //     console.log("CourseID: " + courseID);
+            //     console.log("Group: " + group);
+            //     console.log("SubGroup: " + subGroup);
+            //     console.log("Type: " + type);
+            //     console.log("Total Days: " + row.getCell(10).text / 3);
+            //     console.log("Required Days: " + (row.getCell(10).text / 3)*(20/100));
+            //     console.log("Room: " + row.getCell(11).text);
+            //     console.log("Start date input: " + row.getCell(12).text);
+            //     console.log("Start date MYSQL: " + JSDatetimeToMySQLDatetime(new Date(row.getCell(12).text)));
+            //     console.log("End date input: " + row.getCell(13).text);
+            //     console.log("End date MYSQL: " + JSDatetimeToMySQLDatetime(new Date(row.getCell(13).text)));
+            //     console.log("Lecturer: " + row.getCell(14).text);
+            //     console.log("Lecturer ID: " + row.getCell(18).text);
+            // }
+        return res.status(200).json({message: "oke"});
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({message: "Internal Server"});
+    }
 })
 
 TestAPIRouter.get("/notifications", async (req,res) => {

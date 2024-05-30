@@ -18,7 +18,6 @@ class AttendanceFormService {
                 await transactionalEntityManager.save(attendanceDetails);
                 
             })
-
             return {data: attendanceForm, error: null}
         } catch (e) {
             console.log(e);
@@ -27,10 +26,10 @@ class AttendanceFormService {
     }
 
     //Oke
-    createFormEntity = (classes, startTime, endTime, dateOpen, type,
+    createFormEntity = (attendanceForm, classes, startTime, endTime, dateOpen, type,
                         location, latitude, longitude, radius) => {
         let form = new AttendanceForm();
-        form.formID = uuidv4();
+        form.formID = attendanceForm;
         form.classes = classes;
         form.startTime = startTime;
         form.endTime = endTime;

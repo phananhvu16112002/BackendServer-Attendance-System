@@ -9,6 +9,7 @@ import AttendanceDetailController from "../controllers/AttendanceDetailControlle
 import ReportController from "../controllers/ReportController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import VerifyResetToken from "../middlewares/verifyResetToken";
+import SemesterController from "../controllers/SemesterController";
 
 const TeacherRouter = express.Router();
 
@@ -47,7 +48,7 @@ TeacherRouter.put("/feedback/edit/:id", VerifyAccessToken, Authorization('teache
 
 TeacherRouter.put("/attendancedetail/edit/:classid/:studentid/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.editAttendanceDetail);
 
-TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.createAttendanceForm)
+TeacherRouter.post("/form/submit", VerifyAccessToken, Authorization("teacher"), AttendanceFormController.activateAttendanceForm)
 // TeacherRouter.post("/createAttendanceForm", AttendanceFormController.createAttendanceForm);
 ///
 TeacherRouter.get("/notifications", VerifyAccessToken, Authorization('teacher'), ReportController.getNotificationReport);
@@ -60,5 +61,5 @@ TeacherRouter.put("/editstatus/attendanceform/:classid/:formid", VerifyAccessTok
 TeacherRouter.delete("/classes/:classid/edit/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.deleteAttendanceFormByFormID);
 
 TeacherRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getTotalStatsByClassIDForTeacher);
-
+TeacherRouter.get("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.getAllSemester);
 export default TeacherRouter;

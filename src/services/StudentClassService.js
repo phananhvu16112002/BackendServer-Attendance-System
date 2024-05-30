@@ -7,9 +7,12 @@ import { Classes } from "../models/Classes";
 import { Student } from "../models/Student";
 import StudentClassDTO from "../dto/StudentClassDTO";
 import { StudentDeviceToken } from "../models/StudentDeviceToken";
+import { AttendanceForm } from "../models/AttendanceForm";
+import { JSDatetimeToMySQLDatetime } from "../utils/TimeConvert";
 
 
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
+const attendanceFormRepository = AppDataSource.getRepository(AttendanceForm);
 
 class StudentClassService {
     getStudentClass = async (studentID, classID) => {
@@ -112,16 +115,36 @@ class StudentClassService {
     getClassesByStudentID = async (studentID) => {
         try {
             // const studentID = studentID;
+            // let data = await studentClassRepository.createQueryBuilder("student_class"). 
+            // innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
+            // innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
+            // innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").
+            // leftJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
+            // select('student_class.*').addSelect('COUNT(attendancedetail.formID) as total').addSelect(`SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS totalPresence`,).
+            // addSelect(`SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS totalAbsence`,).addSelect(`SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS totalLate`,).
+            // addSelect('classes.*').addSelect('course.*').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
+            // groupBy('student_class.classID').
+            // where("student_class.studentID = :id", {id : studentID}).
+            // getRawMany();
+
+            let datenow = JSDatetimeToMySQLDatetime(new Date());
+
+            let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("attendanceform.formID").where("classes.classID = attendanceform.classID").
+            orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1)
+
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
             innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
+            innerJoinAndMapMany("classes.attendanceform", AttendanceForm, "attendanceform", "attendanceform.classID = classes.classID").
             innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
             innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").
             leftJoinAndMapMany('student_class.attendancedetails', AttendanceDetail, "attendancedetail", "attendancedetail.studentID = student_class.studentID AND student_class.classID = attendancedetail.classDetail").
             select('student_class.*').addSelect('COUNT(attendancedetail.formID) as total').addSelect(`SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS totalPresence`,).
             addSelect(`SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS totalAbsence`,).addSelect(`SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS totalLate`,).
             addSelect('classes.*').addSelect('course.*').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
-            groupBy('student_class.classID').
-            where("student_class.studentID = :id", {id : studentID}).
+            addSelect("attendanceform.formID, attendanceform.shiftNumber, attendanceform.roomNumber, attendanceform.periodDateTime").
+            groupBy('student_class.classID, attendanceform.formID').
+            where("student_class.studentID = :id", {id : studentID}).andWhere("attendanceform.formID =(" + subQuery.getQuery() + ")").
             getRawMany();
     
         return {data, error: null};

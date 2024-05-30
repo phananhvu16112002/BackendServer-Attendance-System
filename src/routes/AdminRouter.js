@@ -4,6 +4,8 @@ import Authorization from "../middlewares/Authorization";
 import StudentClassController from "../controllers/StudentClassController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import AttendanceDetailController from "../controllers/AttendanceDetailController";
+import SemesterController from "../controllers/SemesterController";
+import ClassesController from "../controllers/ClassesController";
 
 const AdminRouter = express.Router();
 
@@ -53,4 +55,14 @@ AdminRouter.get("/search/teacher/:id", VerifyAccessToken, Authorization("admin")
 
 AdminRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('admin'), AttendanceDetailController.getTotalStatsByClassIDForAdmin);
 
+//semester
+AdminRouter.get("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.getAllSemester);
+AdminRouter.post("/semester/submit", VerifyAccessToken, Authorization("admin"), SemesterController.addSemester);
+AdminRouter.put("/semester/:id", VerifyAccessToken, Authorization("admin"), SemesterController.editSemester);
+AdminRouter.delete("/semester/:id", VerifyAccessToken, Authorization("admin"), SemesterController.deleteSemester);
+AdminRouter.delete("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.deleteAllSemester);
+
+//import
+AdminRouter.post("/class/submit", VerifyAccessToken, Authorization("admin"), ClassesController.uploadClasses);
+AdminRouter.post("/studentclass/submit", VerifyAccessToken, Authorization("admin"), StudentClassController.uploadStudentClass);
 export default AdminRouter;

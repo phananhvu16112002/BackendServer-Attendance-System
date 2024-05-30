@@ -392,7 +392,8 @@ class AttendanceDetailController {
             if (studentDetails.length == 0){
                 return res.status(204).json({message: "There are no records for students' attendance details"});
             }
-            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let totalDays = classData.attendanceForm.length
+            let offset = totalDays - (0.2)*(totalDays);
             let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(studentDetails, offset);
             let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
             if (error){
@@ -439,7 +440,8 @@ class AttendanceDetailController {
             if (studentDetails.length == 0){
                 return res.status(204).json({message: "There are no records for students' attendance details"});
             }
-            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let totalDays = classData.attendanceForm.length
+            let offset = totalDays - (0.2)*(totalDays);
             let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(studentDetails, offset);
             let {data, error} = await AttendanceDetailService.getStatsBasedOnClassID(classID);
             if (error){

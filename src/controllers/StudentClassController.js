@@ -2,6 +2,7 @@ import AttendanceDetailDTO from "../dto/AttendanceDetailDTO";
 import StudentClassDTO from "../dto/StudentClassDTO";
 import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
+import BusinessUtils from "../utils/BusinessUtils";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 
 class StudentClassController {
@@ -53,7 +54,8 @@ class StudentClassController {
                 return res.status(204).json({message: "There are no records for students' attendance details"});
             }
 
-            let offset = classData.course.totalWeeks - classData.course.requiredWeeks;
+            let totalDays = classData.attendanceForm.length
+            let offset = totalDays - (0.2)*(totalDays);
             let {total, pass, ban, warning, data: result} = AttendanceDetailDTO.transformStudentsAttendanceDetails(data, offset); 
 
             classData.total = total;
@@ -138,6 +140,24 @@ class StudentClassController {
                 return res.status(204).json({message: "No content"});
             }
             return res.status(200).json(data);
+        } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    uploadStudentClass = async (req,res) => {
+        try {
+            let fileExcel = req.files.file;
+            let semesterID = req.body.semesterID;
+            const buffer = fileExcel.data;
+            const workbook = new Excel.Workbook();
+            const content = await workbook.xlsx.load(buffer, { type: "buffer" });
+            const worksheet = content.worksheets[0];
+            let studentClasses = BusinessUtils.generateStudentClassFromExcel(worksheet, semesterID);
+            if (await StudentClassService.uploadStudentsInClass(studentClasses)){
+                return res.status(200).json(studentClasses);
+            }
+            return res.status(503).json({message: "Fail adding students in class"});
         } catch (e) {
             return res.status(500).json({message: "Internal Server Error"});
         }

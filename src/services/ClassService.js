@@ -1,5 +1,8 @@
 import { AppDataSource, entityManager } from "../config/db.config";
+import { AttendanceForm } from "../models/AttendanceForm";
 import { Classes } from "../models/Classes";
+import { Course } from "../models/Course";
+import { Teacher } from "../models/Teacher";
 
 const classRepository = AppDataSource.getRepository(Classes);
 class ClassService {
@@ -23,7 +26,7 @@ class ClassService {
         try {
             let data = await classRepository.findOne({
                 where : {classID : classID},
-                relations : {studentClass : true, course: true, teacher: true}
+                relations : {studentClass : true, course: true, teacher: true, attendanceForm: true}
             });
             return {data, error: null}
         } catch (e) {
@@ -74,7 +77,25 @@ class ClassService {
                 teacher : {
                     teacherID : teacherID
                 },
-            }, relations: {course : true}})
+            }, relations: {course : true, attendanceForm: true}})
+
+            return {data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed fetching data"};
+        }
+    }
+
+    //migration
+    getClassesInSemesterWithCoursesByTeacherID = async (teacherID, semesterID) => {
+        try {
+            let data = await classRepository.find({where : {
+                semester: {
+                    semesterID: semesterID
+                },
+                teacher : {
+                    teacherID : teacherID
+                },
+            }, relations: {course : true, semester: true, attendanceForm: true}})
 
             return {data, error: null};
         } catch (e) {
@@ -88,7 +109,25 @@ class ClassService {
                 teacher : {
                     teacherID : teacherID
                 },
-            }, relations: {course : true}, skip: skip, take: take})
+            }, relations: {course : true, attendanceForm: true}, skip: skip, take: take})
+
+            return {data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed fetching data"};
+        }
+    }
+
+    //migration
+    getClassesInSemesterWithCoursesByTeacherIDWithPagination = async (teacherID, semesterID, skip, take) => {
+        try {
+            let data = await classRepository.find({where : {
+                semester: {
+                    semesterID : semesterID
+                },
+                teacher : {
+                    teacherID : teacherID
+                },
+            }, relations: {course : true, semester: true, attendanceForm: true}, skip: skip, take: take})
 
             return {data, error: null};
         } catch (e) {
@@ -113,6 +152,7 @@ class ClassService {
                 relations: {
                     teacher: true,
                     course: true,
+                    attendanceForm: true
                 }
             });
             return {data, error: null};
@@ -161,11 +201,42 @@ class ClassService {
                 },
                 relations: {
                     teacher: true,
-                    course: true
+                    course: true,
+                    attendanceForm: true
                 }
             })
             return {data: data, error: null};
         } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
+
+    //migration
+    getClassesBySemester = async (semesterID) => {
+        try {
+            let data = await classRepository.find({
+                where: {
+                    semester: {
+                        semesterID: semesterID
+                    }
+                },
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true,
+                    semester: true,
+                    attendanceForm: true
+                }
+            });
+            return {data: data, error: null};
+        } catch (e) {
+            console.log(e);
             return {data: [], error: "Failed getting classes"};
         }
     }
@@ -226,6 +297,41 @@ class ClassService {
                 relations: {
                     teacher: true,
                     course: true
+                },
+                skip: skip,
+                take: 6
+            })
+            return {data: data, error: null};
+        } catch (e) {
+            return {data: [], error: "Failed getting classes"};
+        }
+    }
+
+    //migration
+    getClassesWithPaginationAndSemester = async (page, semester) => {
+        try {
+            if (page <= 0) {
+                page = 1;
+            }
+            let skip = (page - 1) * 6;
+
+            let data = await classRepository.find({
+                where: {
+                    semester: {
+                        semesterID: semester
+                    }
+                },
+                select: {
+                    teacher: {
+                        teacherID: true,
+                        teacherEmail: true,
+                        teacherName: true
+                    }
+                },
+                relations: {
+                    teacher: true,
+                    course: true,
+                    semester: true
                 },
                 skip: skip,
                 take: 6
@@ -306,11 +412,41 @@ class ClassService {
         }
     }
 
+    //migration
+    getTotalPagesForClassesInSemesterByTeacherID = async (teacherID, semesterID, offset) => {
+        try {
+            let total = await classRepository.findAndCount({where : {
+                teacher : {
+                    teacherID : teacherID
+                },semester : {
+                    semesterID: semesterID
+                }
+            }})
+            if (total[1] == 0 || offset <= 0) return 0;
+            return Math.ceil(total[1] / offset);
+        } catch (e) {
+            return 0;
+        }
+    }
+
     getTotalClasses = async () => {
         try {
             return await classRepository.count();
         } catch (e) {
             return 0;
+        }
+    }
+
+    uploadClasses = async (classes, attendanceForms) => {
+        try {
+            await AppDataSource.transaction(async (transactionalEntityManager) => {
+                await transactionalEntityManager.save(classes);
+                await transactionalEntityManager.save(attendanceForms);
+            })
+            return {data: classes, error: null}
+        } catch (e) {
+            console.log(e);
+            return {data: null, error: "Failed creating classes"};
         }
     }
 }

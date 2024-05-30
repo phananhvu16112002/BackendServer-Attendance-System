@@ -1,6 +1,6 @@
 function JSDatetimeToMySQLDatetime(date){
-    let dateString = date.toLocaleDateString();
-    let timeString = date.toLocaleTimeString();
+    let dateString = date.toLocaleDateString('vn-VN');
+    let timeString = date.toLocaleTimeString('vn-VN');
 
     function convertTime(time){
         let timeFraction = time.split(" ");
@@ -35,4 +35,10 @@ function MySQLDatetimeToJSDatetime(date){
     return JSDatetimeToMySQLDatetime(new Date(date));
 }
 
-export {JSDatetimeToMySQLDatetime , MySQLDatetimeToJSDatetime};
+function getWeekday(datetimeString) {
+    const date = new Date(datetimeString);
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[date.getDay()];
+}
+
+export {JSDatetimeToMySQLDatetime , MySQLDatetimeToJSDatetime, getWeekday};

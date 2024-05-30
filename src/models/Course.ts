@@ -9,12 +9,6 @@ export class Course {
     courseName: string
 
     @Column({default: 0})
-    totalWeeks: number
-
-    @Column({default: 0})
-    requiredWeeks: number
-
-    @Column({default: 0})
     credit: number
 
     @OneToMany(() => Classes, Classes => Classes.course)

@@ -3,35 +3,34 @@ import { Course } from "./Course"
 import { Teacher } from "./Teacher"
 import { StudentClass } from "./StudentClass"
 import { AttendanceForm } from "./AttendanceForm"
+import { Semester } from "./Semester"
 @Entity()
 export class Classes {
     @PrimaryColumn()
     classID: string
-
-    @Column({default: ""})
-    roomNumber: string
-
-    @Column({default: 0})
-    shiftNumber: number
-
-    @Column({type: "time", nullable: false})
-    startTime: string
-
-    @Column({type: "time", nullable: false})
-    endTime: string
-
-    @Column({default: ""})
-    classType: string
-
-    @Column({default: ""})
-    group: string
-
-    @Column({default: ""})
-    subGroup: string
-
+    
     @ManyToOne(() => Course, Course => Course.classes, {onDelete: "CASCADE"})
     @JoinColumn({name:"courseID", referencedColumnName:"courseID"})
     course: Course
+
+    @ManyToOne(() => Semester, Semester => Semester.classes)
+    @JoinColumn({name:"semesterID", referencedColumnName:"semesterID"})
+    semester: Semester
+
+    @Column()
+    group: string
+
+    @Column()
+    subGroup: string
+
+    @Column({type: "datetime", nullable: true})
+    startDate: string
+
+    @Column({type: "datetime", nullable: true})
+    endDate: string
+
+    @Column({default: ""})
+    classType: string
 
     @ManyToOne(() => Teacher, Teacher => Teacher.classes, {onDelete: "CASCADE"})
     @JoinColumn({name:"teacherID", referencedColumnName:"teacherID"})

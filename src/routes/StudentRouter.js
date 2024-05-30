@@ -7,6 +7,7 @@ import ReportController from "../controllers/ReportController";
 import NotificationController from "../controllers/NotificationController";
 import VerifyAccessToken from "../middlewares/verifyAccessToken";
 import VerifyResetToken from "../middlewares/verifyResetToken";
+import SemesterController from "../controllers/SemesterController";
 
 const StudentRouter = express.Router();
 
@@ -46,4 +47,5 @@ StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAtte
 
 StudentRouter.get("/notifications", VerifyAccessToken, Authorization('student'), NotificationController.getNotificationsByStudentID);
 
+StudentRouter.get("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.getAllSemester);
 export default StudentRouter;

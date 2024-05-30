@@ -14,6 +14,7 @@ import TeacherService from '../services/TeacherService';
 import AdminService from '../services/AdminService';
 import AttendanceDetailDTO from '../dto/AttendanceDetailDTO';
 import AttendanceDetailService from '../services/AttendanceDetailService';
+import ClassesDTO from '../dto/ClassesDTO';
 //$2b$10$Jy/x6brNkjrtIpPRRbHrQu8jh8k8o.l9qXPxAORF6G9fFAvmHr4JO //520h0380password!
 //$2b$10$jf1lWevTaxoTjvYTr34l9.qDb0ZQoDNGFUK2uj2DPdrA7pXrgOc2G //520h0696password!
 const studentClassRepository = AppDataSource.getRepository(StudentClass);
@@ -213,7 +214,7 @@ class AdminController {
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            return res.status(200).json(data);
+            return res.status(200).json(ClassesDTO.appendRecentLesson(data));
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
@@ -223,14 +224,16 @@ class AdminController {
     //testabel
     getClasses = async (req,res) => {
         try {
-            let {data, error} = await ClassService.getClasses();
+            let semesterID = req.query.semester;
+            console.log(semesterID);
+            let {data, error} = (semesterID) ? await ClassService.getClassesBySemester(semesterID): await ClassService.getClasses();
             if (error){
                 return res.status(503).json({message: error});
             }
             if (data.length == 0){
                 return res.status(204).json({message: "No content found in this excel"});
             }
-            return res.status(200).json(data);
+            return res.status(200).json(ClassesDTO.appendRecentLesson(data));
         } catch (e) {
             console.log(e);
             return res.status(500).json({message: "Internal Server"});
@@ -464,8 +467,9 @@ class AdminController {
     getClassesWithPagination = async (req,res) => {
         try {
             let page = req.params.page; 
-            let {data, error} = await ClassService.getClassesWithPagination(page);
-            let {data: total, error: nopage} = await ClassService.getClasses();
+            let semesterID = req.query.semester;
+            let {data, error} = (semesterID) ? await ClassService.getClassesWithPaginationAndSemester(page, semesterID) : await ClassService.getClassesWithPagination(page);
+            let {data: total, error: nopage} = (semesterID) ? await ClassService.getClassesBySemester(semesterID) : await ClassService.getClasses();
             if (nopage || total.length == 0){
                 total = 0;
             } else {

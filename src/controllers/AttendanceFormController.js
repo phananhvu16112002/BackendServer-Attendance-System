@@ -7,6 +7,60 @@ import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 import {JSDatetimeToMySQLDatetime} from "../utils/TimeConvert";
 
 class AttendanceFormController {
+    //oke
+    activateAttendanceForm = async (req,res) => {
+        try {
+            const teacherID = req.payload.userID;
+            const classID = req.body.classID;
+            const startTime = req.body.startTime;
+            const endTime = req.body.endTime;
+            const dateOpen = JSDatetimeToMySQLDatetime(new Date());
+            const type = req.body.type;
+            const attendanceForm = req.body.formID;
+            const location = req.body.location;
+            const latitude = req.body.latitude;
+            const longitude = req.body.longitude;
+            const radius = req.body.radius;
+
+            const {data: classes, error: err} = await ClassService.getClassByIDWithStudents(classID);
+            if (err){
+                return res.status(503).json({message: err});
+            }
+            if (classes == null){
+                return res.status(204).json({message : `Class with the id: ${classID} does not exist`});
+            }
+
+            if (compareCaseInsentitive(teacherID, classes.teacher.teacherID) == false){
+                return res.status(422).json({message: "Teacher is not in charge of this class"});
+            }
+
+            //Create entities before inserting into database
+            const attendanceFormEntity = AttendanceFormService.createFormEntity(attendanceForm, classes, startTime, endTime, dateOpen, type, location, latitude, longitude, radius);
+            const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceForm);
+        
+            //Make transactions to insert into database
+            const {data: form,error} = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);
+
+            if (error){
+                return res.status(503).json({message: error});
+            }
+            //Get danh sach student trong danh sach cam thi, trong danh sach warning
+            //Send notification
+            let totalDays = classData.attendanceForm.length
+            let offset = totalDays - (0.2)*(totalDays);
+            offset = offset + 1;
+            await NotificationService.sendAttendanceFormToStudents(classID, offset);
+            
+            if (form == null){
+                return res.status(503).json({message : "Attendance Form cannot be created. Please try again!"});
+            }
+
+            return res.status(200).json(AttendanceFormDTO.excludeClasses(form));
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({message : "Internal Server"});
+        }
+    }
     //Oke
     createAttendanceForm = async (req, res) => {
         try {
@@ -46,7 +100,8 @@ class AttendanceFormController {
             }
             //Get danh sach student trong danh sach cam thi, trong danh sach warning
             //Send notification
-            let offset = classes.course.totalWeeks - classes.course.requiredWeeks;
+            let totalDays = classData.attendanceForm.length
+            let offset = totalDays - (0.2)*(totalDays);
             offset = offset + 1;
             await NotificationService.sendAttendanceFormToStudents(classID, offset);
             

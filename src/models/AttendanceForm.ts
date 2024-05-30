@@ -11,17 +11,32 @@ export class AttendanceForm {
     @JoinColumn({name:"classID",referencedColumnName:"classID"})
     classes: Classes
 
+    @Column({default: ""})
+    roomNumber: string
+
+    @Column({default: 0})
+    shiftNumber: number
+
+    @Column({type: "time"})
+    periodStartTime: string
+
+    @Column({type: "time"})
+    periodEndTime: string
+
+    @Column({type: "datetime"})
+    periodDateTime: string
+
+    @Column({default: false})
+    status: boolean
+
+    @Column({type: "datetime", nullable: true})
+    dateOpen: string
+
     @Column({type: "datetime", nullable: true})
     startTime: string
 
     @Column({type: "datetime", nullable: true})
     endTime: string
-
-    @Column()
-    status: boolean
-
-    @Column({type: "datetime", nullable: true})
-    dateOpen: string
 
     @Column({default: 0})
     type: number
