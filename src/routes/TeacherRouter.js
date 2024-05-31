@@ -61,5 +61,5 @@ TeacherRouter.put("/editstatus/attendanceform/:classid/:formid", VerifyAccessTok
 TeacherRouter.delete("/classes/:classid/edit/:formid", VerifyAccessToken, Authorization('teacher'), AttendanceFormController.deleteAttendanceFormByFormID);
 
 TeacherRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getTotalStatsByClassIDForTeacher);
-TeacherRouter.get("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.getAllSemester);
+TeacherRouter.get("/semester", VerifyAccessToken, Authorization("teacher"), SemesterController.getAllSemester);
 export default TeacherRouter;

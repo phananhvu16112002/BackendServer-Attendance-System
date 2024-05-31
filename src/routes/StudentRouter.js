@@ -47,5 +47,5 @@ StudentRouter.post("/takeAttendanceoffline", AttendanceDetailController.takeAtte
 
 StudentRouter.get("/notifications", VerifyAccessToken, Authorization('student'), NotificationController.getNotificationsByStudentID);
 
-StudentRouter.get("/semester", VerifyAccessToken, Authorization("admin"), SemesterController.getAllSemester);
+StudentRouter.get("/semester", VerifyAccessToken, Authorization("student"), SemesterController.getAllSemester);
 export default StudentRouter;
