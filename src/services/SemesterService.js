@@ -30,7 +30,8 @@ class SemesterService {
             semester.startDate = startDate;
             semester.endDate = endDate;
             await semesterRepository.save(semester);
-            return {data: semester, error: null};
+            let data = await semesterRepository.find();
+            return {data: data, error: null};
         } catch (e) {
             return {data: null, error: "Failed editing semester"};
         }
