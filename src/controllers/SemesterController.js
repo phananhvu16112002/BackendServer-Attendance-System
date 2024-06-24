@@ -20,6 +20,10 @@ class SemesterController {
     editSemester = async (req,res) => {
         try {
             let semesterID = req.params.id;
+            let semesterName = req.body.semesterName;
+            let semesterDescription = req.body.semesterDescription;
+            let startDate = req.body.startDate;
+            let endDate = req.body.endDate;
             let {data, error} = await SemesterService.editSemester(semesterID, semesterName, semesterDescription, startDate, endDate);
             if (error){
                 return res.status(503).json({message: error});
