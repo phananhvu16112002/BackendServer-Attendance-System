@@ -29,10 +29,12 @@ class SemesterService {
             semester.semesterDescription = semesterDescription;
             semester.startDate = startDate;
             semester.endDate = endDate;
-            await semesterRepository.save(semester);
+            await semesterRepository.update({semesterID: semesterID}, 
+                {semesterName: semesterName, semesterDescription: semesterDescription, startDate: startDate, endDate: endDate});
             let data = await semesterRepository.find();
             return {data: data, error: null};
         } catch (e) {
+            console.log(e);
             return {data: null, error: "Failed editing semester"};
         }
     }
