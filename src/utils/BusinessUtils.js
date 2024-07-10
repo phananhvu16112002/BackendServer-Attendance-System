@@ -119,7 +119,7 @@ class BusinessUtils {
         for (let rowIndex = 2; rowIndex <= worksheet.actualRowCount; rowIndex++){
             let row = worksheet.getRow(rowIndex);
             let studentClass = new StudentClass();
-            studentClass.classDetail = this.generateClassID(row.getCell(6), Number(row.getCell(9)).toString(), row.getCell(10), semesterID);
+            studentClass.classDetail = this.generateClassID(row.getCell(6), Number(row.getCell(8)).toString(), Number(row.getCell(9)).toString(), semesterID);
             studentClass.studentDetail = row.getCell(1).text;
             studentClassArray.push(studentClass);
         }
