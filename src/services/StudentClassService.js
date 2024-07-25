@@ -131,7 +131,11 @@ class StudentClassService {
 
             let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
             select("attendanceform.formID").where("classes.classID = attendanceform.classID").
-            orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1)
+            orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1);
+
+            let subQuery1 = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("COUNT(*)").
+            where("classes.classID = attendanceform.classID");
 
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
             innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
@@ -143,6 +147,7 @@ class StudentClassService {
             addSelect(`SUM(CASE WHEN result = 0 THEN 1 ELSE 0 END) AS totalAbsence`,).addSelect(`SUM(CASE WHEN result = 0.5 THEN 1 else 0 END) AS totalLate`,).
             addSelect('classes.*').addSelect('course.*').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').
             addSelect("attendanceform.formID, attendanceform.shiftNumber, attendanceform.roomNumber, attendanceform.periodDateTime").
+            addSelect('(' + subQuery1.getQuery() + ')' + 'as totalWeeks').
             groupBy('student_class.classID, attendanceform.formID').
             where("student_class.studentID = :id", {id : studentID}).andWhere("attendanceform.formID =(" + subQuery.getQuery() + ")").
             getRawMany();

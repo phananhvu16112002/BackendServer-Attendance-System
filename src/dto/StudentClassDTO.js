@@ -106,7 +106,8 @@ class StudentClassDTO {
             studentClass.totalPresence = parseInt(studentClass.totalPresence);
             studentClass.totalAbsence = parseInt(studentClass.totalAbsence);
             studentClass.totalLate = parseInt(studentClass.totalLate);
-
+            studentClass.totalWeeks = parseInt(studentClass.totalWeeks);
+            studentClass.requiredWeeks = (20/100)*studentClass.totalWeeks;
             let progress = studentClass.total / studentClass.totalWeeks;
             studentClass.progress = progress;     
         }
