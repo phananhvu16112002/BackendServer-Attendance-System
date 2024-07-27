@@ -62,6 +62,7 @@ class StudentClassController {
             classData.pass = pass;
             classData.ban = ban;
             classData.warning = warning;
+            classData.totalWeeks = totalDays;
 
             return res.status(200).json({classData: classData, data: result});
         } catch(e){

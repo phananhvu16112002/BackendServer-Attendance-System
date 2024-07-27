@@ -14,7 +14,19 @@ class AttendanceFormService {
     createFormTransaction = async (attendanceForm, attendanceDetails) => {
         try {
             await AppDataSource.transaction(async (transactionalEntityManager) => {
-                await transactionalEntityManager.save(attendanceForm);
+                await transactionalEntityManager.update(attendanceForm.formID, {
+                    startTime: attendanceForm.startTime,
+                    endTime: attendanceForm.endTime,
+                    dateOpen: attendanceForm.dateOpen,
+                    status: attendanceForm.status,
+                    type: attendanceForm.type,
+                    classes: attendanceForm.classes,
+                    latitude:attendanceForm.latitude,
+                    longitude:attendanceForm.longitude,
+                    location: attendanceForm.location,
+                    radius: attendanceForm.radius
+                });
+                save(attendanceForm);
                 await transactionalEntityManager.save(attendanceDetails);
                 
             })
