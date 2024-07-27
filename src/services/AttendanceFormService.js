@@ -26,7 +26,6 @@ class AttendanceFormService {
                     location: attendanceForm.location,
                     radius: attendanceForm.radius
                 });
-                save(attendanceForm);
                 await transactionalEntityManager.save(attendanceDetails);
                 
             })
