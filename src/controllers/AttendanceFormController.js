@@ -46,7 +46,7 @@ class AttendanceFormController {
             }
             //Get danh sach student trong danh sach cam thi, trong danh sach warning
             //Send notification
-            let totalDays = classData.attendanceForm.length
+            let totalDays = classes.attendanceForm.length
             let offset = totalDays - (0.2)*(totalDays);
             offset = offset + 1;
             await NotificationService.sendAttendanceFormToStudents(classID, offset);
