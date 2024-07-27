@@ -20,7 +20,7 @@ class AttendanceFormService {
                     dateOpen: attendanceForm.dateOpen,
                     status: attendanceForm.status,
                     type: attendanceForm.type,
-                    classes: attendanceForm.classes,
+                    classes: attendanceForm.classes.classID,
                     latitude:attendanceForm.latitude,
                     longitude:attendanceForm.longitude,
                     location: attendanceForm.location,
