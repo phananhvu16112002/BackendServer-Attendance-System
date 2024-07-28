@@ -74,7 +74,8 @@ class StudentClassController {
     getClassesByStudentID = async (req,res) => {
         try{
             const studentID = req.payload.userID;
-            let {data, error} = await StudentClassService.getClassesByStudentID(studentID);
+            let semesterID = req.query.semester;
+            let {data, error} = await StudentClassService.getClassesByStudentID(studentID, semesterID);
             
             if (error){
                 return res.status(500).json({message: error});

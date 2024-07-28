@@ -112,7 +112,7 @@ class StudentClassService {
     // }
 
     //oke used in studentcontroller
-    getClassesByStudentID = async (studentID) => {
+    getClassesByStudentID = async (studentID, semesterID) => {
         try {
             // const studentID = studentID;
             // let data = await studentClassRepository.createQueryBuilder("student_class"). 
@@ -129,6 +129,8 @@ class StudentClassService {
 
             let datenow = JSDatetimeToMySQLDatetime(new Date());
 
+            let queryFilter = (semesterID) ? `student_class.classID = classes.classID AND classes.semesterID = ${semesterID}` : "student_class.classID = classes.classID";
+
             let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
             select("attendanceform.formID").where("classes.classID = attendanceform.classID").
             orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1);
@@ -138,7 +140,7 @@ class StudentClassService {
             where("classes.classID = attendanceform.classID");
 
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
-            innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', "student_class.classID = classes.classID").
+            innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', queryFilter).
             innerJoinAndMapMany("classes.attendanceform", AttendanceForm, "attendanceform", "attendanceform.classID = classes.classID").
             innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
             innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").
