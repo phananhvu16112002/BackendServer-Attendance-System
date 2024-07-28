@@ -160,7 +160,7 @@ class AttendanceFormService {
 
     closeOrOpenFormByFormID = async (formID, status) => {
         try {
-            await attendanceFormRepository.update(formID, {status : status});
+            await attendanceFormRepository.update({formID: formID}, {status : status});
             return true;
         } catch (e) {
             return false;
