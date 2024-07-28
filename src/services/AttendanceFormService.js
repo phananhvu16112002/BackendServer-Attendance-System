@@ -11,10 +11,10 @@ const classRepository = AppDataSource.getRepository(Classes);
 
 class AttendanceFormService {
     //Oke
-    createFormTransaction = async (attendanceForm, attendanceDetails) => {
+    createFormTransaction = async (attendanceForm, attendanceDetails, isFormInUse) => {
         try {
             await AppDataSource.transaction(async (transactionalEntityManager) => {
-                await transactionalEntityManager.update({formID: attendanceForm.formID}, {
+                await transactionalEntityManager.update(AttendanceForm, {formID: attendanceForm.formID}, {
                     startTime: attendanceForm.startTime,
                     endTime: attendanceForm.endTime,
                     dateOpen: attendanceForm.dateOpen,
@@ -25,8 +25,7 @@ class AttendanceFormService {
                     location: attendanceForm.location,
                     radius: attendanceForm.radius
                 });
-                await transactionalEntityManager.save(attendanceDetails);
-                
+                if (!isFormInUse) await transactionalEntityManager.save(attendanceDetails);
             })
             return {data: attendanceForm, error: null}
         } catch (e) {
@@ -50,6 +49,7 @@ class AttendanceFormService {
         form.latitude = latitude;
         form.longitude = longitude;
         form.radius = radius;
+        form.inUsed = true;
         return form;
     }
 

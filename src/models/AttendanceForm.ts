@@ -50,6 +50,8 @@ export class AttendanceForm {
     @Column({default: 0})
     radius: number
 
+    @Column({default: false})
+    inUsed: boolean
     // @OneToMany(() => AttendanceDetail, (AttendanceDetail) => AttendanceDetail.attendanceForm)
     // attendanceDetails: AttendanceDetail[]
 }

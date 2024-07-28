@@ -34,6 +34,10 @@ class ClassesDTO {
         }
         return closestLessons;
     }
+
+    getFormByFormID = (attendanceForms, formID) => {
+        return attendanceForms.find(attendanceForm => attendanceForm.formID === formID);
+    }
 }
 
 export default new ClassesDTO();

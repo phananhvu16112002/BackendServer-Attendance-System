@@ -1,4 +1,5 @@
 import AttendanceFormDTO from "../dto/AttendanceFormDTO";
+import ClassesDTO from "../dto/ClassesDTO";
 import AttendanceDetailService from "../services/AttendanceDetailService";
 import AttendanceFormService from "../services/AttendanceFormService";
 import ClassService from "../services/ClassService";
@@ -34,12 +35,16 @@ class AttendanceFormController {
                 return res.status(422).json({message: "Teacher is not in charge of this class"});
             }
 
+            let formInCheck = ClassesDTO.getFormByFormID(classes.attendanceForm, attendanceForm);
+            if (formInCheck == null) return res.status(503).json({message: "Attendance Form does not exist. Please try again!"});
+            let isFormInUse = formInCheck.inUsed;
+
             //Create entities before inserting into database
             const attendanceFormEntity = AttendanceFormService.createFormEntity(attendanceForm, classes, startTime, endTime, dateOpen, type, location, latitude, longitude, radius);
             const attendanceDetailEntities = AttendanceDetailService.createDefaultAttendanceDetailEntitiesForStudents(classes.studentClass, attendanceForm);
         
             //Make transactions to insert into database
-            const {data: form,error} = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities);
+            const {data: form,error} = await AttendanceFormService.createFormTransaction(attendanceFormEntity, attendanceDetailEntities, isFormInUse);
 
             if (error){
                 return res.status(503).json({message: error});
