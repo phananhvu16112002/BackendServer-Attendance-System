@@ -61,7 +61,7 @@ class TeacherController {
         try{
             const email = req.body.email;
             const password = req.body.password;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
 
@@ -98,7 +98,7 @@ class TeacherController {
     forgotPassword = async (req,res) => {
         try{
             const email = req.body.email;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
             if (teacher == null){
@@ -132,7 +132,7 @@ class TeacherController {
         try {
             const email = req.body.email;
             const OTP = req.body.OTP;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
             if (teacher == null){
@@ -159,7 +159,7 @@ class TeacherController {
         try{
             const email = req.body.email;
             const newPassword = req.body.newPassword;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
             if (teacher == null){
@@ -228,7 +228,7 @@ class TeacherController {
     resendOTP = async (req,res) => {
         try{
             const email = req.body.email;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
             if (teacher == null){
@@ -255,7 +255,7 @@ class TeacherController {
     resendOTPRegister = async (req,res) => {
         try{
             const email = req.body.email;
-            const teacherID = email.split('@')[0];
+            const teacherID = email;
 
             let teacher = await teacherService.checkTeacherExist(teacherID);
             if (teacher == null){
