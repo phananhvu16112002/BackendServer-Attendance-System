@@ -156,14 +156,28 @@ class ReportService {
     //
     getAllReportsByStudentID = async (studentID) => {
         try{
+            let datenow = JSDatetimeToMySQLDatetime(new Date());
+
+            let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("attendanceform.formID").where("classes.classID = attendanceform.classID").
+            orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1);
+
+            let subQuery1 = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("COUNT(*)").
+            where("classes.classID = attendanceform.classID");
+
             let data = await reportRepository.createQueryBuilder("report"). 
                 innerJoinAndMapOne("report.classes", Classes, "classes", 'report.classID = classes.classID').
+                innerJoinAndMapMany("classes.attendanceform", AttendanceForm, "attendanceform", "attendanceform.classID = classes.classID").
                 innerJoinAndMapOne("report.teacher", Teacher, "teacher", 'classes.teacherID = teacher.teacherID'). 
                 innerJoinAndMapOne("report.course", Course, "course", "classes.courseID = course.courseID").
                 leftJoinAndMapOne("report.feedback", Feedback, "feedback", "report.reportID = feedback.reportID").
                 select('report.*').addSelect('classes').addSelect('course').addSelect('teacher.teacherID, teacher.teacherEmail ,teacher.teacherName').addSelect("feedback").
+                addSelect("attendanceform.formID, attendanceform.shiftNumber, attendanceform.roomNumber, attendanceform.periodDateTime").
+                addSelect('(' + subQuery1.getQuery() + ')' + 'as totalWeeks').
+                groupBy('report.reportID, attendanceform.formID').
                 orderBy("report.createdAt", "DESC").
-                where("report.studentID = :id", {id: studentID}).getRawMany();
+                where("report.studentID = :id", {id: studentID}).andWhere("attendanceform.formID =(" + subQuery.getQuery() + ")").getRawMany();
             return {data: data, error: null};
         } catch (e) {
             console.log(e);
