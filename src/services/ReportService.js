@@ -316,13 +316,28 @@ class ReportService {
     //
     getAllReportsByTeacherIDWithPagination = async (teacherID, skip, take) => {
         try {
+            let datenow = JSDatetimeToMySQLDatetime(new Date());
+
+            let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("attendanceform.formID").where("classes.classID = attendanceform.classID").
+            orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1);
+
+            let subQuery1 = attendanceFormRepository.createQueryBuilder("attendanceform").
+            select("COUNT(*)").
+            where("classes.classID = attendanceform.classID");
+
             let data = await classesRepository.createQueryBuilder("classes"). 
             innerJoinAndMapMany("classes.report", Report, 'report', "report.classID = classes.classID").
+            innerJoinAndMapMany("classes.attendanceform", AttendanceForm, "attendanceform", "attendanceform.classID = classes.classID").
             innerJoinAndMapOne("classes.course", Course, 'course', "course.courseID = classes.courseID").
             innerJoinAndMapOne("classes.student", Student, 'student', "report.studentID = student.studentID").
             select('classes.*').addSelect("course.*").addSelect("report.*").addSelect('student.studentID, student.studentEmail ,student.studentName').
+            addSelect("attendanceform.formID, attendanceform.shiftNumber, attendanceform.roomNumber, attendanceform.periodDateTime").
+            addSelect('(' + subQuery1.getQuery() + ')' + 'as totalWeeks').
             orderBy('report.new', "DESC").addOrderBy("report.createdAt", "DESC").
-            where("classes.teacherID = :id", {id: teacherID}).offset(skip).limit(take).
+            where("classes.teacherID = :id", {id: teacherID}).
+            andWhere("attendanceform.formID =(" + subQuery.getQuery() + ")").
+            offset(skip).limit(take).
             getRawMany();
 
             return {data: data, error: null};
