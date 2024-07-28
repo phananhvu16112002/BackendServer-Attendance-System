@@ -22,8 +22,8 @@ class AttendanceFormService {
                     type: attendanceForm.type,
                     latitude:attendanceForm.latitude,
                     longitude:attendanceForm.longitude,
-                    location: attendanceForm.location,
-                    radius: attendanceForm.radius
+                    radius: attendanceForm.radius,
+                    inUsed: true
                 });
                 if (!isFormInUse) await transactionalEntityManager.save(attendanceDetails);
             })
