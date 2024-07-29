@@ -63,7 +63,7 @@ TeacherRouter.delete("/classes/:classid/edit/:formid", VerifyAccessToken, Author
 TeacherRouter.get("/classes/:id/stats", VerifyAccessToken, Authorization('teacher'), AttendanceDetailController.getTotalStatsByClassIDForTeacher);
 TeacherRouter.get("/semester", VerifyAccessToken, Authorization("teacher"), SemesterController.getAllSemester);
 
-TeacherRouter.put("/classes/archives/:id", VerifyAccessToken, Authorization('teacher'), ClassesController.editClassInArchivesByClassID);
+TeacherRouter.put("/classes/archives/:classid", VerifyAccessToken, Authorization('teacher'), ClassesController.editClassInArchivesByClassID);
 
 
 export default TeacherRouter;

@@ -2,7 +2,7 @@ import ClassesDTO from "../dto/ClassesDTO";
 import ClassService from "../services/ClassService";
 import Excel from "exceljs";
 import BusinessUtils from "../utils/BusinessUtils";
-
+import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
 const classService = ClassService;
 
 class ClassesController {
@@ -29,7 +29,7 @@ class ClassesController {
             const teacherID = req.payload.userID; 
             let semesterID = req.query.semester;
             let archived = req.query.archived;
-
+            archived = (archived == "true") ? true : false;
             let page = req.params.page;
             if (page <= 0) {page = 1;}
             let skip = (page - 1) * 9;
@@ -68,8 +68,8 @@ class ClassesController {
                 return res.status(422).json({message: "Teacher is not in charge of this class"});
             }
             return (await classService.editClassesInArchive(classID,archive)) ? 
-            res.status(200).json(successMessage) :
-            res.status(503).json(failMessage);
+            res.status(200).json({message: successMessage}) :
+            res.status(503).json({message: failMessage});
         }catch(e){
             return res.status(500).json({message: "Internal Server Error"});
         }
