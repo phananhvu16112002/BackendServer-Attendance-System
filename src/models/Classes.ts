@@ -32,6 +32,9 @@ export class Classes {
     @Column({default: ""})
     classType: string
 
+    @Column({default: false})
+    isArchived: boolean
+
     @ManyToOne(() => Teacher, Teacher => Teacher.classes, {onDelete: "CASCADE"})
     @JoinColumn({name:"teacherID", referencedColumnName:"teacherID"})
     teacher: Teacher

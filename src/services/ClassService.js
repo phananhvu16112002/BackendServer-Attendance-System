@@ -103,14 +103,22 @@ class ClassService {
         }
     }
 
-    getClassesWithCoursesByTeacherIDWithPagination = async (teacherID, skip, take) => {
+    getClassesWithCoursesByTeacherIDWithPagination = async (teacherID, skip, take, isArchived) => {
         try {
-            let data = await classRepository.find({where : {
+            let data = (isArchived) ? 
+            await classRepository.find({where : {
+                isArchived: isArchived,
                 teacher : {
                     teacherID : teacherID
                 },
             }, relations: {course : true, attendanceForm: true}, skip: skip, take: take})
-
+            :
+            await classRepository.find({where : {
+                isArchived: false,
+                teacher : {
+                    teacherID : teacherID
+                },
+            }, relations: {course : true, attendanceForm: true}, skip: skip, take: take})
             return {data, error: null};
         } catch (e) {
             return {data: [], error: "Failed fetching data"};
@@ -118,9 +126,21 @@ class ClassService {
     }
 
     //migration
-    getClassesInSemesterWithCoursesByTeacherIDWithPagination = async (teacherID, semesterID, skip, take) => {
+    getClassesInSemesterWithCoursesByTeacherIDWithPagination = async (teacherID, semesterID, skip, take, isArchived) => {
         try {
-            let data = await classRepository.find({where : {
+            let data = (isArchived) ? 
+            await classRepository.find({where : {
+                isArchived: isArchived,
+                semester: {
+                    semesterID : semesterID
+                },
+                teacher : {
+                    teacherID : teacherID
+                },
+            }, relations: {course : true, semester: true, attendanceForm: true}, skip: skip, take: take}) 
+            :
+            await classRepository.find({where : {
+                isArchived: false,
                 semester: {
                     semesterID : semesterID
                 },
@@ -398,9 +418,18 @@ class ClassService {
         }
     }
 
-    getTotalPagesForClassesByTeacherID = async (teacherID, offset) => {
+    getTotalPagesForClassesByTeacherID = async (teacherID, offset, isArchived) => {
         try {
-            let total = await classRepository.findAndCount({where : {
+            let total = (isArchived) ? 
+            await classRepository.findAndCount({where : {
+                isArchived: isArchived,
+                teacher : {
+                    teacherID : teacherID
+                },
+            }})
+            :
+            await classRepository.findAndCount({where : {
+                isArchived: false,
                 teacher : {
                     teacherID : teacherID
                 },
@@ -413,9 +442,20 @@ class ClassService {
     }
 
     //migration
-    getTotalPagesForClassesInSemesterByTeacherID = async (teacherID, semesterID, offset) => {
+    getTotalPagesForClassesInSemesterByTeacherID = async (teacherID, semesterID, offset, isArchived) => {
         try {
-            let total = await classRepository.findAndCount({where : {
+            let total = (isArchived) ? 
+            await classRepository.findAndCount({where : {
+                isArchived: isArchived,
+                teacher : {
+                    teacherID : teacherID
+                },semester : {
+                    semesterID: semesterID
+                }
+            }})
+            :
+            await classRepository.findAndCount({where : {
+                isArchived: false,
                 teacher : {
                     teacherID : teacherID
                 },semester : {
@@ -447,6 +487,15 @@ class ClassService {
         } catch (e) {
             console.log(e);
             return {data: null, error: "Failed creating classes"};
+        }
+    }
+
+    editClassesInArchive = async (classID, archived) => {
+        try {
+            await classRepository.update({classID: classID}, {isArchived : archived});
+            return true;
+        } catch (e) {
+            return false;
         }
     }
 }

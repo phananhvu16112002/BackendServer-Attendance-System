@@ -112,7 +112,7 @@ class StudentClassService {
     // }
 
     //oke used in studentcontroller
-    getClassesByStudentID = async (studentID, semesterID) => {
+    getClassesByStudentID = async (studentID, semesterID, archived) => {
         try {
             // const studentID = studentID;
             // let data = await studentClassRepository.createQueryBuilder("student_class"). 
@@ -131,6 +131,9 @@ class StudentClassService {
 
             let queryFilter = (semesterID) ? `student_class.classID = classes.classID AND classes.semesterID = ${semesterID}` : "student_class.classID = classes.classID";
 
+            let queryFilterArchived = (archived) ? "AND classes.isArchived = 1" : "AND classes.isArchived = 0";
+            queryFilterArchived = queryFilter + " " + queryFilterArchived;
+
             let subQuery = attendanceFormRepository.createQueryBuilder("attendanceform").
             select("attendanceform.formID").where("classes.classID = attendanceform.classID").
             orderBy("ABS(DATEDIFF(attendanceform.periodDateTime,'"+datenow +"'))", "ASC").limit(1);
@@ -140,7 +143,7 @@ class StudentClassService {
             where("classes.classID = attendanceform.classID");
 
             let data = await studentClassRepository.createQueryBuilder("student_class"). 
-            innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', queryFilter).
+            innerJoinAndMapOne('student_class.classDetail', Classes, 'classes', queryFilterArchived).
             innerJoinAndMapMany("classes.attendanceform", AttendanceForm, "attendanceform", "attendanceform.classID = classes.classID").
             innerJoinAndMapOne('classes.course', Course, 'course', "course.courseID = classes.courseID").
             innerJoinAndMapOne('classes.teacher', Teacher, 'teacher', "classes.teacherID = teacher.teacherID").

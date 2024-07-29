@@ -28,11 +28,13 @@ class ClassesController {
         try{
             const teacherID = req.payload.userID; 
             let semesterID = req.query.semester;
+            let archived = req.query.archived;
+
             let page = req.params.page;
             if (page <= 0) {page = 1;}
             let skip = (page - 1) * 9;
-            const {data, error} = (semesterID) ? await classService.getClassesInSemesterWithCoursesByTeacherIDWithPagination(teacherID, semesterID, skip, 9) : await classService.getClassesWithCoursesByTeacherIDWithPagination(teacherID, skip, 9);
-            let total = (semesterID) ? await classService.getTotalPagesForClassesInSemesterByTeacherID(teacherID, semesterID, 9) : await classService.getTotalPagesForClassesByTeacherID(teacherID, 9);
+            const {data, error} = (semesterID) ? await classService.getClassesInSemesterWithCoursesByTeacherIDWithPagination(teacherID, semesterID, skip, 9, archived) : await classService.getClassesWithCoursesByTeacherIDWithPagination(teacherID, skip, 9, archived);
+            let total = (semesterID) ? await classService.getTotalPagesForClassesInSemesterByTeacherID(teacherID, semesterID, 9, archived) : await classService.getTotalPagesForClassesByTeacherID(teacherID, 9, archived);
             if (error){
                 return res.status(500).json({message: error});
             }
@@ -41,6 +43,34 @@ class ClassesController {
             }
             return res.status(200).json({totalPage: total, classes: ClassesDTO.appendRecentLesson(data)});
         } catch (e) {
+            return res.status(500).json({message: "Internal Server Error"});
+        }
+    }
+
+    editClassInArchivesByClassID = async (req,res) => {
+        try{
+            const teacherID = req.payload.userID; 
+            let classID = req.params.classid;
+            let archive = req.body.archive;
+            let successMessage = (archive) ? `Successfully added class ${classID} in archives` 
+            : `Successfully restore class ${classID} from archives`;
+            let failMessage = (archive) ? `Failed adding class ${classID} in archives`
+            : `Failed resotring class ${classID} from archives`;
+
+            const {data: classes, error: err} = await classService.getClassByIDWithStudents(classID);
+            if (err){
+                return res.status(503).json({message: err});
+            }
+            if (classes == null){
+                return res.status(204).json({message : `Class with the id: ${classID} does not exist`});
+            }
+            if (compareCaseInsentitive(teacherID, classes.teacher.teacherID) == false){
+                return res.status(422).json({message: "Teacher is not in charge of this class"});
+            }
+            return (await classService.editClassesInArchive(classID,archive)) ? 
+            res.status(200).json(successMessage) :
+            res.status(503).json(failMessage);
+        }catch(e){
             return res.status(500).json({message: "Internal Server Error"});
         }
     }
