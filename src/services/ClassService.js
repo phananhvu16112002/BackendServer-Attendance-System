@@ -316,7 +316,8 @@ class ClassService {
                 },
                 relations: {
                     teacher: true,
-                    course: true
+                    course: true,
+                    attendanceForm: true
                 },
                 skip: skip,
                 take: 6
@@ -351,7 +352,8 @@ class ClassService {
                 relations: {
                     teacher: true,
                     course: true,
-                    semester: true
+                    semester: true,
+                    attendanceForm: true
                 },
                 skip: skip,
                 take: 6

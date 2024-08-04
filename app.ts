@@ -13,6 +13,7 @@ import TokenRouter from "./src/routes/TokenRouter";
 import TestAPIRouter from "./src/routes/TestAPIRouter";
 import AdminRouter from "./src/routes/AdminRouter";
 import firebaseAdmin from "./src/config/notification.config";
+import 'dotenv/config';
 
 const app = express();
 app.use(cors())
@@ -31,6 +32,6 @@ app.use("/test", TestRouter)
 
 app.use("/test/api", TestAPIRouter)
 
-app.listen(8080, () => {
+app.listen(process.env.PORT, () => {
     console.log("Hello");
 })
