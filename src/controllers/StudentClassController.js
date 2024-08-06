@@ -4,6 +4,7 @@ import ClassService from "../services/ClassService";
 import StudentClassService from "../services/StudentClassService";
 import BusinessUtils from "../utils/BusinessUtils";
 import compareCaseInsentitive from "../utils/CompareCaseInsentitive";
+import Excel from 'exceljs';
 
 class StudentClassController {
     getStudentClass = (req,res) => {

@@ -14,10 +14,7 @@ class ExcelService {
     checkInfo = (teacherID, teacherEmail) => {
         try{
             let prefix = teacherEmail.split("@");
-            if (prefix[1] != "student.tdtu.edu.vn"){
-              return false;
-            }
-            if (teacherID.toUpperCase() != prefix[0]){
+            if (prefix[1] != "tdtu.edu.vn"){
               return false;
             }
             return true;
