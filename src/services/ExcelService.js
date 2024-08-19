@@ -23,6 +23,19 @@ class ExcelService {
         }
     }
 
+
+    checkInfoStudent = (studentID, teacherEmail) => {
+        try{
+            let prefix = teacherEmail.split("@");
+            if (prefix[1] != "student.tdtu.edu.vn"){
+              return false;
+            }
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     readStudentsFromExcel = async (fileExcel) => {
         try {
             const buffer = fileExcel.data;
@@ -42,7 +55,7 @@ class ExcelService {
                 console.log(student);
 
                 if (student.studentID != ""){
-                    if (this.checkInfo(student.studentID, student.studentEmail) == false){
+                    if (this.checkInfoStudent(student.studentID, student.studentEmail) == false){
                         return {data: [], error: `Error detected at row ${rowIndex}. Invalid data for studentID: ${student.studentID}, studentEmail: ${student.studentEmail}`};
                     }
                     students.push(student);

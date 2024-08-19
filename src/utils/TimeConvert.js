@@ -23,10 +23,13 @@ function JSDatetimeToMySQLDatetime(date){
     function normalize(date){
         if (date.length == 1){
             return "0" + date
-        }else if (date == "12"){
-            return "00";
-        } else {
-          return date;
+        // }else if (date == "12"){
+        //     return "00";
+        // } else {
+        //   return date;
+        // }
+        }else {
+            return date;
         }
     }
 

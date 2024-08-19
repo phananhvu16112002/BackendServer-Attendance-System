@@ -35,6 +35,7 @@ class BusinessUtils {
     
     AttendanceFormConstructor = (classID, roomNumber, shiftNumber, periodStartTime, periodEndTime, periodDateTime) => {
         let attendanceForm = new AttendanceForm();
+        console.log('periodDateTime', periodDateTime);
         attendanceForm.formID = uuidv4();
         attendanceForm.classes = classID;
         attendanceForm.roomNumber = roomNumber;
